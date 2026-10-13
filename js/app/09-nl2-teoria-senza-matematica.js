@@ -371,6 +371,13 @@ const LXW = (() => {
       const ks = Object.keys(sc).sort((a, b) => a - b); if (!ks.length) return "";
       return `<small>I tuoi tentativi</small>${ks.map(k => `<span>${fI(+k)} mani: ${sc[k][0]} su ${sc[k][1]}</span>`).join("")}`;
     },
+    // range di open di una posizione con le tabelle NL2-NL10 della scuola (le stesse del drill preflop): percentuale di mani e griglia
+    rfiOut(pos) {
+      const sp = typeof PRE_BY === "object" ? PRE_BY["m_rfi_" + pos] : null; if (!sp || typeof preGrid !== "function") return "";
+      let t = 0, o = 0; for (let i = 0; i < 13; i++) for (let j = 0; j < 13; j++) { const h = handAt(i, j), c = combosOf(h), f = sp.f[h]; t += c; if (f) o += c * (1 - f[0]); }
+      const [n, d] = { ep: ["UTG", 5], mp: ["HJ", 4], co: ["CO", 3], btn: ["BTN", 2], sb: ["SB", 1] }[pos] || [pos, 0];
+      return `<p class="lx-rfi-m"><b>${n}</b>, con ${d} ${d === 1 ? "giocatore" : "giocatori"} dietro: apri il <b>${String(Math.round(o / t * 1000) / 10).replace(".", ",")}%</b> delle mani.</p>${preGrid(sp, null)}`;
+    },
     // check del tilt: basta un segnale per chiudere
     tiltOut(n) {
       return n ? `<div class="lx-tilt-v st"><i>STOP</i><p><b>Chiudi la sessione.</b> ${n === 1 ? "Basta un segnale" : n + " segnali"}: la mano dopo non la giocherai meglio. Torna quando decidi con la calma della prima mano.</p></div>`
@@ -596,6 +603,8 @@ const UI = (() => {
     // vero o falso con spiegazione: UI.tf([["frase", true, "perché"], ...])
     tf: (items, o = {}) => { const Y = o.yes || "Vero", N = o.no || "Falso", hint = o.hint || "Tocca Vero o Falso per ogni frase.";
       return `<div class="lx-tf" data-hint="${hint}">${items.map(([q, a, e]) => `<div class="lx-tf-i" data-a="${a ? 1 : 0}"><p>${q}</p><div class="lx-tf-b">${o.noFirst ? `<button type="button" data-lxtf="0">${N}</button><button type="button" data-lxtf="1">${Y}</button>` : `<button type="button" data-lxtf="1">${Y}</button><button type="button" data-lxtf="0">${N}</button>`}</div><p class="lx-tf-e" hidden><b>${a ? Y : N}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+    // range di open per posizione, con i pulsanti delle posizioni: UI.rfi("ep")
+    rfi: (pos = "ep") => `<div class="lx-rfi"><div class="lx-coin-row"><span>Posizione</span>${[["ep", "UTG"], ["mp", "HJ"], ["co", "CO"], ["btn", "BTN"], ["sb", "SB"]].map(([k, n]) => `<button type="button" class="${k === pos ? "on" : ""}" data-lxrfi="${k}" aria-pressed="${k === pos ? "true" : "false"}">${n}</button>`).join("")}</div><div data-rfio aria-live="polite">${LXW.rfiOut(pos)}</div></div>`,
     // check del tilt: UI.tilt([["Segnale", "descrizione"], ...])
     tilt: items => `<div class="lx-tilt"><div class="lx-tilt-h"><b>Il check del tilt</b><small>Spunta quello che senti adesso. Rifallo dopo ogni colpo grosso.</small></div><div class="lx-tilt-l">${items.map(([t, d]) => `<label class="lx-tilt-i"><input type="checkbox" data-lxtilt><span><b>${t}</b>${d}</span></label>`).join("")}</div><div data-tout aria-live="polite">${LXW.tiltOut(0)}</div></div>`,
     // tabella: UI.tab(["Size","Fold","MDF"], [["1/3","25%","75%"],...], {num:[1,2]})
@@ -693,6 +702,8 @@ const UI = (() => {
     if (s) s.innerHTML = done < it.length ? `${done} su ${it.length}: continua con le altre.` : `Giuste <b>${ok} su ${it.length}</b>. <button type="button" class="lx-tf-r" data-lxtfr>Rifai</button>`;
   };
   document.addEventListener("click", e => {
+    const rf = e.target.closest("[data-lxrfi]");
+    if (rf) { const box = rf.closest(".lx-rfi"); if (!box) return; box.querySelectorAll("[data-lxrfi]").forEach(b => { const on = b === rf; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); box.querySelector("[data-rfio]").innerHTML = LXW.rfiOut(rf.dataset.lxrfi); return; }
     const rr = e.target.closest("[data-lxrr]");
     if (rr) {
       const box = rr.closest(".lx-rr"); if (!box || typeof djEval !== "function") return;
