@@ -103,7 +103,7 @@ const LXW = (() => {
       const Wd = 320, Ht = 120, X = k => 6 + k / (pts.length - 1) * (Wd - 12), Y = v => 8 + (hi - v) / span * (Ht - 16);
       const path = pts.map((v, k) => (k ? "L" : "M") + X(k).toFixed(1) + " " + Y(v).toFixed(1)).join("");
       const svg = `<svg viewBox="0 0 ${Wd} ${Ht}" class="lx-coin-ch" role="img" aria-label="Andamento dei ${fI(N)} lanci"><path class="z" d="M6 ${Y(0).toFixed(1)} H${Wd - 6}"/><path class="e" d="M${X(0)} ${Y(0).toFixed(1)} L${X(pts.length - 1)} ${Y(ev).toFixed(1)}"/><path class="l ${cls(s)}" d="${path}"/></svg>`;
-      return { s, w, html: `<div class="lx-coin-res"><div class="lx-edge-n ${cls(s)}"><small>Dopo ${fI(N)} lanci</small><b>${sg(s)} €</b></div><p>${fI(w)} teste e ${fI(N - w)} croci: in media <b>${eur(s / N)}</b> a lancio, contro i <b>${eur(2 * p - 1)}</b> attesi. Il risultato atteso in totale era <b>${Math.abs(ev) < 10 ? eur(ev) : sg(Math.round(ev)) + " €"}</b> (linea tratteggiata).</p></div>${svg}` };
+      return { s, w, html: `<div class="lx-coin-res"><div class="lx-edge-n ${cls(s)}"><small>Dopo ${fI(N)} lanci</small><b>${sg(s)} €</b></div><p>${fI(w)} teste e ${fI(N - w)} croci: in media <b>${eur(Math.sign(s) * Math.round(Math.abs(s) / N * 100) / 100)}</b> a lancio, contro i <b>${eur(2 * p - 1)}</b> attesi. Il risultato atteso in totale era <b>${Math.abs(ev) < 10 ? eur(ev) : sg(Math.round(ev)) + " €"}</b> (linea tratteggiata).</p></div>${svg}` };
     },
     // calcolatore del bankroll: buy-in a ogni limite secondo il piano; per salire servono almeno 30 buy-in del limite nuovo (NL2 è il punto di partenza)
     brcOut(e, plan) {
@@ -476,7 +476,8 @@ const UI = (() => {
       const log = (o.log || []).map(([t, txt]) => `<li class="${anim("opacity:.18", "opacity:1", t)}">${txt}</li>`).join("");
       const brd = o.board ? `<div class="lx-ha-board">${o.board.map(([t, str]) => `<span class="${anim("opacity:0;transform:translateY(-8px)", "opacity:1;transform:none", t)}">${cardsHtml(str)}</span>`).join("")}</div>` : "";
       const frz = o.end ? Math.min(C - 0.75, o.end.t + 0.4) : C - 1;
-      return `<div class="lx-ha ${id}" style="--lx-ha-frz:-${frz.toFixed(2)}s"><style>${css}</style><div class="lx-ha-tbl${o.board ? " hasb" : ""}" aria-hidden="true"><div class="lx-ha-felt"></div>${seats}${db}${brd}${pots}${ev}${end}</div>${log ? `<ol class="lx-ha-log">${log}</ol>` : ""}<p class="lx-cap">La mano si ripete da sola ogni ${C} secondi.</p></div>`;
+      const sum = [...(o.reveal || []).map(([, pos, c]) => `${pos} mostra ${c}`), o.end ? o.end.testo.replace(/<[^>]+>/g, "") : ""].filter(Boolean).join(". ");
+      return `<div class="lx-ha ${id}" style="--lx-ha-frz:-${frz.toFixed(2)}s"><style>${css}</style><div class="lx-ha-tbl${o.board ? " hasb" : ""}" aria-hidden="true"><div class="lx-ha-felt"></div>${seats}${db}${brd}${pots}${ev}${end}</div>${log ? `<ol class="lx-ha-log">${log}</ol>` : ""}${sum ? `<p class="lx-ha-sr">${sum}</p>` : ""}<p class="lx-cap">La mano si ripete da sola ogni ${C} secondi.</p></div>`;
     },
     // rigioca un all-in con board sempre nuovi: UI.rerun({ hero, vil, vn, hp, pot, inv, ev, ex:[vinci,pareggio,perdi], exNote })
     rerun: (o = {}) => {
