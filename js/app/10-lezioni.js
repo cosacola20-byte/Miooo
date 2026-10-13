@@ -191,29 +191,47 @@ ${UI.method(["Quante mani?", "Chi ci guadagna?", "E le volte opposte?", "Le tue 
 ]);
 
 LES("pos", "nl2", "Posizione e open", `
-<p class="lx-lead"><span class="lx-eye">Posizione</span>Avere posizione vuol dire parlare dopo l'avversario in tutte le street dopo il flop. Impari perché vale così tanto, quante mani aprire da ogni posto e con quale size.</p>
-<h4>Perché la posizione vale</h4>
+<div class="lx-hero"><span class="lx-eye">Posizione</span><h3>Chi parla per ultimo decide con più informazioni: per questo al bottone apri più mani.</h3><p class="lx-lead">Avere <b>posizione</b> vuol dire parlare dopo l'avversario in tutte le street dopo il flop. Impari perché vale così tanto, quante mani aprire da ogni posto e con quale size.</p></div>
+
+<div class="lx-sec"><b>1</b><h4>Perché la posizione vale</h4></div>
+<p>Sei al bottone con ${UI.c("9♠9♦")}: apri e il BB paga. Guarda chi parla per primo dopo il flop.</p>
+${UI.hand({ cycle: 17, hero: { pos: "BTN", cards: "9♠9♦" }, deal: 1, hcards: 2,
+  ev: [[0.3, "SB", "post", "", "0,5"], [0.6, "BB", "post", "", "1"], [2.4, "UTG", "fold", "Fold"], [2.9, "HJ", "fold", "Fold"], [3.4, "CO", "fold", "Fold"], [4.1, "BTN", "raise", "Raise 2,5bb", "2,5"], [4.9, "SB", "fold", "Fold"], [5.6, "BB", "call", "Call", "2,5"], [7.8, "BB", "check", "Check"], [8.6, "BTN", "check", "Check"], [11, "BB", "check", "Check"], [11.8, "BTN", "bet", "Bet 3bb", "3"], [12.6, "BB", "fold", "Fold"]],
+  board: [[7, "K♣7♥3♠"], [10.2, "2♦"]],
+  pot: [[0.6, "1,5bb"], [4.1, "4bb"], [5.6, "5,5bb"], [11.8, "8,5bb"]],
+  end: { t: 13.4, testo: "Vince <em>Hero</em>: ha deciso dopo il BB" },
+  log: [[0.3, "Bui: lo SB mette 0,5bb, il BB 1bb"], [2, "Hero ha 9♠ 9♦ al bottone"], [4.1, "Foldano fino a Hero, che apre a 2,5bb"], [5.6, "Lo SB folda, il BB paga"], [7.8, "Flop K♣ 7♥ 3♠: il BB parla per primo e fa check"], [8.6, "Hero ha visto il check e sceglie di non puntare: il turn arriva gratis"], [11, "Turn 2♦: il BB fa di nuovo check"], [11.8, "Due check del BB, spesso segno di una mano debole: Hero punta 3bb"], [12.6, "Il BB folda: Hero vince il piatto"]] })}
+<p>Dal BB, con la stessa mano, avresti parlato per primo a ogni street senza sapere cosa farà il BTN: puntare e rischiare un rilancio, o fare check e lasciargli l'ultima parola.</p>
 <div class="lx-grid"><div class="lx-k v"><small>In posizione (IP)</small><b>Decidi dopo</b><p>Vedi cosa fa l'avversario, dopo il suo check puoi vedere la carta gratis, controlli la dimensione del piatto.</p></div><div class="lx-k r"><small>Fuori posizione (OOP)</small><b>Decidi prima</b><p>Parli senza informazioni e spesso è l'altro a decidere quanto grande diventa il piatto.</p></div></div>
-${UI.spot({ hero: "9♠9♦", pos: "BTN", board: "K♣7♥3♠", info: [["Preflop", "apri a 2,5 bb, il BB paga"], ["Flop", "il BB fa check"], ["In posizione", "scegli tu: puntare o vedere il turn gratis"], ["Dal BB", "con la stessa mano devi parlare per primo, senza sapere cosa farà il BTN"]] })}
 <p>La posizione dipende dal posto al tavolo, non da chi ha rilanciato: chi ha rilanciato per ultimo preflop ha l'<b>iniziativa</b>, che è un'altra cosa. Attenzione anche a cosa la posizione <b>non</b> fa: chi parla prima può sempre fare check-raise (check e poi rilancio sulla tua puntata).</p>
-<h4>Quante mani aprire</h4>
+
+<div class="lx-sec"><b>2</b><h4>Quante mani aprire</h4></div>
 <p>Quando entri per primo nel piatto <b>rilanci</b> (open raise): puoi vincere subito i bui e, se ti pagano, hai l'iniziativa. Più giocatori hai dietro, più è probabile che uno abbia una mano migliore della tua.</p>
-${UI.bars([["UTG (5 dietro)", 14], ["HJ (4 dietro)", 18], ["CO (3 dietro)", 25], ["BTN (2 dietro)", 41], ["SB (1 dietro)", 38]], { unit: "%", max: 50 })}
+${UI.behind()}
+<div class="lx-anim" style="--dur:1.1s">${UI.bars([["UTG (5 dietro)", 14], ["HJ (4 dietro)", 18], ["CO (3 dietro)", 25], ["BTN (2 dietro)", 41], ["SB (1 dietro)", 38]], { unit: "%", max: 50, cls: "lx-rvg" })}</div>
 <p class="lx-cap">Percentuale di mani aperte con il rilancio nelle tabelle della scuola per NL2-NL10 (6-max, 100 bb): le stesse del drill che segue.</p>
+<div class="lx-box tip"><span class="lx-tag">Tre parole che userai</span><p><b>Range di open</b>: l'insieme delle mani che apri da una posizione, stretto da UTG e largo al BTN. <b>Iniziativa</b>: ce l'ha chi ha rilanciato per ultimo preflop. <b>C&#8209;bet</b>: la puntata al flop di chi ha l'iniziativa; vince spesso subito, perché la maggior parte dei flop non aiuta l'avversario. Le lezioni che seguono usano spesso queste tre idee.</p></div>
+
+<div class="lx-sec"><b>3</b><h4>Le tabelle, mano per mano</h4></div>
 <p>Ecco le tabelle complete: tocca una posizione e guarda quali mani entrano. L'HJ nelle tabelle lo trovi anche come MP.</p>
 ${UI.rfi("ep")}
-<div class="lx-box tip"><span class="lx-tag">Tre parole che userai</span><p><b>Range di open</b>: l'insieme delle mani che apri da una posizione, stretto da UTG e largo al BTN. <b>Iniziativa</b>: ce l'ha chi ha rilanciato per ultimo preflop. <b>C&#8209;bet</b>: la puntata al flop di chi ha l'iniziativa; vince spesso subito, perché la maggior parte dei flop non aiuta l'avversario. Le lezioni che seguono usano spesso queste tre idee.</p></div>
 <p>Le stesse mani, posizione per posizione: più ti avvicini al bottone, più mani entrano.</p>
 ${UI.tab(["Mano", "Da dove la apri"], [["5♠5♦ (55)", "da tutte le posizioni"], ["K♣J♦ (KJo)", "da HJ in poi"], ["A♣9♦ (A9o)", "dal CO in poi"], ["K♣9♦ (K9o)", "solo da BTN e SB"], ["J♣5♦ (J5o)", "mai: fold da ogni posizione"]])}
 <h4>Prova tu: apri o folda?</h4>
 <p>Tutti hanno foldato fino a te. Decidi con le tabelle NL2-NL10, poi leggi il perché.</p>
 ${UI.tf([["UTG, con " + UI.c("A♣T♦") + ".", false, "Da UTG hai cinque giocatori dietro: quando uno ha un asso, spesso ha AJ, AQ o AK e ATo resta dominata. La tabella la apre da HJ in poi."], ["UTG, con " + UI.c("T♠9♠") + ".", true, "Le connesse dello stesso seme non restano dominate come gli assi con il kicker basso: quando colpiscono fanno scale e colori. Da UTG la tabella apre JTs, T9s e 98s."], ["HJ, con " + UI.c("Q♣J♦") + ".", true, "Con un giocatore in meno dietro la tabella si allarga: da HJ entrano anche KJo, QJo e ATo."], ["CO, con " + UI.c("Q♣9♦") + ".", false, "Dal CO apri circa una mano su quattro, ma le offsuit con il kicker basso restano fuori: Q9o e K9o si aprono dal BTN e dalla SB."], ["BTN, con " + UI.c("Q♣9♦") + ".", true, "Al BTN restano solo i bui e dopo il flop giochi in posizione: la tabella apre circa 4 mani su 10, Q9o compresa."], ["CO, con " + UI.c("K♠5♠") + ".", false, "Dietro hai ancora il BTN, che giocherebbe in posizione su di te: K5s si apre dal BTN e dalla SB."]], { yes: "Apri", no: "Folda", hint: "Tocca Apri o Folda per ogni mano." })}
-<div class="lx-box calc"><span class="lx-tag">Size di open</span><span class="lx-f">2,5 bb da UTG, HJ, CO e BTN · circa 3 bb dalla SB</span><p>Dalla SB giochi fuori posizione contro il BB: una size un po' più grande gli dà un prezzo peggiore per pagare. Il limp da primo non si usa: non vince mai subito e lascia entrare tutti a buon prezzo.</p></div>
-<h4>I bui e chi hai dietro</h4>
+
+<div class="lx-sec"><b>4</b><h4>Con quale size</h4></div>
+${UI.big([["Da UTG, HJ, CO e BTN", "2,5 bb", "il tuo open standard"], ["Dalla SB", "3 bb", "giochi fuori posizione contro il BB", "gold"]])}
+<p>Dalla SB giochi fuori posizione contro il BB: una size un po' più grande gli dà un prezzo peggiore per pagare. Il limp da primo non si usa: non vince mai subito e lascia entrare tutti a buon prezzo.</p>
+
+<div class="lx-sec"><b>5</b><h4>I bui e chi hai dietro</h4></div>
 ${UI.stats([["-100", "bb/100 in BB se foldi sempre"], ["-35 / -50", "bb/100 in BB per un regular vincente (stima)"], ["-25 / -30", "bb/100 in SB per un regular vincente (stima)"]])}
 <p>Nei bui metti soldi prima di vedere le carte e poi giochi fuori posizione: perdono anche i vincenti. L'obiettivo lì è perdere il meno possibile; il guadagno si fa nelle altre posizioni, soprattutto al BTN.</p>
 <div class="lx-sem"><div><i class="go">APRI DI PIÙ</i>in posizione e con pochi giocatori dietro (CO, BTN).</div><div><i class="mid">APRI MENO</i>se dietro c'è un giocatore aggressivo che rilancia spesso e avrà la posizione.</div><div><i class="st">SOLO MANI SOLIDE</i>da UTG, con cinque giocatori ancora da parlare.</div></div>
 <div class="lx-box trap"><span class="lx-tag">Trappola classica</span><p>Completare dalla SB «per tenere il piatto piccolo» con mani buone come A7o: giochi fuori posizione, senza iniziativa, contro un BB che ha l'ultima parola.</p></div>
+<h4>Le tre regole della posizione</h4>
+<ol class="lx-steps"><li><b>Parla per ultimo</b>In posizione decidi dopo aver visto cosa fa l'avversario, in ogni street dopo il flop.</li><li><b>Apri in base a chi hai dietro</b>Da UTG solo mani solide, dal BTN circa 4 su 10: segui la tabella della tua posizione.</li><li><b>Entra sempre con un rilancio</b>2,5 bb, 3 dalla SB. Il limp da primo non si usa.</li></ol>
 <div class="lx-end"><p>In sintesi</p><b>Più sei vicino al bottone, più mani apri: da UTG solo mani solide, <em>dal BTN circa 4 su 10</em>. Entri sempre con un rilancio, 2,5 bb (3 dalla SB).</b><p>In «Vietato limpare» vedrai perché entrare pagando solo il big blind è un errore.</p></div>`, [
   { q: "Perché dal BTN si aprono molte più mani che da UTG?", o: ["Giochi in posizione dopo il flop e restano da superare solo i due bui", "Il BTN ha già un piccolo investimento nel piatto, quindi gli conviene entrare", "I bui foldano quasi sempre all'open del BTN, quindi la mano conta poco", "Dal BTN l'open costa meno, perché si rilancia a 2 bb invece che a 2,5"], e: "Dal BTN parli per ultimo in tutte le street dopo il flop e solo SB e BB possono avere una mano forte; da UTG hai cinque giocatori dietro. Il BTN non ha soldi obbligatori nel piatto (quelli sono dei bui), i bui difendono spesso e l'open standard è 2,5 bb da ogni posizione tranne la SB." },
   { q: "Apri da primo al CO e, in un'altra mano, dalla SB quando tutti hanno foldato. Quali size sono quelle standard dell'app?", o: ["2,5 bb al CO e circa 3 bb in SB, perché in SB giocherai fuori posizione", "2,5 bb al CO e 2 bb in SB, perché in SB hai già mezzo bb nel piatto", "3,5 bb al CO e 2,5 bb in SB, perché al CO hai più giocatori dietro", "2,5 bb in entrambi i casi: la size non dipende mai dalla posizione"], e: "L'open standard è 2,5 bb. Dalla SB si apre un po' più grande, circa 3 bb: giocherai fuori posizione contro il BB e una size più grande gli dà un prezzo peggiore per pagare. 3,5 bb al CO rischia di più per vincere gli stessi 1,5 bb di bui." },

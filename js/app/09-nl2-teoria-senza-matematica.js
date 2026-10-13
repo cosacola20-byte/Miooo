@@ -504,6 +504,29 @@ const UI = (() => {
       const sum = [...(o.reveal || []).map(([, pos, c]) => `${pos} mostra ${c}`), o.end ? o.end.testo.replace(/<[^>]+>/g, "") : ""].filter(Boolean).join(". ");
       return `<div class="lx-ha ${id}" style="--lx-ha-frz:-${frz.toFixed(2)}s"><style>${css}</style><div class="lx-ha-tbl${o.board ? " hasb" : ""}" aria-hidden="true"><div class="lx-ha-felt"></div>${seats}${db}${brd}${pots}${ev}${end}</div>${log ? `<ol class="lx-ha-log">${log}</ol>` : ""}${sum ? `<p class="lx-ha-sr">${sum}</p>` : ""}<p class="lx-cap">La mano si ripete da sola ogni ${C} secondi.</p></div>`;
     },
+    // chi hai dietro prima del flop: il tavolo 6-max scorre da UTG alla SB, il tuo posto in oro e chi parla dopo di te in rosso (solo CSS, come UI.hand). UI.behind()
+    behind: () => {
+      const id = "lx-bh-" + (++HAN), O = ["UTG", "HJ", "CO", "BTN", "SB"], ALL = [...O, "BB"], T = 3.2, C = T * O.length;
+      const PCT = { UTG: "14%", HJ: "18%", CO: "25%", BTN: "41%", SB: "38%", BB: "difende" };
+      const POS = { BTN: [50, 85], SB: [13, 64], BB: [13, 28], UTG: [50, 16], HJ: [87, 28], CO: [87, 64] };
+      const ST = { h: "background-image:none;background-color:#d9a537;color:#1b1300;box-shadow:0 0 0 2px #f5d06b,0 0 18px rgba(245,208,107,.6);opacity:1", b: "background-image:none;background-color:#b83a3a;color:#fff;box-shadow:0 0 0 2px #ff8a8a,0 0 14px rgba(214,60,60,.55);opacity:1", n: "background-image:none;background-color:#1f2a26;color:#e8efe9;box-shadow:0 0 0 2px rgba(255,255,255,.12);opacity:.45" };
+      const pc = t => (t / C * 100).toFixed(2), state = (p, h) => p === h ? "h" : ALL.indexOf(p) > ALL.indexOf(h) ? "b" : "n", behindN = h => ALL.length - 1 - ALL.indexOf(h);
+      // una fase per posizione; ogni cambio dura 0,35 s e il giro riparte senza salti
+      const kf = list => `0%{${list[list.length - 1]}}` + list.map((x, i) => `${pc(i * T + 0.35)}%,${i + 1 < list.length ? pc((i + 1) * T) : 100}%{${x}}`).join("");
+      let css = "";
+      const seats = ALL.map((p, k) => {
+        css += `@keyframes ${id}-s${k}{${kf(O.map(h => ST[state(p, h)]))}}.${id} .s${k}{animation:${id}-s${k} ${C}s linear infinite}`;
+        const [x, y] = POS[p];
+        return `<div class="lx-ha-seat" style="left:${x}%;top:${y}%"><span class="lx-ha-av s${k}" style="${ST[state(p, "UTG")]}">${p}</span><span class="lx-ha-st">${PCT[p]}</span></div>`;
+      }).join("");
+      const labels = O.map((h, i) => {
+        css += `@keyframes ${id}-c${i}{${kf(O.map((_, j) => j === i ? "opacity:1" : "opacity:0"))}}.${id} .c${i}{animation:${id}-c${i} ${C}s linear infinite}`;
+        const n = behindN(h);
+        return `<span class="c${i}" style="opacity:${i ? 0 : 1}"><b>${h}</b>: ${n} ${n === 1 ? "giocatore" : "giocatori"} dietro<br>apri il ${PCT[h]} delle mani</span>`;
+      }).join("");
+      const sum = O.map(h => `${h}: ${behindN(h)} dietro, apri il ${PCT[h]}`).join(". ");
+      return `<div class="lx-bh ${id}"><style>${css}</style><div class="lx-ha-tbl" aria-hidden="true"><div class="lx-ha-felt"></div>${seats}<span class="lx-ha-d" style="left:37%;top:82%">D</span><div class="lx-bh-c">${labels}</div></div><p class="lx-ha-sr">${sum}.</p><p class="lx-cap">In oro il tuo posto, in rosso chi parla dopo di te prima del flop: più sono, più è probabile che uno abbia una mano migliore della tua. Le percentuali sono quelle delle tabelle NL2-NL10.</p></div>`;
+    },
     // rigioca un all-in con board sempre nuovi: UI.rerun({ hero, vil, vn, hp, pot, inv, ev, ex:[vinci,pareggio,perdi], exNote })
     rerun: (o = {}) => {
       const h = o.hero || "A♠A♦", v = o.vil || "K♣K♥", vn = o.vn || "CO", pot = o.pot || 201.5, ex = o.ex || [], f = x => String(x).replace(".", ",");
