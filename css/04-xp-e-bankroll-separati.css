@@ -1,0 +1,15 @@
+/* ===== XP e bankroll separati ===== */
+.xpg{font-weight:800;color:var(--gold);margin-right:6px}
+.endtiles{grid-template-columns:repeat(5,1fr)}
+.et.br{border-color:#0f766e}.et.br span{background:#0f766e}.et.br.neg{border-color:#d9534f}.et.br.neg span{background:#d9534f}
+@media (max-width:860px){.endtiles{grid-template-columns:repeat(2,1fr)}}
+.gwxp{margin-left:auto;position:relative;background:#2a2412;border:1px solid #6b5520;border-radius:99px;padding:2px 10px}.gwxp b{color:#f5c542}
+.gwcoins{margin-left:6px;background:#12291c;border-color:#1f6b43}.gwcoins b{color:#5fd39a}.gwcoins.neg b{color:#ff8a80}
+.gwfloat.neg{color:#ff8a80}
+b.neg{color:#d9534f}
+/* card dei drill: niente testo che esce su schermi stretti o lingue lunghe */
+.drill-grid>.dcard{min-width:0}.dcard .row{flex-wrap:wrap}.dcard .row .btn{margin-left:auto}
+.gwhud{flex-wrap:wrap;row-gap:6px}@media (max-width:480px){.gwhud{gap:8px;font-size:12.5px}}
+/* accessibilità: contorno visibile per chi naviga da tastiera */
+:where(button,a,[role=button],input,select,textarea,summary,[tabindex]):focus-visible{outline:3px solid #f5b700;outline-offset:2px}
+.gwcoins .gic{width:15px;height:15px;vertical-align:-3px}.gpill.br .gic{width:20px;height:20px}

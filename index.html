@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Orca School Poker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="css/00-reset.css">
+<link rel="stylesheet" href="css/01-generale.css">
+<link rel="stylesheet" href="css/02-programma-carriera-da-nl2-a-nl1000.css">
+<link rel="stylesheet" href="css/03-tavolo-animato-di-allenati.css">
+<link rel="stylesheet" href="css/04-xp-e-bankroll-separati.css">
+<link rel="stylesheet" href="css/05-lezioni-scheda-quiz.css">
+<link rel="stylesheet" href="css/06-coaching-aspetto-moderno.css">
+<link rel="stylesheet" href="css/07-easter-egg-delle-leggende.css">
+<link rel="stylesheet" href="css/08-easter-egg-seconda-ondata.css">
+<link rel="stylesheet" href="css/09-lezioni-componenti-grafici-delle-schede.css">
+<link rel="stylesheet" href="css/10-componenti-premium.css">
+<link rel="stylesheet" href="css/11-simulazione-animata-della-mano.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 100 100" width="30" height="30" class="logo-orca" aria-hidden="true"> <defs><linearGradient id="obtfo2b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3b4f"/><stop offset="1" stop-color="#141d28"/></linearGradient></defs> <path d="M74 70q14-2 20-14q-3 12-10 18q9 2 14 10q-12-3-24-6z" fill="#1a2533"/> <path d="M43 27q4-19 13-23q-1 12 5 23z" fill="url(#obtfo2b)"/> <ellipse cx="50" cy="58" rx="37" ry="33" fill="url(#obtfo2b)"/> <path d="M27 66q23 24 46 0q-3 20-23 22q-20-2-23-22z" fill="#f5f8fc"/> <ellipse cx="50" cy="67" rx="25" ry="19" fill="#f5f8fc"/> <ellipse cx="29" cy="44" rx="8.5" ry="4.8" transform="rotate(-28 29 44)" fill="#f5f8fc"/> <ellipse cx="71" cy="44" rx="8.5" ry="4.8" transform="rotate(28 71 44)" fill="#f5f8fc"/> <path d="M15 64q-9 6-8 15q8-2 14-10z" fill="#1a2533"/> <path d="M85 64q9 6 8 15q-8-2-14-10z" fill="#1a2533"/> <ellipse cx="33" cy="66" rx="4.4" ry="2.8" fill="#ff9fb3" opacity=".75"/> <ellipse cx="67" cy="66" rx="4.4" ry="2.8" fill="#ff9fb3" opacity=".75"/> <ellipse cx="40" cy="35" rx="9" ry="4" fill="#fff" opacity=".12"/> <path d="M35 59q5 -6 10 0" stroke="#0e1620" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M55 59q5 -6 10 0" stroke="#0e1620" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M43.5 68q6.5 7 13 0" stroke="#0e1620" stroke-width="2.6" fill="#ff8fa3" stroke-linecap="round" stroke-linejoin="round"/> <g transform="translate(80 78)"><circle r="8" fill="#15925f"/><rect x="-1.4" y="-8" width="2.8" height="3.4" rx=".8" fill="#fff" transform="rotate(0)"/><rect x="-1.4" y="-8" width="2.8" height="3.4" rx=".8" fill="#fff" transform="rotate(60)"/><rect x="-1.4" y="-8" width="2.8" height="3.4" rx=".8" fill="#fff" transform="rotate(120)"/><rect x="-1.4" y="-8" width="2.8" height="3.4" rx=".8" fill="#fff" transform="rotate(180)"/><rect x="-1.4" y="-8" width="2.8" height="3.4" rx=".8" fill="#fff" transform="rotate(240)"/><rect x="-1.4" y="-8" width="2.8" height="3.4" rx=".8" fill="#fff" transform="rotate(300)"/><circle r="4.6" fill="#e8f7ef"/></g> </svg></div>
+      <div><h1>Orca School Poker</h1><p>La scuola di poker cash 6-max: dalle basi del NL2 fino al NL1000</p></div>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-tab="program" aria-selected="true">Programma</button>
+    <button role="tab" data-tab="free" aria-selected="false">Drill liberi</button>
+    <button role="tab" data-tab="mind" aria-selected="false">Mindset</button>
+    <button role="tab" data-tab="data" aria-selected="false">I miei dati</button>
+    <button role="tab" data-tab="err" aria-selected="false">Errori</button>
+    <button role="tab" data-tab="opp" aria-selected="false">Avversari</button>
+    <button role="tab" data-tab="solver" aria-selected="false">Solver</button>
+    <button role="tab" data-tab="equity" aria-selected="false">Sonar</button>
+    <button role="tab" data-tab="coach" aria-selected="false">Coaching</button>
+    <button role="tab" data-tab="progress" aria-selected="false">Progressi</button>
+    <button role="tab" data-tab="ref" aria-selected="false">Promemoria</button>
+  </nav>
+  <main id="view"></main>
+  <p class="savestate" id="savestate"></p>
+</div>
+<!-- prima i dati, poi il codice: l'ordine conta -->
+<script src="js/data/bank.js"></script>
+<script src="js/data/gblk.js"></script>
+<script src="js/data/mranges.js"></script>
+<script src="js/data/pre.js"></script>
+<script src="js/data/pre-micro.js"></script>
+<script src="js/data/pf-b64.js"></script>
+<script src="js/data/gw-flopsub.js"></script>
+<script src="js/data/gw-bench.js"></script>
+<script src="js/data/gw-reports.js"></script>
+<script src="js/app/00-dati-iniziali.js"></script>
+<script src="js/app/01-utilita.js"></script>
+<script src="js/app/02-stato.js"></script>
+<script src="js/app/03-sincronizzazione-tra-dispositivi.js"></script>
+<script src="js/app/04-modello-size.js"></script>
+<script src="js/app/05-drill.js"></script>
+<script src="js/app/06-preflop.js"></script>
+<script src="js/app/07-tabelle-dei-micro-limiti.js"></script>
+<script src="js/app/08-randomizzatore.js"></script>
+<script src="js/app/09-nl2-teoria-senza-matematica.js"></script>
+<script src="js/app/10-lezioni.js"></script>
+<script src="js/app/11-strategie-di-riferimento.js"></script>
+<script src="js/app/12-motore-di-valutazione-ed-equity.js"></script>
+<script src="js/app/13-drill-difesa-dalla-c-bet.js"></script>
+<script src="js/app/14-drill-la-mano-piu-forte.js"></script>
+<script src="js/app/15-minigioco-la-mano-piu-forte.js"></script>
+<script src="js/app/16-classifica-condivisa-dei-minigiochi.js"></script>
+<script src="js/app/17-minigioco-all-in-o-fold.js"></script>
+<script src="js/app/18-minigioco-open-o-fold.js"></script>
+<script src="js/app/19-premi-degli-esami.js"></script>
+<script src="js/app/20-classifica-xp.js"></script>
+<script src="js/app/21-battaglia-di-problemi.js"></script>
+<script src="js/app/22-classifiche-dei-drill.js"></script>
+<script src="js/app/23-coaching.js"></script>
+<script src="js/app/24-easter-egg-leggende-del-poker.js"></script>
+<script src="js/app/25-easter-egg-seconda-ondata.js"></script>
+<script src="js/app/26-voto-da-1-a-10-per.js"></script>
+<script src="js/app/27-programma.js"></script>
+<script src="js/app/28-carriera-da-nl2-a-nl1000.js"></script>
+<script src="js/app/29-render.js"></script>
+<script src="js/app/30-avversari-motore-regole-hm3.js"></script>
+<script src="js/app/31-avversari-interfaccia.js"></script>
+<script src="js/app/32-solver-river.js"></script>
+<script src="js/app/33-solver-range-dei-giocatori-da-una.js"></script>
+<script src="js/app/34-solver-interfaccia.js"></script>
+<script src="js/app/35-solver-impostazione-dello-spot.js"></script>
+<script src="js/app/36-calcolatore-di-equity.js"></script>
+<script src="js/app/37-sonar-allenamento-equity.js"></script>
+<script src="js/app/38-solver-preflop-motore.js"></script>
+<script src="js/app/39-solver-preflop-interfaccia.js"></script>
+<script src="js/app/40-solver-flop-turn.js"></script>
+<script src="js/app/41-solver-in-parallelo.js"></script>
+<script src="js/app/42-study-preflop-postflop-in-un-unico.js"></script>
+<script src="js/app/43-scelta-delle-size-prima-di-calcolare.js"></script>
+<script src="js/app/44-problema-del-giorno.js"></script>
+<script src="js/app/45-allenamento-ripasso-degli-errori-flop-casuali.js"></script>
+<script src="js/app/46-guida-come-usare-il-solver.js"></script>
+<script src="js/app/47-backup-esporta-e-importa-tutto.js"></script>
+<script src="js/app/48-prove-dei-livelli.js"></script>
+<script src="js/app/49-memoria-delle-soluzioni.js"></script>
+<script src="js/app/50-risolvi-con-ia.js"></script>
+<script src="js/app/51-allenati.js"></script>
+<script src="js/app/52-tavolo-animato-di-allenati.js"></script>
+<script src="js/app/53-report-flop.js"></script>
+<script src="js/app/54-mindset.js"></script>
+<script src="js/app/55-varianza-simulatore-monte-carlo.js"></script>
+<script src="js/app/56-gamification.js"></script>
+<script src="js/app/57-fiches.js"></script>
+<script src="js/app/58-gamification-interfaccia.js"></script>
+<script src="js/app/59-4-bet-pot-e-3-bet.js"></script>
+<script src="js/app/60-report-settimanale.js"></script>
+<script src="js/app/61-runner.js"></script>
+<script src="js/app/62-eventi.js"></script>
+<script src="js/app/63-avvio.js"></script>
+</body>
+</html>
