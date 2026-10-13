@@ -10,6 +10,7 @@
 .lx-ha-bk{display:flex;gap:2px;height:22px}
 .lx-ha-bk i{width:15px;height:21px;border-radius:3px;background:repeating-linear-gradient(45deg,#b23a3a 0 3px,#8e2525 3px 6px);box-shadow:0 0 0 1.5px #fff,0 2px 4px rgba(0,0,0,.4)}
 .lx-ha-hc{display:flex;gap:3px}
+.lx-ha-bk+.lx-ha-hc{position:absolute;top:0;left:-24px;right:-24px;justify-content:center}
 .lx-ha-hc .lx-c{font-size:15px;height:1.9em;min-width:2em;box-shadow:0 3px 8px rgba(0,0,0,.45)}
 .lx-ha-bub{position:absolute;transform:translate(-50%,-50%);z-index:4;font-weight:800;font-size:11px;padding:3px 9px;border-radius:99px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.45)}
 .lx-ha-bub.fold{background:#3a4440;color:#cfd8d3}
@@ -28,7 +29,7 @@
 .lx-ha-log li{counter-increment:hl;display:flex;gap:8px;align-items:baseline;font-size:13.5px;color:var(--ink2)}
 .lx-ha-log li::before{content:counter(hl);flex:0 0 20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--surface2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
 @media (max-width:480px){.lx-ha-tbl{aspect-ratio:1/1}.lx-ha-av{width:32px;height:32px;font-size:10px}.lx-ha-end{font-size:11.5px;padding:6px 10px}}
-@media (prefers-reduced-motion:reduce){.lx-ha [class*=" a"],.lx-ha [class^="a"]{animation-play-state:paused!important;animation-delay:-17s!important}}
+@media (prefers-reduced-motion:reduce){.lx-ha [class*=" a"],.lx-ha [class^="a"]{animation-play-state:paused!important;animation-delay:var(--lx-ha-frz,-17s)!important}.lx-ha>.lx-cap{display:none}}
 
 .lesbody .lx-why,.lx-why{margin:10px 0;padding:0;list-style:none;display:grid;gap:6px}
 .lx-why li{position:relative;padding:8px 10px 8px 34px;border-radius:10px;background:var(--surface2);font-size:14px;color:var(--ink2)}
@@ -150,6 +151,10 @@
 .lx-coin-ch path,.lx-vol path{vector-effect:non-scaling-stroke}
 .lx-edge-n.g b,.lx-coin b.g,.lx-edge b.g,.lx-bbc b.g,.lx-coin-hist span.g{color:color-mix(in srgb,#1fb57a 72%,var(--ink))}
 .lx-edge-n.r b,.lx-coin b.r,.lx-edge b.r,.lx-bbc b.r,.lx-coin-hist span.r{color:color-mix(in srgb,#e05a4e 82%,var(--ink))}
+.lx-vol .tg{fill:color-mix(in srgb,#1fb57a 72%,var(--ink))}.lx-vol .tr{fill:color-mix(in srgb,#e05a4e 82%,var(--ink))}
+.lx-vol b.g{color:color-mix(in srgb,#1fb57a 72%,var(--ink))}.lx-vol b.r{color:color-mix(in srgb,#e05a4e 82%,var(--ink))}
+.lx-vol text.tl{paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+@media (max-width:520px){.lx-vol text{font-size:14px}}
 /* tabella della moneta: la colonna con le percentuali della moneta resta leggibile */
 .lx-coin .lx-tab tbody th{background:none;color:var(--ink);font-weight:800;text-align:left}
 .lx-coin .lx-tab tr:nth-child(even) th{background:var(--surface2)}

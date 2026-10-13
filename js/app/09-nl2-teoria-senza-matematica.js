@@ -103,7 +103,7 @@ const LXW = (() => {
       const Wd = 320, Ht = 120, X = k => 6 + k / (pts.length - 1) * (Wd - 12), Y = v => 8 + (hi - v) / span * (Ht - 16);
       const path = pts.map((v, k) => (k ? "L" : "M") + X(k).toFixed(1) + " " + Y(v).toFixed(1)).join("");
       const svg = `<svg viewBox="0 0 ${Wd} ${Ht}" class="lx-coin-ch" role="img" aria-label="Andamento dei ${fI(N)} lanci"><path class="z" d="M6 ${Y(0).toFixed(1)} H${Wd - 6}"/><path class="e" d="M${X(0)} ${Y(0).toFixed(1)} L${X(pts.length - 1)} ${Y(ev).toFixed(1)}"/><path class="l ${cls(s)}" d="${path}"/></svg>`;
-      return { s, w, html: `<div class="lx-coin-res"><div class="lx-edge-n ${cls(s)}"><small>Dopo ${fI(N)} lanci</small><b>${sg(s)} €</b></div><p>${fI(w)} teste e ${fI(N - w)} croci. Il risultato atteso era <b>${Math.abs(ev) < 10 ? eur(ev) : sg(Math.round(ev)) + " €"}</b> (linea tratteggiata).</p></div>${svg}` };
+      return { s, w, html: `<div class="lx-coin-res"><div class="lx-edge-n ${cls(s)}"><small>Dopo ${fI(N)} lanci</small><b>${sg(s)} €</b></div><p>${fI(w)} teste e ${fI(N - w)} croci: in media <b>${eur(s / N)}</b> a lancio, contro i <b>${eur(2 * p - 1)}</b> attesi. Il risultato atteso in totale era <b>${Math.abs(ev) < 10 ? eur(ev) : sg(Math.round(ev)) + " €"}</b> (linea tratteggiata).</p></div>${svg}` };
     },
     // calcolatore del bankroll: buy-in a ogni limite secondo il piano; per salire servono almeno 30 buy-in del limite nuovo (NL2 è il punto di partenza)
     brcOut(e, plan) {
@@ -475,7 +475,8 @@ const UI = (() => {
       const end = o.end ? `<div class="lx-ha-end ${anim("opacity:0;transform:translate(-50%,8px)", "opacity:1;transform:translate(-50%,0)", o.end.t)}">${o.end.testo}</div>` : "";
       const log = (o.log || []).map(([t, txt]) => `<li class="${anim("opacity:.18", "opacity:1", t)}">${txt}</li>`).join("");
       const brd = o.board ? `<div class="lx-ha-board">${o.board.map(([t, str]) => `<span class="${anim("opacity:0;transform:translateY(-8px)", "opacity:1;transform:none", t)}">${cardsHtml(str)}</span>`).join("")}</div>` : "";
-      return `<div class="lx-ha ${id}"><style>${css}</style><div class="lx-ha-tbl${o.board ? " hasb" : ""}"><div class="lx-ha-felt"></div>${seats}${db}${brd}${pots}${ev}${end}</div>${log ? `<ol class="lx-ha-log">${log}</ol>` : ""}<p class="lx-cap">La mano si ripete da sola ogni ${C} secondi.</p></div>`;
+      const frz = o.end ? Math.min(C - 0.75, o.end.t + 0.4) : C - 1;
+      return `<div class="lx-ha ${id}" style="--lx-ha-frz:-${frz.toFixed(2)}s"><style>${css}</style><div class="lx-ha-tbl${o.board ? " hasb" : ""}" aria-hidden="true"><div class="lx-ha-felt"></div>${seats}${db}${brd}${pots}${ev}${end}</div>${log ? `<ol class="lx-ha-log">${log}</ol>` : ""}<p class="lx-cap">La mano si ripete da sola ogni ${C} secondi.</p></div>`;
     },
     // rigioca un all-in con board sempre nuovi: UI.rerun({ hero, vil, vn, hp, pot, inv, ev, ex:[vinci,pareggio,perdi], exNote })
     rerun: (o = {}) => {
@@ -586,11 +587,11 @@ const UI = (() => {
       const row = p => `<tr><th>${Math.round(p * 100)}%</th>${P[p].map(v => `<td class="num">${String(v).replace(".", ",")}%</td>`).join("")}</tr>`;
       return `<div class="lx-coin" data-p="0.55">
         <div class="lx-coin-top"><div class="lx-coin-c" aria-hidden="true"><b data-cpc>55%</b></div><div><b>La moneta truccata</b><p>Esce testa il <b data-cp>55%</b> delle volte. Testa vinci 1 €, croce perdi 1 €. In media guadagni <b data-cev>0,10 €</b> a lancio: un vantaggio piccolo.</p></div></div>
-        <div class="lx-coin-row"><span>Vantaggio</span><button type="button" data-lxcp="0.51">51%</button><button type="button" data-lxcp="0.53">53%</button><button type="button" class="on" data-lxcp="0.55">55%</button></div>
+        <div class="lx-coin-row"><span>Vantaggio</span><button type="button" data-lxcp="0.51" aria-pressed="false">51%</button><button type="button" data-lxcp="0.53" aria-pressed="false">53%</button><button type="button" class="on" data-lxcp="0.55" aria-pressed="true">55%</button></div>
         <div class="lx-coin-row"><span>Lancia</span><button type="button" data-lxcn="10">10</button><button type="button" data-lxcn="100">100</button><button type="button" data-lxcn="1000">1.000</button><button type="button" data-lxcn="10000">10.000</button></div>
-        <div class="lx-coin-out" data-cout><p class="lx-cap">Tocca un numero di lanci, poi ripeti: guarda quanto cambia il risultato con 10 lanci e quanto poco con 10.000.</p></div>
+        <div class="lx-coin-out" data-cout aria-live="polite"><p class="lx-cap">Tocca un numero di lanci, poi ripeti. Con 10 lanci a volte chiudi in perdita, con 10.000 quasi mai. Guarda anche la media a lancio: con tanti lanci si avvicina a quella attesa.</p></div>
         <div class="lx-coin-hist" data-chist></div>
-        <details class="lx-fold"><summary><span>Probabilità di chiudere in vantaggio</span><small>calcolo esatto, non simulato</small></summary><div class="lx-tabw"><table class="lx-tab"><thead><tr><th>Moneta</th><th class="num">10 lanci</th><th class="num">100</th><th class="num">1.000</th><th class="num">10.000</th></tr></thead><tbody>${["0.51", "0.53", "0.55"].map(row).join("")}</tbody></table></div><p class="lx-cap">Più il vantaggio è piccolo, più ripetizioni servono perché venga fuori.</p></details>
+        <details class="lx-fold"><summary><span>Probabilità di chiudere in vantaggio</span><small>calcolo esatto, non simulato</small></summary><div class="lx-tabw"><table class="lx-tab"><thead><tr><th>Moneta</th><th class="num">10 lanci</th><th class="num">100</th><th class="num">1.000</th><th class="num">10.000</th></tr></thead><tbody>${["0.51", "0.53", "0.55"].map(row).join("")}</tbody></table></div><p class="lx-cap">«In vantaggio» vuol dire sopra zero, e con pochi lanci chiudere in pari capita spesso: con la moneta al 55% e 10 lanci chiudi in vantaggio 1 volta su 2, in pari 1 su 4, in perdita 1 su 4. Più il vantaggio è piccolo, più ripetizioni servono perché venga fuori.</p></details>
       </div>`;
     },
     // dove vanno i soldi di un piatto: UI.flow(10, 5) · piatto in euro, rake in percentuale (esempio)
@@ -600,21 +601,21 @@ const UI = (() => {
         <div class="lx-flow-arr"><div class="lx-flow-a w"><span style="--w:${100 - pct}%"></span><div><b>${f(win)}</b><small>a chi vince la mano</small></div></div><div class="lx-flow-a r"><span style="--w:${Math.max(pct, 4)}%"></span><div><b>${f(rk)}</b><small>alla room: la rake</small></div></div></div></div>`;
     },
     // vantaggio contro rake, con cursore: UI.edge(13, 10)
-    edge: (v = 13, rake = 10) => `<div class="lx-edge" data-rake="${rake}" data-rb="0"><label><span>Il tuo vantaggio sul tavolo, prima della rake</span><b data-ev>+${v} bb/100</b><input type="range" min="0" max="25" step="1" value="${v}" data-lxedge aria-label="Vantaggio prima della rake in bb/100"></label>
-      <div class="lx-coin-row"><span>Rakeback</span>${[0, 15, 30, 50].map(p => `<button type="button" class="${p ? "" : "on"}" data-lxrb="${p}" aria-pressed="${p ? "false" : "true"}">${p ? p + "%" : "Nessuna"}</button>`).join("")}</div>
+    edge: (v = 13, rake = 10) => `<div class="lx-edge" data-rake="${rake}" data-rb="0"><label><span>Il tuo vantaggio sul tavolo, prima della rake</span><b data-ev>+${v} bb/100</b><input type="range" min="0" max="25" step="1" value="${v}" data-lxedge aria-label="Vantaggio prima della rake in bb/100" aria-valuetext="+${v} bb/100"></label>
+      <div class="lx-coin-row"><span>Rakeback</span>${[0, 15, 30, 50].map(p => `<button type="button" class="${p ? "" : "on"}" data-lxrb="${p}" aria-pressed="${p ? "false" : "true"}">${p ? p + "%" : "Nessuno"}</button>`).join("")}</div>
       <div class="lx-edge-bars"><div><small>Vantaggio</small><i class="g" data-eg style="--w:${v / 25 * 100}%"></i></div><div><small>Rake</small><i class="r" style="--w:${rake / 25 * 100}%"></i><em>−${rake}</em></div><div class="rb" data-erb hidden><small>Rakeback</small><i class="rb" data-erbi style="--w:0%"></i><em data-erbe>+0</em></div></div>
-      <div class="lx-edge-res" data-er>${LXW.edgeRes(v, rake)}</div></div>`,
+      <div class="lx-edge-res" data-er aria-live="polite">${LXW.edgeRes(v, rake)}</div></div>`,
     // da bb/100 a euro: UI.bbc(5)
-    bbc: (wr = 5) => `<div class="lx-bbc" data-lv="0.02"><label><span>Winrate</span><b data-bw>+${wr} bb/100</b><input type="range" min="-10" max="15" step="1" value="${wr}" data-lxbbw aria-label="Winrate in bb/100"></label>
-      <div class="lx-coin-row"><span>Limite</span>${[["NL2", "0.02"], ["NL5", "0.05"], ["NL10", "0.10"], ["NL25", "0.25"], ["NL50", "0.50"], ["NL100", "1"], ["NL200", "2"], ["NL500", "5"], ["NL1000", "10"]].map(([n, b], i) => `<button type="button" class="${i ? "" : "on"}" data-lxbbl="${b}">${n}</button>`).join("")}</div>
-      <div class="lx-bbc-out" data-bo>${LXW.bbcOut(wr, 0.02)}</div></div>`,
+    bbc: (wr = 5) => `<div class="lx-bbc" data-lv="0.02"><label><span>Winrate</span><b data-bw>+${wr} bb/100</b><input type="range" min="-10" max="15" step="1" value="${wr}" data-lxbbw aria-label="Winrate in bb/100" aria-valuetext="${LXW.sg(wr)} bb/100"></label>
+      <div class="lx-coin-row"><span>Limite</span>${[["NL2", "0.02"], ["NL5", "0.05"], ["NL10", "0.10"], ["NL25", "0.25"], ["NL50", "0.50"], ["NL100", "1"], ["NL200", "2"], ["NL500", "5"], ["NL1000", "10"]].map(([n, b], i) => `<button type="button" class="${i ? "" : "on"}" data-lxbbl="${b}" aria-pressed="${i ? "false" : "true"}">${n}</button>`).join("")}</div>
+      <div class="lx-bbc-out" data-bo aria-live="polite">${LXW.bbcOut(wr, 0.02)}</div></div>`,
     // il volume moltiplica: due linee di risultato atteso, +3 e −4 bb/100, fino a 100.000 mani
     vol: () => {
       const W = 320, H = 150, X = k => 34 + k / 100 * 276, Y = v => 75 - v / 4200 * 62;
       const ln = (wr, cls) => `<path class="${cls}" d="M${X(0)} ${Y(0)} L${X(100)} ${Y(wr * 1000)}"/>`;
       return `<figure class="lx-vol"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Risultato atteso con +3 e −4 bb/100 fino a 100.000 mani">
-        <path class="ax" d="M${X(0)} ${Y(0)} H${X(100)}"/>${[25, 50, 75, 100].map(k => `<path class="tk" d="M${X(k)} ${Y(0) - 3} V${Y(0) + 3}"/><text class="tl" x="${X(k)}" y="${Y(0) + 14}" text-anchor="${k === 100 ? "end" : "middle"}">${k}k</text>`).join("")}
-        ${ln(3, "g")}${ln(-4, "r")}<text class="tg" x="${X(100) - 2}" y="${Y(3000) - 6}" text-anchor="end">+3 bb/100 → +3.000bb</text><text class="tr" x="${X(100) - 2}" y="${Y(-4000) + 14}" text-anchor="end">−4 bb/100 → −4.000bb</text>
+        <path class="ax" d="M${X(0)} ${Y(0)} H${X(100)}"/>${ln(3, "g")}${ln(-4, "r")}${[25, 50, 75, 100].map(k => `<path class="tk" d="M${X(k)} ${Y(0) - 3} V${Y(0) + 3}"/><text class="tl" x="${X(k)}" y="${Y(0) + 14}" text-anchor="${k === 100 ? "end" : "middle"}">${k}k</text>`).join("")}
+        <text class="tg" x="${X(100) - 2}" y="${Y(3000) - 6}" text-anchor="end">+3 bb/100 → +3.000bb</text><text class="tr" x="${X(100) - 2}" y="${Y(-4000) + 14}" text-anchor="end">−4 bb/100 → −4.000bb</text>
         <text class="tl" x="${X(0) - 4}" y="${Y(0) + 4}" text-anchor="end">0</text></svg>
         <figcaption>Risultato atteso in base alle mani giocate (in migliaia). A NL2: <b class="g">+60 €</b> contro <b class="r">−80 €</b> dopo 100.000 mani.</figcaption></figure>`;
     },
@@ -632,14 +633,14 @@ const UI = (() => {
     box.dataset.p = p; box.dataset.h = "[]"; const pc = Math.round(p * 100);
     box.querySelectorAll("[data-cp],[data-cpc]").forEach(x => x.textContent = pc + "%");
     const ev = box.querySelector("[data-cev]"); if (ev) ev.textContent = (2 * p - 1).toFixed(2).replace(".", ",") + " €";
-    box.querySelectorAll("[data-lxcp]").forEach(b => b.classList.toggle("on", +b.dataset.lxcp === p));
+    box.querySelectorAll("[data-lxcp]").forEach(b => { const on = +b.dataset.lxcp === p; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
     const o = box.querySelector("[data-cout]"); if (o) o.innerHTML = `<p class="lx-cap">Moneta al ${pc}%: tocca un numero di lanci e ripeti più volte.</p>`;
     const hi = box.querySelector("[data-chist]"); if (hi) hi.innerHTML = "";
   };
   // vantaggio contro rake: ridisegna barre e risultato con il rakeback scelto
   const edgeUpd = box => {
     if (!box) return; const v = +box.querySelector("[data-lxedge]").value, rk = +box.dataset.rake || 10, rb = +box.dataset.rb || 0, back = rk * rb / 100;
-    box.querySelector("[data-ev]").textContent = "+" + v + " bb/100"; box.querySelector("[data-eg]").style.setProperty("--w", v / 25 * 100 + "%");
+    box.querySelector("[data-ev]").textContent = "+" + v + " bb/100"; box.querySelector("[data-lxedge]").setAttribute("aria-valuetext", "+" + v + " bb/100"); box.querySelector("[data-eg]").style.setProperty("--w", v / 25 * 100 + "%");
     const rr = box.querySelector("[data-erb]"); if (rr) { rr.hidden = !rb; rr.querySelector("[data-erbi]").style.setProperty("--w", back / 25 * 100 + "%"); rr.querySelector("[data-erbe]").textContent = "+" + String(back).replace(".", ","); }
     box.querySelector("[data-er]").innerHTML = LXW.edgeRes(v, rk, rb);
   };
@@ -657,7 +658,7 @@ const UI = (() => {
       return;
     }
     const bl = e.target.closest("[data-lxbbl]");
-    if (bl) { const box = bl.closest(".lx-bbc"); if (!box) return; box.dataset.lv = bl.dataset.lxbbl; box.querySelectorAll("[data-lxbbl]").forEach(b => b.classList.toggle("on", b === bl)); const w = +box.querySelector("[data-lxbbw]").value; box.querySelector("[data-bo]").innerHTML = LXW.bbcOut(w, +box.dataset.lv); }
+    if (bl) { const box = bl.closest(".lx-bbc"); if (!box) return; box.dataset.lv = bl.dataset.lxbbl; box.querySelectorAll("[data-lxbbl]").forEach(b => { b.classList.toggle("on", b === bl); b.setAttribute("aria-pressed", b === bl ? "true" : "false"); }); const w = +box.querySelector("[data-lxbbw]").value; box.querySelector("[data-bo]").innerHTML = LXW.bbcOut(w, +box.dataset.lv); }
   });
   // chi è il vincente: nuova coppia di grafici
   const guessNew = (box, N) => {
@@ -776,7 +777,7 @@ const UI = (() => {
     const t = e.target; if (!t || !t.matches) return;
     if (t.matches("[data-lxedge]")) edgeUpd(t.closest(".lx-edge"));
     if (t.matches("[data-lxrare]")) { const box = t.closest(".lx-rare"), h = +t.value; box.querySelector("[data-rh]").textContent = h + (h === 1 ? " ora" : " ore"); box.querySelector("[data-ro]").innerHTML = LXW.rareOut(h, +box.dataset.p); }
-    if (t.matches("[data-lxbbw]")) { const box = t.closest(".lx-bbc"), w = +t.value; box.querySelector("[data-bw]").textContent = LXW.sg(w) + " bb/100"; box.querySelector("[data-bo]").innerHTML = LXW.bbcOut(w, +box.dataset.lv || 0.02); }
+    if (t.matches("[data-lxbbw]")) { const box = t.closest(".lx-bbc"), w = +t.value; box.querySelector("[data-bw]").textContent = LXW.sg(w) + " bb/100"; t.setAttribute("aria-valuetext", LXW.sg(w) + " bb/100"); box.querySelector("[data-bo]").innerHTML = LXW.bbcOut(w, +box.dataset.lv || 0.02); }
   });
 })();
 

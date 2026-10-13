@@ -469,7 +469,7 @@ textarea{min-height:120px;font-family:var(--f-mono);font-size:12.5px}
 .badge.on{border-color:#f5b700;background:color-mix(in srgb,#f5b700 10%,var(--surface))}.badge:not(.on){opacity:.65}
 @media (max-width:860px){.pathwrap{grid-template-columns:1fr}.pside{position:static;order:-1}.endtiles{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:520px){.nlab{max-width:120px}.unit-h{flex-direction:column;align-items:flex-start}.fbx{margin-left:0}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){*:not(.lx-ha *){animation:none!important}*{transition:none!important}}
 /* v14: solver setup */
 :root{--sv-spade:#1b1b1b;--sv-heart:#d62f2f;--sv-diam:#1e6fd9;--sv-club:#1c9a4a}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--sv-spade:#e8eeeb}}

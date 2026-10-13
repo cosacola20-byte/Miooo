@@ -11,6 +11,8 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => {
   if (!run) return;
+  // dentro la scheda Invio attiva il bottone, il cursore, la tendina o il termine del glossario selezionato: non deve far partire il quiz
+  if (e.key === "Enter" && e.target.closest && e.target.closest(".lesbody")) return;
   if ((e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") && e.key !== "Enter") return;
   if (e.target.id === "htarget" && e.key === "Enter") return;
   if (e.key === "Enter") { const b = $("#go") || $("#nextQ") || $("#cont") || $("#submitSl:not([hidden])"); if (b) { e.preventDefault(); b.click(); } }
