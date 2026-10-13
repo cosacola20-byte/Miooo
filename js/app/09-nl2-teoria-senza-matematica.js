@@ -371,6 +371,17 @@ const LXW = (() => {
       const ks = Object.keys(sc).sort((a, b) => a - b); if (!ks.length) return "";
       return `<small>I tuoi tentativi</small>${ks.map(k => `<span>${fI(+k)} mani: ${sc[k][0]} su ${sc[k][1]}</span>`).join("")}`;
     },
+    // dai un nome all'avversario dai suoi numeri (VPIP e PFR, valori indicativi): profilo, numeri tipici e come giocargli contro
+    profKind(v, p) {
+      const gap = v - p;
+      if (v >= 35 && p < 15) return ["v", "Fish passivo, calling station", "Entra in tante mani e rilancia di rado: limpa e paga.", "40-60 / sotto 10", "punta per valore spesso, anche con mani medie, e non bluffare. Se rilancia, ha la mano."];
+      if (v >= 35 && p >= 25) return ["y", "Maniac", "Gioca tantissime mani e le rilancia quasi tutte.", "oltre 40 / oltre 30", "paga di più con le mani buone e lascialo puntare: rilanciando fai foldare proprio i suoi bluff."];
+      if (v <= 16) return ["b", "Nit", "Entra di rado, e quando entra ha una mano.", "sotto 15 / poco meno", "rubagli i bui e fai c-bet piccole; rispetta i suoi rilanci e folda le mani medie."];
+      if (v <= 32 && gap <= 9) return ["g", "Reg", "Gioca un numero normale di mani e le rilancia quasi tutte.", "20-28 / 16-24", "gioco solido e linee standard: gli exploit sono pochi."];
+      if (v >= 35) return ["y", "Ricreativo largo", "Gioca tante mani: a volte rilancia, a volte paga.", "35-60 / 15-25", "osservalo ancora: allo showdown arriva con mani deboli (paga troppo) o molla spesso (folda troppo)?"];
+      return ["n", "Da osservare", "Numeri nella media, ma paga più di quanto rilancia.", "—", "raccogli altre mani e chiediti sempre: paga troppo o folda troppo?"];
+    },
+    profOut(v, p) { const [c, n, d, t, x] = LXW.profKind(v, p); return `<div class="lx-prof-r ${c}"><small>Profilo</small><b>${n}</b><p>${d}</p>${t !== "—" ? `<p class="lx-prof-t">Numeri tipici (VPIP / PFR): ${t}</p>` : ""}<p class="lx-prof-c"><b>Contro di lui:</b> ${x}</p></div>`; },
     // una mano contro sempre più avversari: fiches degli avversari, equity e messaggio per quel numero
     multiOut(hand, eq, n, msg) {
       const v = eq[n - 1], f = x => String(x).replace(".", ","), cl = v >= 60 ? "g" : v < 50 ? "r" : "";
@@ -632,6 +643,13 @@ const UI = (() => {
     // vero o falso con spiegazione: UI.tf([["frase", true, "perché"], ...])
     tf: (items, o = {}) => { const Y = o.yes || "Vero", N = o.no || "Falso", hint = o.hint || "Tocca Vero o Falso per ogni frase.";
       return `<div class="lx-tf" data-hint="${hint}">${items.map(([q, a, e]) => `<div class="lx-tf-i" data-a="${a ? 1 : 0}"><p>${q}</p><div class="lx-tf-b">${o.noFirst ? `<button type="button" data-lxtf="0">${N}</button><button type="button" data-lxtf="1">${Y}</button>` : `<button type="button" data-lxtf="1">${Y}</button><button type="button" data-lxtf="0">${N}</button>`}</div><p class="lx-tf-e" hidden><b>${a ? Y : N}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+    // chi hai davanti? Due cursori (VPIP e PFR) e alcuni esempi; il profilo cambia mentre muovi i cursori. UI.prof()
+    prof: () => { const v0 = 48, p0 = 5, bar = (k, v, c) => `<div><small>${k}</small><i class="${c}" data-pb${c} style="--w:${(v / 80 * 100).toFixed(1)}%"></i><em data-pe${c}>${v}%</em></div>`;
+      return `<div class="lx-prof"><div class="lx-coin-row"><span>Esempi</span>${[[48, 5, "Il vicino"], [24, 19, "Lo sconosciuto"], [11, 9, "Il roccioso"], [52, 38, "Lo scatenato"]].map(([v, p, n], i) => `<button type="button" class="${i ? "" : "on"}" data-lxfx="${v},${p}" aria-pressed="${i ? "false" : "true"}">${n}</button>`).join("")}</div>
+        <label><span>VPIP: mani in cui mette soldi</span><input type="range" min="0" max="80" step="1" value="${v0}" data-lxfv aria-label="VPIP in percentuale" aria-valuetext="${v0}%"></label>
+        <label><span>PFR: mani in cui rilancia</span><input type="range" min="0" max="60" step="1" value="${p0}" data-lxfp aria-label="PFR in percentuale" aria-valuetext="${p0}%"></label>
+        <div class="lx-prof-b" aria-hidden="true">${bar("VPIP", v0, "v")}${bar("PFR", p0, "p")}</div>
+        <div data-pout aria-live="polite">${LXW.profOut(v0, p0)}</div></div>`; },
     // confronto tra due scelte: tocchi una e compaiono, una dopo l'altra, le sue conseguenze. UI.duel(["Open", [["titolo", "testo", true], ...]], ["Limp", [...]])
     duel: (A, B, lab = "Scegli") => `<div class="lx-duel"><div class="lx-coin-row"><span>${lab}</span>${[A, B].map((x, i) => `<button type="button" class="${i ? "" : "on"}" data-lxduel="${i}" aria-pressed="${i ? "false" : "true"}">${x[0]}</button>`).join("")}</div>${[A, B].map((x, i) => `<div class="lx-duel-l" data-duel="${i}" aria-live="polite"${i ? " hidden" : ""}>${x[1].map(([t, d, g], k) => `<div class="lx-duel-r ${g ? "g" : "r"}" style="--d:${(k * 0.09).toFixed(2)}s"><i aria-hidden="true">${g ? "✓" : "✗"}</i><span><b>${t}</b>${d}</span></div>`).join("")}</div>`).join("")}</div>`,
     // quanto vince una mano forte contro 1, 2, 3... avversari: UI.multi({ hand: "AA", eq: [85.2, 73.5, ...], n0: 4, msg: [...], cap })
@@ -729,12 +747,23 @@ const UI = (() => {
     box.querySelectorAll("[data-lxgp]").forEach(b => { b.disabled = false; b.classList.remove("on", "ok", "ko"); const i = b.querySelector("i"); if (i) i.className = b.dataset.lxgp === "0" ? "a" : "b"; });
     box.querySelector("[data-gout]").innerHTML = `<p class="lx-cap">Uno dei due vince 5 bb/100, l'altro ne perde 5: scegli guardando i grafici.</p>`;
   };
+  // chi hai davanti: aggiorna barre e numeri; la scheda del profilo si ridisegna solo quando il profilo cambia
+  const profUpd = (box, ex) => {
+    const iv = box.querySelector("[data-lxfv]"), ip = box.querySelector("[data-lxfp]"); let v = +iv.value, p = +ip.value; if (p > v) { p = v; ip.value = p; }
+    [["v", v], ["p", p]].forEach(([c, x]) => { const b = box.querySelector(`[data-pb${c}]`), t = box.querySelector(`[data-pe${c}]`); if (b) b.style.setProperty("--w", (x / 80 * 100).toFixed(1) + "%"); if (t) t.textContent = x + "%"; });
+    iv.setAttribute("aria-valuetext", v + "%"); ip.setAttribute("aria-valuetext", p + "%");
+    box.querySelectorAll("[data-lxfx]").forEach(b => { const on = b === ex; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
+    const k = LXW.profKind(v, p)[1]; if (box.dataset.k !== k || ex) { box.dataset.k = k; box.querySelector("[data-pout]").innerHTML = LXW.profOut(v, p); }
+  };
+  document.addEventListener("input", e => { const t = e.target; if (t && t.matches && t.matches("[data-lxfv],[data-lxfp]")) { const box = t.closest(".lx-prof"); if (box) profUpd(box, null); } });
   // vero o falso: conteggio e pulsante per rifare
   const tfScore = box => {
     const it = [...box.querySelectorAll(".lx-tf-i")], done = it.filter(x => x.dataset.done).length, ok = it.filter(x => x.classList.contains("ok")).length, s = box.querySelector("[data-tfs]");
     if (s) s.innerHTML = done < it.length ? `${done} su ${it.length}: continua con le altre.` : `Giuste <b>${ok} su ${it.length}</b>. <button type="button" class="lx-tf-r" data-lxtfr>Rifai</button>`;
   };
   document.addEventListener("click", e => {
+    const fx = e.target.closest("[data-lxfx]");
+    if (fx) { const box = fx.closest(".lx-prof"); if (!box) return; const [v, p] = fx.dataset.lxfx.split(",").map(Number); box.querySelector("[data-lxfv]").value = v; box.querySelector("[data-lxfp]").value = p; profUpd(box, fx); return; }
     const du = e.target.closest("[data-lxduel]");
     if (du) { const box = du.closest(".lx-duel"); if (!box) return; box.querySelectorAll("[data-lxduel]").forEach(b => { const on = b === du; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); box.querySelectorAll("[data-duel]").forEach(l => { l.hidden = l.dataset.duel !== du.dataset.lxduel; }); return; }
     const mu = e.target.closest("[data-lxmulti]");
