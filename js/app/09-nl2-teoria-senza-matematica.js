@@ -371,6 +371,14 @@ const LXW = (() => {
       const ks = Object.keys(sc).sort((a, b) => a - b); if (!ks.length) return "";
       return `<small>I tuoi tentativi</small>${ks.map(k => `<span>${fI(+k)} mani: ${sc[k][0]} su ${sc[k][1]}</span>`).join("")}`;
     },
+    // la size dell'iso raise: 3bb + 1bb per limper, +1bb fuori posizione (la stessa regola del drill «Contro i limper»), con una fiche per ogni bb
+    isoOut(n, oop) {
+      const s = 3 + n + (oop ? 1 : 0), P = [["3bb", "la base", "pos"], "+", [`${n}bb`, n === 1 ? "1 limper" : `${n} limper, 1bb ciascuno`, "pos"]];
+      if (oop) P.push("+", ["1bb", "fuori posizione", "neg"]);
+      P.push("=", [`${s}bb`, "la tua iso", "res"]);
+      const chips = Array.from({ length: s }, (_, i) => `<i style="--d:${(i * 0.06).toFixed(2)}s"></i>`).join("");
+      return UI.eqn(P) + `<div class="lx-iso-chips" aria-hidden="true">${chips}<span>${s}bb</span></div><p>${oop ? "Fuori posizione (dalla SB, o dal BB contro un limper che non è la SB) aggiungi 1bb: parlerai per primo in tutte le street." : "In posizione (CO, BTN) giocherai dopo di lui in tutte le street."} È una base, non un massimo: contro chi paga qualsiasi rilancio puoi salire ancora.</p>`;
+    },
     // dai un nome all'avversario dai suoi numeri (VPIP e PFR, valori indicativi): profilo, numeri tipici e come giocargli contro
     profKind(v, p) {
       const gap = v - p;
@@ -490,7 +498,7 @@ const UI = (() => {
     hand: (o) => {
       const id = "lx-ha-" + (++HAN), C = o.cycle || 18, P = t => Math.max(0, Math.min(100, t / C * 100)).toFixed(2);
       const POS = { BTN: [50, 85], SB: [13, 64], BB: [13, 28], UTG: [50, 16], HJ: [87, 28], CO: [87, 64] }, CEN = [50, 46];
-      const BUB = { BTN: [76, 88], SB: [22, 79], BB: [20, 46], UTG: [50, 31], HJ: [80, 44], CO: [80, 79] }, CHP = { BTN: [50, 64], SB: [24, 60], BB: [29, 37], UTG: [50, 27], HJ: [71, 37], CO: [72, 58] };
+      const BUB = { BTN: [76, 88], SB: [22, 79], BB: [20, 46], UTG: [67, 30], HJ: [80, 44], CO: [80, 79] }, CHP = { BTN: [50, 64], SB: [24, 60], BB: [29, 37], UTG: [38, 31], HJ: [71, 37], CO: [72, 58] };
       const lerp = (a, k) => [a[0] + (CEN[0] - a[0]) * k, a[1] + (CEN[1] - a[1]) * k];
       let css = "", k = 0;
       const anim = (from, to, t1, t2 = C - 0.7, fade = 0.35) => { const c = "a" + (++k); css += `@keyframes ${id}-${c}{0%,${P(t1)}%{${from}}${P(t1 + fade)}%,${P(t2)}%{${to}}${P(Math.min(C, t2 + fade))}%,100%{${from}}}.${id} .${c}{animation:${id}-${c} ${C}s linear infinite}`; return c; };
@@ -643,6 +651,8 @@ const UI = (() => {
     // vero o falso con spiegazione: UI.tf([["frase", true, "perché"], ...])
     tf: (items, o = {}) => { const Y = o.yes || "Vero", N = o.no || "Falso", hint = o.hint || "Tocca Vero o Falso per ogni frase.";
       return `<div class="lx-tf" data-hint="${hint}">${items.map(([q, a, e]) => `<div class="lx-tf-i" data-a="${a ? 1 : 0}"><p>${q}</p><div class="lx-tf-b">${o.noFirst ? `<button type="button" data-lxtf="0">${N}</button><button type="button" data-lxtf="1">${Y}</button>` : `<button type="button" data-lxtf="1">${Y}</button><button type="button" data-lxtf="0">${N}</button>`}</div><p class="lx-tf-e" hidden><b>${a ? Y : N}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+    // calcola la size dell'iso raise: limper (1-3) e posizione. UI.iso()
+    iso: () => `<div class="lx-iso" data-n="1" data-oop="0"><div class="lx-coin-row"><span>Limper</span>${[1, 2, 3].map(n => `<button type="button" class="${n === 1 ? "on" : ""}" data-lxison="${n}" aria-pressed="${n === 1 ? "true" : "false"}">${n}</button>`).join("")}</div><div class="lx-coin-row"><span>Tu sei</span><button type="button" class="on" data-lxisop="0" aria-pressed="true">In posizione</button><button type="button" data-lxisop="1" aria-pressed="false">Fuori posizione</button></div><div data-isout aria-live="polite">${LXW.isoOut(1, 0)}</div></div>`,
     // chi hai davanti? Due cursori (VPIP e PFR) e alcuni esempi; il profilo cambia mentre muovi i cursori. UI.prof()
     prof: () => { const v0 = 48, p0 = 5, bar = (k, v, c) => `<div><small>${k}</small><i class="${c}" data-pb${c} style="--w:${(v / 80 * 100).toFixed(1)}%"></i><em data-pe${c}>${v}%</em></div>`;
       return `<div class="lx-prof"><div class="lx-coin-row"><span>Esempi</span>${[[48, 5, "Il vicino"], [24, 19, "Lo sconosciuto"], [11, 9, "Il roccioso"], [52, 38, "Lo scatenato"]].map(([v, p, n], i) => `<button type="button" class="${i ? "" : "on"}" data-lxfx="${v},${p}" aria-pressed="${i ? "false" : "true"}">${n}</button>`).join("")}</div>
@@ -762,6 +772,8 @@ const UI = (() => {
     if (s) s.innerHTML = done < it.length ? `${done} su ${it.length}: continua con le altre.` : `Giuste <b>${ok} su ${it.length}</b>. <button type="button" class="lx-tf-r" data-lxtfr>Rifai</button>`;
   };
   document.addEventListener("click", e => {
+    const isn = e.target.closest("[data-lxison],[data-lxisop]");
+    if (isn) { const box = isn.closest(".lx-iso"); if (!box) return; const k = isn.dataset.lxison != null ? "lxison" : "lxisop"; if (k === "lxison") box.dataset.n = isn.dataset.lxison; else box.dataset.oop = isn.dataset.lxisop; box.querySelectorAll(`[data-${k}]`).forEach(b => { const on = b === isn; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); box.querySelector("[data-isout]").innerHTML = LXW.isoOut(+box.dataset.n, +box.dataset.oop); return; }
     const fx = e.target.closest("[data-lxfx]");
     if (fx) { const box = fx.closest(".lx-prof"); if (!box) return; const [v, p] = fx.dataset.lxfx.split(",").map(Number); box.querySelector("[data-lxfv]").value = v; box.querySelector("[data-lxfp]").value = p; profUpd(box, fx); return; }
     const du = e.target.closest("[data-lxduel]");

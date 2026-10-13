@@ -75,7 +75,7 @@
 .lx-gl{border-bottom:1.5px dotted var(--gold,#a87712);cursor:help;color:inherit}
 .lx-gl:hover,.lx-gl:focus{background:var(--gold-soft,#f8eed8);outline:none}
 /* ---- strumenti interattivi delle schede (moneta, rake, bb/100, flusso del piatto, volume) ---- */
-.lx-coin,.lx-edge,.lx-bbc,.lx-rfi,.lx-duel,.lx-multi,.lx-prof{margin:12px 0 16px;padding:14px;border-radius:16px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) 4%,var(--surface));display:flex;flex-direction:column;gap:10px}
+.lx-coin,.lx-edge,.lx-bbc,.lx-rfi,.lx-duel,.lx-multi,.lx-prof,.lx-iso{margin:12px 0 16px;padding:14px;border-radius:16px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) 4%,var(--surface));display:flex;flex-direction:column;gap:10px}
 .lx-coin-top{display:flex;gap:12px;align-items:center}
 .lx-rfi-m{margin:0;font-size:14.5px}
 .lx-duel-l{display:grid;gap:8px}
@@ -90,6 +90,11 @@
 .lx-multi-bar span{display:block;height:100%;width:var(--w);border-radius:99px;background:linear-gradient(90deg,#1fb57a,#f5d06b);animation:lxgrow .6s ease-out both}
 @keyframes lxgrow{from{width:0}}
 .lx-multi p{margin:0;font-size:14px;line-height:1.45}
+.lx-iso .lx-eqn{margin:0}
+.lx-iso-chips{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.lx-iso-chips i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle,#fff 0 28%,#2f6fe0 29%);box-shadow:0 0 0 2px #fff inset,0 2px 0 #18408a,0 3px 6px rgba(0,0,0,.35);animation:lxpop .4s ease-out var(--d,0s) both}
+.lx-iso-chips span{margin-left:6px;font-weight:900;font-size:15px}
+.lx-iso p{margin:0;font-size:14px;line-height:1.45}
 .lx-prof label{display:flex;flex-direction:column;gap:2px}.lx-prof label span{font-size:13.5px;font-weight:700}
 .lx-prof input[type=range]{width:100%;accent-color:#1fb57a;margin:2px 0 0}
 .lx-prof-b{display:grid;gap:6px}
