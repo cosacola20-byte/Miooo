@@ -371,6 +371,12 @@ const LXW = (() => {
       const ks = Object.keys(sc).sort((a, b) => a - b); if (!ks.length) return "";
       return `<small>I tuoi tentativi</small>${ks.map(k => `<span>${fI(+k)} mani: ${sc[k][0]} su ${sc[k][1]}</span>`).join("")}`;
     },
+    // una mano contro sempre più avversari: fiches degli avversari, equity e messaggio per quel numero
+    multiOut(hand, eq, n, msg) {
+      const v = eq[n - 1], f = x => String(x).replace(".", ","), cl = v >= 60 ? "g" : v < 50 ? "r" : "";
+      const op = Array.from({ length: n }, (_, i) => `<i style="--d:${(i * 0.07).toFixed(2)}s"></i>`).join("");
+      return `<div class="lx-multi-v"><div class="lx-edge-n ${cl}"><small>${hand} contro ${n} ${n === 1 ? "mano casuale" : "mani casuali"}</small><b>${f(v)}%</b></div><div class="lx-multi-op" aria-hidden="true">${op}</div></div><div class="lx-multi-bar" aria-hidden="true"><span style="--w:${v}%"></span></div>${msg && msg[n - 1] ? `<p>${msg[n - 1]}</p>` : ""}`;
+    },
     // range di open di una posizione con le tabelle NL2-NL10 della scuola (le stesse del drill preflop): percentuale di mani e griglia
     rfiOut(pos) {
       const sp = typeof PRE_BY === "object" ? PRE_BY["m_rfi_" + pos] : null; if (!sp || typeof preGrid !== "function") return "";
@@ -626,6 +632,10 @@ const UI = (() => {
     // vero o falso con spiegazione: UI.tf([["frase", true, "perché"], ...])
     tf: (items, o = {}) => { const Y = o.yes || "Vero", N = o.no || "Falso", hint = o.hint || "Tocca Vero o Falso per ogni frase.";
       return `<div class="lx-tf" data-hint="${hint}">${items.map(([q, a, e]) => `<div class="lx-tf-i" data-a="${a ? 1 : 0}"><p>${q}</p><div class="lx-tf-b">${o.noFirst ? `<button type="button" data-lxtf="0">${N}</button><button type="button" data-lxtf="1">${Y}</button>` : `<button type="button" data-lxtf="1">${Y}</button><button type="button" data-lxtf="0">${N}</button>`}</div><p class="lx-tf-e" hidden><b>${a ? Y : N}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+    // confronto tra due scelte: tocchi una e compaiono, una dopo l'altra, le sue conseguenze. UI.duel(["Open", [["titolo", "testo", true], ...]], ["Limp", [...]])
+    duel: (A, B, lab = "Scegli") => `<div class="lx-duel"><div class="lx-coin-row"><span>${lab}</span>${[A, B].map((x, i) => `<button type="button" class="${i ? "" : "on"}" data-lxduel="${i}" aria-pressed="${i ? "false" : "true"}">${x[0]}</button>`).join("")}</div>${[A, B].map((x, i) => `<div class="lx-duel-l" data-duel="${i}" aria-live="polite"${i ? " hidden" : ""}>${x[1].map(([t, d, g], k) => `<div class="lx-duel-r ${g ? "g" : "r"}" style="--d:${(k * 0.09).toFixed(2)}s"><i aria-hidden="true">${g ? "✓" : "✗"}</i><span><b>${t}</b>${d}</span></div>`).join("")}</div>`).join("")}</div>`,
+    // quanto vince una mano forte contro 1, 2, 3... avversari: UI.multi({ hand: "AA", eq: [85.2, 73.5, ...], n0: 4, msg: [...], cap })
+    multi: (o = {}) => { const eq = o.eq || [], n0 = o.n0 || 1, msg = o.msg || [], q = x => JSON.stringify(x).replace(/'/g, "&#39;"); return `<div class="lx-multi" data-hand="${o.hand || ""}" data-eq='${q(eq)}' data-msg='${q(msg)}'><div class="lx-coin-row"><span>Avversari</span>${eq.map((_, i) => `<button type="button" class="${i + 1 === n0 ? "on" : ""}" data-lxmulti="${i + 1}" aria-pressed="${i + 1 === n0 ? "true" : "false"}">${i + 1}</button>`).join("")}</div><div data-mout aria-live="polite">${LXW.multiOut(o.hand || "", eq, n0, msg)}</div>${o.cap ? `<p class="lx-cap">${o.cap}</p>` : ""}</div>`; },
     // range di open per posizione, con i pulsanti delle posizioni: UI.rfi("ep")
     rfi: (pos = "ep") => `<div class="lx-rfi"><div class="lx-coin-row"><span>Posizione</span>${[["ep", "UTG"], ["mp", "HJ"], ["co", "CO"], ["btn", "BTN"], ["sb", "SB"]].map(([k, n]) => `<button type="button" class="${k === pos ? "on" : ""}" data-lxrfi="${k}" aria-pressed="${k === pos ? "true" : "false"}">${n}</button>`).join("")}</div><div data-rfio aria-live="polite">${LXW.rfiOut(pos)}</div></div>`,
     // check del tilt: UI.tilt([["Segnale", "descrizione"], ...])
@@ -725,6 +735,10 @@ const UI = (() => {
     if (s) s.innerHTML = done < it.length ? `${done} su ${it.length}: continua con le altre.` : `Giuste <b>${ok} su ${it.length}</b>. <button type="button" class="lx-tf-r" data-lxtfr>Rifai</button>`;
   };
   document.addEventListener("click", e => {
+    const du = e.target.closest("[data-lxduel]");
+    if (du) { const box = du.closest(".lx-duel"); if (!box) return; box.querySelectorAll("[data-lxduel]").forEach(b => { const on = b === du; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); box.querySelectorAll("[data-duel]").forEach(l => { l.hidden = l.dataset.duel !== du.dataset.lxduel; }); return; }
+    const mu = e.target.closest("[data-lxmulti]");
+    if (mu) { const box = mu.closest(".lx-multi"); if (!box) return; let eq = [], msg = []; try { eq = JSON.parse(box.dataset.eq); msg = JSON.parse(box.dataset.msg || "[]"); } catch (er) {} box.querySelectorAll("[data-lxmulti]").forEach(b => { const on = b === mu; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); box.querySelector("[data-mout]").innerHTML = LXW.multiOut(box.dataset.hand, eq, +mu.dataset.lxmulti, msg); return; }
     const rf = e.target.closest("[data-lxrfi]");
     if (rf) { const box = rf.closest(".lx-rfi"); if (!box) return; box.querySelectorAll("[data-lxrfi]").forEach(b => { const on = b === rf; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); box.querySelector("[data-rfio]").innerHTML = LXW.rfiOut(rf.dataset.lxrfi); return; }
     const rr = e.target.closest("[data-lxrr]");

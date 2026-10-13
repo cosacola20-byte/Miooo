@@ -75,9 +75,21 @@
 .lx-gl{border-bottom:1.5px dotted var(--gold,#a87712);cursor:help;color:inherit}
 .lx-gl:hover,.lx-gl:focus{background:var(--gold-soft,#f8eed8);outline:none}
 /* ---- strumenti interattivi delle schede (moneta, rake, bb/100, flusso del piatto, volume) ---- */
-.lx-coin,.lx-edge,.lx-bbc,.lx-rfi{margin:12px 0 16px;padding:14px;border-radius:16px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) 4%,var(--surface));display:flex;flex-direction:column;gap:10px}
+.lx-coin,.lx-edge,.lx-bbc,.lx-rfi,.lx-duel,.lx-multi{margin:12px 0 16px;padding:14px;border-radius:16px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) 4%,var(--surface));display:flex;flex-direction:column;gap:10px}
 .lx-coin-top{display:flex;gap:12px;align-items:center}
-.lx-rfi-m{margin:0;font-size:14.5px}.lx-rfi .pgrid13{margin-top:0}
+.lx-rfi-m{margin:0;font-size:14.5px}
+.lx-duel-l{display:grid;gap:8px}
+.lx-duel-r{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);animation:lxfade .35s ease-out var(--d,0s) both}
+.lx-duel-r i{flex:0 0 24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:13px;color:var(--surface)}
+.lx-duel-r.g i{background:var(--good)}.lx-duel-r.r i{background:var(--bad)}
+.lx-duel-r span{font-size:14px;line-height:1.4;color:var(--ink2)}.lx-duel-r b{display:block;color:var(--ink);font-size:14px}
+.lx-multi-v{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lx-multi-op{display:flex;gap:6px;flex-wrap:wrap}
+.lx-multi-op i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle,#fff 0 28%,#d63c3c 29%);box-shadow:0 0 0 2px #fff inset,0 2px 0 #8a1818,0 3px 6px rgba(0,0,0,.35);animation:lxpop .4s ease-out var(--d,0s) both}
+.lx-multi-bar{height:12px;border-radius:99px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden}
+.lx-multi-bar span{display:block;height:100%;width:var(--w);border-radius:99px;background:linear-gradient(90deg,#1fb57a,#f5d06b);animation:lxgrow .6s ease-out both}
+@keyframes lxgrow{from{width:0}}
+.lx-multi p{margin:0;font-size:14px;line-height:1.45}.lx-rfi .pgrid13{margin-top:0}
 .lx-coin-top p{margin:2px 0 0;font-size:14px;color:var(--ink2);line-height:1.45}
 .lx-coin-c{flex:0 0 58px;height:58px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#ffe9a6,#e0a100 60%,#8a6200);box-shadow:inset 0 0 0 4px rgba(255,255,255,.35),0 6px 14px rgba(0,0,0,.35);color:#3b2a00;font-size:15px}
 .lx-coin-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
