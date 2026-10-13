@@ -486,7 +486,7 @@ const UI = (() => {
       return `<div class="lx-rr" data-h="${h}" data-v="${v}" data-b="${o.board || ""}" data-vn="${vn}" data-pot="${pot}" data-inv="${o.inv || 100}" data-ev="${o.ev || 0}">
         <div class="lx-rr-top"><div><small>Tu${o.hp ? " · " + o.hp : ""}</small>${cs(h)}</div><span class="lx-rr-vs">contro</span><div><small>${vn}</small>${cs(v)}</div>${o.board ? `<div class="lx-rr-bd"><small>Board</small>${cs(o.board)}</div>` : ""}<div class="lx-rr-pot"><small>Piatto</small><b>${f(pot)}bb</b></div></div>
         <div class="lx-coin-row"><span>Rigioca</span>${[[1, "1 volta"], [10, "10"], [100, "100"], [1000, "1.000"]].map(([n, l]) => `<button type="button" data-lxrr="${n}">${l}</button>`).join("")}</div>
-        <div class="lx-coin-out" data-rrout><p class="lx-cap">${o.board ? "Tocca un pulsante: a ogni prova esce un river nuovo dalle carte rimaste." : "Tocca un pulsante: a ogni all-in il mazzo si mescola da capo."}</p></div>
+        <div class="lx-coin-out" data-rrout aria-live="polite"><p class="lx-cap">${o.board ? "Tocca un pulsante: a ogni prova esce un river nuovo dalle carte rimaste." : "Tocca un pulsante: a ogni all-in il mazzo si mescola da capo."}</p></div>
         <div class="lx-coin-hist" data-rrhist></div>
         ${ex.length ? `<details class="lx-fold"><summary><span>Il conto esatto</span><small>${o.exSub || "su tutti i 1.712.304 board possibili"}</small></summary><div class="lx-tabw"><table class="lx-tab"><tbody><tr><th>Vinci tu</th><td class="num">${f(ex[0])}%</td></tr><tr><th>Pareggio</th><td class="num">${f(ex[1])}%</td></tr><tr><th>Vince il ${vn}</th><td class="num">${f(ex[2])}%</td></tr><tr><th>Risultato medio</th><td class="num">+${f(o.ev)}bb</td></tr></tbody></table></div>${o.exNote ? `<p class="lx-cap">${o.exNote}</p>` : ""}</details>` : ""}
       </div>`;
@@ -495,10 +495,10 @@ const UI = (() => {
     guess: () => {
       const N = 10000, pr = LXW.guessPair(N);
       return `<div class="lx-gs" data-n="${N}" data-w="${pr.w}" data-l='${JSON.stringify(pr.L)}' data-sc="{}">
-        <div class="lx-coin-row"><span>Mani</span>${[1000, 10000, 100000].map(n => `<button type="button" class="${n === N ? "on" : ""}" data-lxgn="${n}">${n === 1000 ? "1.000" : n === 10000 ? "10.000" : "100.000"}</button>`).join("")}</div>
+        <div class="lx-coin-row"><span>Mani</span>${[1000, 10000, 100000].map(n => `<button type="button" class="${n === N ? "on" : ""}" data-lxgn="${n}" aria-pressed="${n === N ? "true" : "false"}">${n === 1000 ? "1.000" : n === 10000 ? "10.000" : "100.000"}</button>`).join("")}</div>
         <div data-gch>${LXW.guessSvg(pr.L, N, false, pr.w)}</div>
         <div class="lx-gs-pick"><span>Chi è il vincente?</span><button type="button" data-lxgp="0"><i class="a"></i>A</button><button type="button" data-lxgp="1"><i class="b"></i>B</button></div>
-        <div data-gout><p class="lx-cap">Uno dei due vince 5 bb/100, l'altro ne perde 5: scegli guardando i grafici.</p></div>
+        <div data-gout aria-live="polite"><p class="lx-cap">Uno dei due vince 5 bb/100, l'altro ne perde 5: scegli guardando i grafici.</p></div>
         <div class="lx-coin-hist" data-gsc></div>
         <details class="lx-fold"><summary><span>Quanto dice il saldo</span><small>calcolo, non simulazione</small></summary><div class="lx-tabw"><table class="lx-tab"><thead><tr><th>Mani</th><th class="num">Saldo più alto del vincente</th><th class="num">Vincente in perdita</th></tr></thead><tbody><tr><th>1.000</th><td class="num">6 su 10</td><td class="num">43%</td></tr><tr><th>10.000</th><td class="num">8 su 10</td><td class="num">29%</td></tr><tr><th>100.000</th><td class="num">99 su 100</td><td class="num">4%</td></tr></tbody></table></div><p class="lx-cap">Vincente a +5 e perdente a −5 bb/100, con un'oscillazione tipica di 90bb ogni 100 mani (stima per il 6-max).</p></details>
       </div>`;
@@ -579,7 +579,7 @@ const UI = (() => {
     tf: (items, o = {}) => { const Y = o.yes || "Vero", N = o.no || "Falso", hint = o.hint || "Tocca Vero o Falso per ogni frase.";
       return `<div class="lx-tf" data-hint="${hint}">${items.map(([q, a, e]) => `<div class="lx-tf-i" data-a="${a ? 1 : 0}"><p>${q}</p><div class="lx-tf-b">${o.noFirst ? `<button type="button" data-lxtf="0">${N}</button><button type="button" data-lxtf="1">${Y}</button>` : `<button type="button" data-lxtf="1">${Y}</button><button type="button" data-lxtf="0">${N}</button>`}</div><p class="lx-tf-e" hidden><b>${a ? Y : N}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
     // check del tilt: UI.tilt([["Segnale", "descrizione"], ...])
-    tilt: items => `<div class="lx-tilt"><div class="lx-tilt-h"><b>Il check del tilt</b><small>Spunta quello che senti adesso. Rifallo dopo ogni colpo grosso.</small></div><div class="lx-tilt-l">${items.map(([t, d]) => `<label class="lx-tilt-i"><input type="checkbox" data-lxtilt><span><b>${t}</b>${d}</span></label>`).join("")}</div><div data-tout>${LXW.tiltOut(0)}</div></div>`,
+    tilt: items => `<div class="lx-tilt"><div class="lx-tilt-h"><b>Il check del tilt</b><small>Spunta quello che senti adesso. Rifallo dopo ogni colpo grosso.</small></div><div class="lx-tilt-l">${items.map(([t, d]) => `<label class="lx-tilt-i"><input type="checkbox" data-lxtilt><span><b>${t}</b>${d}</span></label>`).join("")}</div><div data-tout aria-live="polite">${LXW.tiltOut(0)}</div></div>`,
     // tabella: UI.tab(["Size","Fold","MDF"], [["1/3","25%","75%"],...], {num:[1,2]})
     tab: (head, rows, o = {}) => `<div class="lx-tabw"><table class="lx-tab${o.green ? " g" : ""}"><thead><tr>${head.map((h, i) => `<th${(o.num || []).includes(i) ? ' class="num"' : ""}>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td${(o.num || []).includes(i) ? ' class="num"' : ""}>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`,
     // moneta truccata interattiva: UI.coin() · il vantaggio piccolo e ripetuto, lanci simulati e probabilità esatte
@@ -664,7 +664,7 @@ const UI = (() => {
   // chi è il vincente: nuova coppia di grafici
   const guessNew = (box, N) => {
     const pr = LXW.guessPair(N); box.dataset.n = N; box.dataset.w = pr.w; box.dataset.l = JSON.stringify(pr.L); delete box.dataset.done;
-    box.querySelectorAll("[data-lxgn]").forEach(b => b.classList.toggle("on", +b.dataset.lxgn === N));
+    box.querySelectorAll("[data-lxgn]").forEach(b => { const on = +b.dataset.lxgn === N; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); });
     box.querySelector("[data-gch]").innerHTML = LXW.guessSvg(pr.L, N, false, pr.w);
     box.querySelectorAll("[data-lxgp]").forEach(b => { b.disabled = false; b.classList.remove("on", "ok", "ko"); const i = b.querySelector("i"); if (i) i.className = b.dataset.lxgp === "0" ? "a" : "b"; });
     box.querySelector("[data-gout]").innerHTML = `<p class="lx-cap">Uno dei due vince 5 bb/100, l'altro ne perde 5: scegli guardando i grafici.</p>`;
