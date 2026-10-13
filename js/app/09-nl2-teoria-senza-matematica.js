@@ -138,21 +138,29 @@ const LXW = (() => {
     // costruisci il tuo piano: situazione (limite, bankroll, mani, winrate) + soglie per salire e per scendere → risposta a «posso salire?»
     LV: [["NL2", 2], ["NL5", 5], ["NL10", 10], ["NL25", 25], ["NL50", 50], ["NL100", 100], ["NL200", 200], ["NL500", 500], ["NL1000", 1000]],
     LVC: ["#9aa5b1", "#f08c3c", "#4f9dff", "#b07cff", "#f5c542", "#3cc9d6", "#ff8fb1", "#c9a227", "#e8e8e8"],
-    // probabilità di scendere prima o poi di D buy-in (moto con deriva wr bb/100 e oscillazione 90bb ogni 100 mani)
-    pDown(dBi, wr) { return dBi <= 0 ? 1 : wr <= 0 ? 1 : Math.exp(-2 * wr * dBi * 100 / 8100); },
+    // probabilità di scendere prima o poi di D buy-in (moto con deriva wr bb/100 e oscillazione sd bb ogni 100 mani)
+    pDown(dBi, wr, sd = 90) { return dBi <= 0 ? 1 : wr <= 0 ? 1 : Math.exp(-2 * wr * dBi * 100 / (sd * sd)); },
+    // mani minime a un limite prima di salire ancora: si sale un limite alla volta
+    STAY: 20000,
     planOut(P) {
       const L = LXW.LV, eu = x => fI(x) + " €", eu2 = x => x.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      const f1 = x => String(Math.round(x * 10) / 10).replace(".", ","), fs = x => (x < 0 ? "−" : x > 0 ? "+" : "") + f1(Math.abs(x)), fb = x => String(Math.floor(x * 10) / 10).replace(".", ",");
+      const f1 = x => String(Math.round(x * 10) / 10).replace(".", ","), fs = x => (x < 0 ? "−" : x > 0 ? "+" : "") + f1(Math.abs(x)), fb = x => (Math.floor(x * 10) / 10).toLocaleString("it-IT", { maximumFractionDigits: 1 });
       const { lv, e, h, wr, up, dn } = P, dr = P.dr != null ? P.dr : 2, ev = P.ev != null && isFinite(P.ev) ? P.ev : null, W = ev != null ? ev : wr, U = Math.max(up, 30);
+      const own = P.sd != null && isFinite(P.sd) && P.sd > 0, sd = own ? P.sd : 90, pr = x => x < 0.001 ? "meno dello 0,1%" : LXW.ruinPct(x);
       const [cn, cc] = L[lv], nx = L[lv + 1], pv = lv > 0 ? L[lv - 1] : null, curDn = dn * cc;
-      // winrate: margine circa 2 × 90 ÷ √(mani ÷ 100), 19 volte su 20; per i conti si usa l'EV se c'è
-      const m = h >= 100 ? 180 / Math.sqrt(h / 100) : Infinity, lo = W - m, hi = W + m, sure = h >= 1000 && lo > 0;
+      // winrate: margine circa 2 × oscillazione ÷ √(mani ÷ 100), 19 volte su 20; per i conti si usa l'EV se c'è
+      const m = h >= 100 ? 2 * sd / Math.sqrt(h / 100) : Infinity, lo = W - m, hi = W + m, sure = h >= 1000 && lo > 0;
+      // stime con il calo scelto: winrate a ogni limite, fin dove arriva il bankroll con la soglia per salire, fin dove resti vincente
+      const estW = i => Math.round((W - dr * (i - lv)) * 10) / 10;
+      let top = lv; while (top + 1 < L.length && e >= U * L[top + 1][1]) top++;
+      let topW = lv; while (topW + 1 < L.length && estW(topW + 1) > 0) topW++;
       let k = lv; while (k > 0 && e < dn * L[k][1]) k--;
-      const S = [], T = []; let v, cls;
+      const S = [], T = [], w = []; let v, cls, ck = "";
       let s1 = h < 1000 ? `Con ${fI(h)} mani il winrate non dice ancora niente: servono molte più mani.` : `Su ${fI(h)} mani il margine è circa ±${f1(m)} bb/100: il tuo winrate reale sta, 19 volte su 20, tra ${fs(lo)} e ${fs(hi)} bb/100. ${sure ? "Sei vincente con buona sicurezza." : W > 0 ? "Probabilmente vinci, ma non è ancora sicuro: potresti anche essere sotto zero." : "Al momento non risulti vincente a questo limite."}`;
-      if (ev != null) { const d = wr - ev; s1 += Math.abs(d) < 1 ? " EV e vincita sono quasi uguali: negli all-in non hai avuto né fortuna né sfortuna particolare." : d > 0 ? ` Hai vinto più dell'EV: negli all-in sei stato fortunato, quindi per i conti uso l'EV (${fs(ev)} bb/100).` : ` Hai vinto meno dell'EV: negli all-in sei stato sfortunato, quindi per i conti uso l'EV (${fs(ev)} bb/100).`; }
+      if (ev != null) { const d = wr - ev; s1 += Math.abs(d) < 1 ? " EV e vincita sono quasi uguali: negli all-in non hai avuto né fortuna né sfortuna particolare." : (d > 0 ? ` Hai vinto più dell'EV: negli all-in sei stato fortunato, quindi per i conti uso l'EV (${fs(ev)} bb/100).` : ` Hai vinto meno dell'EV: negli all-in sei stato sfortunato, quindi per i conti uso l'EV (${fs(ev)} bb/100).`) + " L'EV toglie solo la fortuna degli all-in, non tutta la varianza: il margine resta."; }
+      if (h >= 1000) s1 += own ? ` Il margine usa la tua oscillazione: ${f1(sd)}bb ogni 100 mani.` : " Il margine usa un'oscillazione di 90bb ogni 100 mani, la stima tipica del 6-max: se il tracker ti dà la tua (la deviazione standard), scrivila in «Oscillazione».";
       S.push(["Il winrate", s1]);
-      S.push(["Il bankroll", `${eu(e)} sono ${fb(e / cc)} buy-in di ${cn}${nx ? ` e ${fb(e / nx[1])} di ${nx[0]}` : ""}.${nx ? ` Per salire a ${nx[0]} il tuo piano ne chiede ${U}, cioè ${eu(U * nx[1])}.` : ""} ${pv ? `Sotto ${eu(curDn)} (${dn} buy-in di ${cn}) il piano ti riporta a ${pv[0]}.` : `Sotto ${eu(dn * 2)} sei fuori piano anche a NL2.`}`]);
+      S.push(["Il bankroll", `${eu(e)} sono ${fb(e / cc)} buy-in di ${cn}${nx ? ` e ${fb(e / nx[1])} di ${nx[0]}` : ""}.${nx ? ` Per salire a ${nx[0]} il tuo piano ne chiede ${U}, cioè ${eu(U * nx[1])}.` : ""} ${pv ? `Sotto ${eu(curDn)} (${dn} buy-in di ${cn}) il piano ti riporta a ${pv[0]}.` : `Sotto ${eu(dn * 2)} sei fuori piano anche a NL2.`}${top >= lv + 2 ? ` Con la soglia di ${U} buy-in il bankroll ti basterebbe fino a ${L[top][0]} (${fb(e / L[top][1])} buy-in): non è il bankroll a frenarti.` : ""}`]);
       const per = W * cc / 100, fuori = "Tieni fuori dal bankroll i soldi per le spese: conta solo quello che hai per il poker.";
       if (lv > 0 && e < curDn) {
         v = `No: prima devi scendere. Con ${eu(e)} sei sotto la tua soglia di ${cn} (${eu(curDn)}).`; cls = "r";
@@ -172,7 +180,14 @@ const LXW = (() => {
         T.push(`Resta a <b>${cn}</b> finché hai almeno <b>${eu(curDn)}</b>; sotto torna a ${pv[0]}.`);
       } else {
         const need = U * nx[1], biN = e / nx[1], shot = 5 * nx[1], after = e - shot, dnN = dn * nx[1], dist = (e - dnN) / nx[1];
-        const Wn = Math.round((W - dr) * 10) / 10, shotOk = W > 0 && Wn > 0 && biN >= 20 && after >= curDn;
+        const Wn = estW(lv + 1), shotOk = W > 0 && Wn > 0 && biN >= 20 && after >= curDn;
+        // i tre controlli, separati: il bankroll basta? il winrate è affidabile? al limite nuovo resti vincente?
+        const C3 = [
+          [e >= need ? "y" : "n", "Bankroll", e >= need ? `${fb(biN)} buy-in di ${nx[0]}, ne servono ${U}` : `ti mancano ${eu(need - e)} per i ${U} buy-in di ${nx[0]}`],
+          [h < 1000 || W <= 0 ? "n" : sure ? "y" : "s", `Winrate a ${cn}`, h < 1000 ? "troppo poche mani per dirlo" : W <= 0 ? "non risulti vincente" : `tra ${fs(lo)} e ${fs(hi)} bb/100: ${sure ? "vincente con buona sicurezza" : "probabile, non ancora sicuro"}`],
+          [Wn > 0 ? "y" : "n", `A ${nx[0]}, stimato`, `${fs(Wn)} bb/100${Wn > 0 ? " con il calo che hai scelto" : ": non saresti vincente"}`],
+        ], SR = { y: "sì", n: "no", s: "non ancora sicuro" };
+        ck = `<div class="lx-plan-ck">${C3.map(([s, t, d]) => `<div class="${s}"><i aria-hidden="true">${s === "y" ? "✓" : s === "n" ? "✗" : "?"}</i><span><b>${t}<span class="lx-sr">: ${SR[s]}</span></b>${d}</span></div>`).join("")}</div>`;
         if (e >= need && W > 0 && Wn <= 0) {
           v = `Il bankroll basterebbe per ${nx[0]}, ma lì non saresti vincente: con il calo che hai scelto il tuo winrate stimato è ${fs(Wn)} bb/100.`; cls = "y";
           T.push(`Resta a <b>${cn}</b>, dove vinci ${fs(W)} bb/100.`);
@@ -182,7 +197,7 @@ const LXW = (() => {
           v = `Sì: puoi salire a ${nx[0]}.`; cls = "g";
           T.push(`Sali a <b>${nx[0]}</b>: hai ${fb(biN)} buy-in, il tuo piano ne chiede ${U}.`);
           T.push(`Se lì scendi sotto <b>${eu(dnN)}</b> (${dn} buy-in di ${nx[0]}) torna a ${cn}, senza cambiare piano.`);
-          T.push(`A ${nx[0]} aspettati un winrate più basso, circa <b>${fs(Wn)} bb/100</b>: dopo un bel po' di mani rifai questo controllo con il tuo winrate di ${nx[0]}.`);
+          T.push(`A ${nx[0]} aspettati un winrate più basso, circa <b>${fs(Wn)} bb/100</b>. Gioca almeno <b>${fI(LXW.STAY)} mani</b> a ${nx[0]}, poi rifai questo controllo con il tuo winrate di ${nx[0]}: si sale un limite alla volta.`);
         } else if (e >= need && W > 0) {
           v = `Quasi: il bankroll basta per ${nx[0]}, ma il tuo winrate non è ancora sicuro.`; cls = "y";
           T.push(`Prova <b>${nx[0]}</b> con uno shot di 5 buy-in (<b>${eu(shot)}</b>): se li perdi torna a ${cn}.`);
@@ -196,7 +211,7 @@ const LXW = (() => {
           const hands = Math.ceil((need - e) / per / 10) * 1000;
           v = `Non ancora: ti mancano ${eu(need - e)} per salire a ${nx[0]}.`; cls = "y";
           T.push(`Resta a <b>${cn}</b>.`);
-          T.push(`Sali a ${nx[0]} quando arrivi a <b>${eu(need)}</b>: al tuo ritmo circa <b>${fI(hands)} mani</b>.`);
+          T.push(Wn > 0 ? `Sali a ${nx[0]} quando arrivi a <b>${eu(need)}</b>: al tuo ritmo circa <b>${fI(hands)} mani</b>. Allora rifai questo controllo.` : `Arriverai a <b>${eu(need)}</b> in circa ${fI(hands)} mani, ma con il calo che hai scelto a ${nx[0]} non saresti vincente: prima di salire migliora il gioco.`);
           if (shotOk) T.push(`Se vuoi provarci prima: shot di 5 buy-in di ${nx[0]} (<b>${eu(shot)}</b>). Se li perdi torna subito a ${cn}: resterai con ${eu(after)}, ancora dentro il piano.`);
           T.push(pv ? `Se scendi sotto <b>${eu(curDn)}</b> torna a ${pv[0]}.` : `Se scendi sotto <b>${eu(dn * 2)}</b> sei fuori piano: fermati o ricarica solo con soldi che puoi perdere.`);
           S.push(["Quanto manca", `A ${cn} con ${f1(W)} bb/100 guadagni in media ${eu2(per)} ogni 100 mani: i ${eu(need - e)} che mancano arrivano in circa ${fI(hands)} mani.`]);
@@ -205,57 +220,60 @@ const LXW = (() => {
           T.push(`Resta a <b>${cn}</b> e lavora sul gioco: con un winrate di zero o negativo il bankroll non cresce.`);
           T.push(pv ? `Se scendi sotto <b>${eu(curDn)}</b> torna a ${pv[0]}.` : `Se scendi sotto <b>${eu(dn * 2)}</b> sei fuori piano: fermati o ricarica solo con soldi che puoi perdere.`);
         }
-        if (W > 0) S.push(["Il winrate al livello nuovo", dr > 0 ? `Salendo gli avversari sono più forti e il winrate in bb/100 di solito scende. Con il calo che hai scelto (${dr} bb/100 a livello), a ${nx[0]} stimi circa ${fs(Wn)} bb/100${Wn > 0 ? "" : ": non saresti più vincente"}.` : `Hai scelto nessun calo: stai ipotizzando di vincere a ${nx[0]} quanto a ${cn}, ${fs(W)} bb/100. Di solito però salendo il winrate scende.`]);
-        if (W > 0 && Wn > 0 && biN >= 20) S.push(["Lo shot", shotOk ? `5 buy-in di ${nx[0]} sono ${eu(shot)}: se vanno male resti a ${cn} con ${eu(after)}, cioè ${fb(after / cc)} buy-in, sopra la tua soglia. È un rischio piccolo e deciso prima.` : `5 buy-in di ${nx[0]} sono ${eu(shot)}: se vanno male scenderesti sotto la tua soglia di ${cn}. Meglio aspettare di avere più margine.`]);
+        if (W > 0) S.push(["Il winrate al livello nuovo", dr > 0 ? `Salendo gli avversari sono più forti e il winrate in bb/100 di solito scende. Con il calo che hai scelto (${dr} bb/100 a livello), a ${nx[0]} stimi circa ${fs(Wn)} bb/100${Wn > 0 ? `, cioè circa ${eu2(Wn * nx[1] / 100)} ogni 100 mani contro i ${eu2(per)} di ${cn}` : ": non saresti più vincente"}.` : `Hai scelto nessun calo: stai ipotizzando di vincere a ${nx[0]} quanto a ${cn}, ${fs(W)} bb/100. Di solito però salendo il winrate scende.`]);
+        if (W > 0 && Wn > 0 && biN >= 20 && !(e >= need && sure)) S.push(["Lo shot", shotOk ? `5 buy-in di ${nx[0]} sono ${eu(shot)}: se vanno male resti a ${cn} con ${eu(after)}, cioè ${fb(after / cc)} buy-in, sopra la tua soglia. È un rischio piccolo e deciso prima.` : `5 buy-in di ${nx[0]} sono ${eu(shot)}: se vanno male scenderesti sotto la tua soglia di ${cn}. Meglio aspettare di avere più margine.`]);
         if (W > 0 && Wn > 0) {
           const H = [...new Set([Wn, Math.round(Wn / 2 * 10) / 10].filter(x => x > 0))];
-          S.push(["Se salissi adesso", dist < 0 ? `Con ${eu(e)} saresti già sotto la tua soglia di ${nx[0]} (${eu(dnN)}): torneresti giù subito.` : dist === 0 ? `Con ${eu(e)} saresti proprio sulla tua soglia di ${nx[0]}: basterebbe una mano persa per tornare giù.` : `Con ${fb(biN)} buy-in e la soglia a ${dn}, torneresti prima o poi a ${cn} il ${Math.round(LXW.pDown(dist, H[0]) * 100)}% delle volte se lì vinci ${f1(H[0])} bb/100${H[1] ? `, il ${Math.round(LXW.pDown(dist, H[1]) * 100)}% se vinci solo la metà (${f1(H[1])} bb/100)` : ""}.`]);
+          S.push(["Se salissi adesso", dist < 0 ? `Con ${eu(e)} saresti già sotto la tua soglia di ${nx[0]} (${eu(dnN)}): torneresti giù subito.` : dist === 0 ? `Con ${eu(e)} saresti proprio sulla tua soglia di ${nx[0]}: basterebbe una mano persa per tornare giù.` : `Con ${fb(biN)} buy-in di ${nx[0]} e la soglia a ${dn}, torneresti a ${cn} solo dopo aver perso ${eu(e - dnN)} (${fb(dist)} buy-in). Probabilità che succeda prima o poi, con un'oscillazione di ${f1(sd)}bb ogni 100 mani: ${pr(LXW.pDown(dist, H[0], sd))} se lì vinci ${fs(H[0])} bb/100${H[1] ? `, ${pr(LXW.pDown(dist, H[1], sd))} se vinci solo la metà (${fs(H[1])} bb/100)` : ""}. Tornare giù non vuol dire perdere tutto: vuol dire giocare di nuovo a ${cn}.`]);
         }
+        // fuori scala: il bankroll copre anche i limiti dopo quello nuovo, quindi le soglie non decidono più niente (solo per chi lì resterebbe vincente: agli altri il verdetto dice già di non salire)
+        if (top >= lv + 2 && W > 0 && Wn > 0) w.push(`Il bankroll non è il tuo limite: con la soglia di ${U} buy-in ti basterebbe fino a ${L[top][0]}, e se sali a ${nx[0]} torneresti a ${cn} solo dopo aver perso ${eu(e - dnN)}. Con un bankroll così le soglie non ti fermano: a decidere quanto salire sono il tuo livello e i risultati a ogni limite. ${topW > lv ? `Con il calo che hai scelto resteresti vincente fino a ${L[topW][0]} (${fs(estW(topW))} bb/100), ma è una stima: si sale` : "Si sale"} un limite alla volta, e ogni limite si conferma con le mani giocate lì.`);
       }
       T.push(fuori);
-      const w = [];
       if (dn >= up) w.push("Nessun margine: sali e scendi alla stessa cifra, quindi basta una sessione storta per tornare giù. Di solito la soglia per scendere sta qualche buy-in sotto quella per salire.");
       if (dn < 20) w.push(`Scendere solo sotto ${dn} buy-in è più rischioso anche del piano aggressivo (20-25).`);
-      const rows = L.map(([n, c], i) => `<tr class="${i === lv ? "on" : ""}"><th><i class="lx-lvd" style="--c:${LXW.LVC[i]}"></i>${n}</th><td class="num">${i ? eu(U * c) : "partenza"}</td><td class="num">${eu(dn * c)}</td></tr>`).join("");
+      const rows = L.map(([n, c], i) => `<tr class="${i === lv ? "on" : ""}"><th><i class="lx-lvd" style="--c:${LXW.LVC[i]}"></i>${n}</th><td class="num">${i ? eu(U * c) : "partenza"}</td><td class="num">${eu(dn * c)}</td><td class="num">${fs(estW(i))}</td></tr>`).join("");
       return `<div class="lx-plan-v ${cls}"><small>${nx ? `Posso salire a ${nx[0]}?` : "La risposta"}</small><b>${v}</b></div>
+        ${ck}
         <div class="lx-plan-do"><small>Cosa devi fare</small><ol>${T.map(x => `<li>${x}</li>`).join("")}</ol></div>
         ${w.map(x => `<p class="lx-plan-w">${x}</p>`).join("")}
         <details class="lx-fold" open><summary><span>La soluzione passo per passo</span><small>con i tuoi numeri</small></summary><div class="lx-fold-b"><ol class="lx-steps lx-plan-st">${S.map(([t, x]) => `<li><b>${t}</b>${x}</li>`).join("")}</ol></div></details>
-        <details class="lx-fold"><summary><span>La tua scala dei limiti</span><small>con le tue due soglie</small></summary><div class="lx-tabw"><table class="lx-tab lx-brc-t"><thead><tr><th>Limite</th><th class="num">Sali qui con</th><th class="num">Scendi sotto</th></tr></thead><tbody>${rows}</tbody></table></div><p class="lx-cap">A NL2 non c'è un limite più basso: sotto la soglia sei fuori piano.</p></details>`;
+        <details class="lx-fold"><summary><span>La tua scala dei limiti</span><small>con le tue due soglie</small></summary><div class="lx-tabw"><table class="lx-tab lx-brc-t"><thead><tr><th>Limite</th><th class="num">Sali qui con</th><th class="num">Scendi sotto</th><th class="num">Winrate stimato</th></tr></thead><tbody>${rows}</tbody></table></div><p class="lx-cap">A NL2 non c'è un limite più basso: sotto la soglia sei fuori piano. Il winrate stimato, in bb/100, parte dal tuo e usa il calo che hai scelto: è un'ipotesi, da confermare con le mani giocate a ogni limite.</p></details>`;
     },
-    // simula il piano dal limite dove sei: ogni 100 mani il bankroll cambia di (winrate + oscillazione 90bb), poi si applicano le due soglie
-    planSim(e, up, dn, wr, N, s0, dr = 0) {
+    // simula il piano dal limite dove sei: ogni 100 mani il bankroll cambia di (winrate + oscillazione sd), poi si applicano le due soglie.
+    // Come nella risposta: si sale solo dove il winrate stimato resta sopra zero, e un limite alla volta (almeno LXW.STAY mani a ogni limite; h0 = mani già giocate al limite di partenza)
+    planSim(e, up, dn, wr, N, s0, dr = 0, sd = 90, h0 = 0) {
       const L = LXW.LV, C = LXW.LVC, g = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random()), B = N / 100, step = Math.max(1, Math.floor(B / 300)), U = Math.max(up, 30);
-      let s = s0 || 0, x = e, hi = s, ups = 0, downs = 0, bust = -1; const st = s, pts = [[0, x]], ev = [], segs = [[0, s]];
+      let s = s0 || 0, x = e, hi = s, ups = 0, downs = 0, bust = -1, stay = (h0 || 0) / 100; const st = s, pts = [[0, x]], ev = [], segs = [[0, s]], minStay = LXW.STAY / 100, wAt = lv => wr - dr * (lv - st);
       for (let i = 1; i <= B; i++) {
-        x += (wr - dr * (s - st) + 90 * g()) * L[s][1] / 100;
+        x += (wAt(s) + sd * g()) * L[s][1] / 100; stay++;
         if (x <= 0) { x = 0; bust = i; pts.push([i, 0]); break; }
-        if (s + 1 < L.length && x >= U * L[s + 1][1]) { s++; ups++; ev.push([i, x, 1, s]); segs.push([i, s]); hi = Math.max(hi, s); pts.push([i, x]); }
-        else if (s > 0 && x < dn * L[s][1]) { s--; downs++; ev.push([i, x, -1, s]); segs.push([i, s]); pts.push([i, x]); }
+        if (s + 1 < L.length && x >= U * L[s + 1][1] && wAt(s + 1) > 0 && stay >= minStay) { s++; ups++; stay = 0; ev.push([i, x, 1, s]); segs.push([i, s]); hi = Math.max(hi, s); pts.push([i, x]); }
+        else if (s > 0 && x < dn * L[s][1]) { s--; downs++; stay = 0; ev.push([i, x, -1, s]); segs.push([i, s]); pts.push([i, x]); }
         else if (i % step === 0 || i === B) pts.push([i, x]);
       }
       const end = bust > 0 ? bust : B, eu = v => fI(v) + " €";
       // tratti per limite: [inizio, fine, limite] con le soglie di quel momento
       const SG = segs.map(([a, lv], k) => [a, k + 1 < segs.length ? segs[k + 1][0] : end, lv]);
-      const thr = SG.flatMap(([, , lv]) => [lv + 1 < L.length ? U * L[lv + 1][1] : 0, lv > 0 ? dn * L[lv][1] : 0]);
+      const canUp = lv => lv + 1 < L.length && wAt(lv + 1) > 0, thr = SG.flatMap(([, , lv]) => [canUp(lv) ? U * L[lv + 1][1] : 0, lv > 0 ? dn * L[lv][1] : 0]);
       const top0 = Math.max(e, ...pts.map(p => p[1]), ...thr) * 1.06 || 1;
-      const nice = [10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000], stp = nice.find(n => top0 / n <= 4) || 100000, top = Math.ceil(top0 / stp) * stp;
+      const nice = [10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000], stp = nice.find(n => top0 / n <= 4) || 10000000, top = Math.ceil(top0 / stp) * stp;
       const W = 640, H = 360, X = i => 6 + i / B * (W - 12), Y = v => 10 + (top - v) / top * (H - 20), pc = (v, M) => (v / M * 100).toFixed(2) + "%";
       const grid = Array.from({ length: Math.round(top / stp) + 1 }, (_, k) => k * stp);
       const gl = grid.map(v => `<path class="gl" d="M6 ${Y(v).toFixed(1)} H${W - 6}"/>`).join("");
       const ylab = grid.filter(v => v > 0 && Y(v) / H >= 0.1).map(v => `<span style="top:${pc(Y(v), H)}">${eu(v)}</span>`).join("");
-      const th = SG.map(([a, b, lv]) => (lv + 1 < L.length ? `<path class="tu" d="M${X(a).toFixed(1)} ${Y(U * L[lv + 1][1]).toFixed(1)} H${X(b).toFixed(1)}"/>` : "") + (lv > 0 ? `<path class="td" d="M${X(a).toFixed(1)} ${Y(dn * L[lv][1]).toFixed(1)} H${X(b).toFixed(1)}"/>` : "")).join("");
+      const th = SG.map(([a, b, lv]) => (canUp(lv) ? `<path class="tu" d="M${X(a).toFixed(1)} ${Y(U * L[lv + 1][1]).toFixed(1)} H${X(b).toFixed(1)}"/>` : "") + (lv > 0 ? `<path class="td" d="M${X(a).toFixed(1)} ${Y(dn * L[lv][1]).toFixed(1)} H${X(b).toFixed(1)}"/>` : "")).join("");
       const lines = SG.map(([a, b, lv]) => { const q = pts.filter(([i]) => i >= a && i <= b); return q.length > 1 ? `<path class="l" style="stroke:${C[lv]}" d="${q.map(([i, v], k) => (k ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1)).join("")}"/>` : ""; }).join("");
       const mk = ev.slice(0, 80).map(([i, v, t]) => `<circle class="dot ${t > 0 ? "up" : "dn"}" style="--d:${(i / B * 2.6).toFixed(2)}s" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="5"/>`).join("") + (bust > 0 ? `<circle class="dot dn" style="--d:${(bust / B * 2.6).toFixed(2)}s" cx="${X(bust).toFixed(1)}" cy="${Y(0).toFixed(1)}" r="6"/>` : "");
       // etichette dei cambi di limite, senza sovrapporle
-      let lastX = -99; const tags = ev.filter(([i]) => { const p = i / B * 100; if (p - lastX < 11) return false; lastX = p; return true; }).slice(0, 7).map(([i, v, t, lv]) => { const lp = Math.min(91, Math.max(9, X(i) / W * 100)), tp = Y(v) / H * 100, below = t < 0 || tp < 16; return `<span class="${t > 0 ? "up" : "dn"}${below ? " bl" : ""}" style="left:${lp.toFixed(2)}%;top:${tp.toFixed(2)}%;--d:${(i / B * 2.6).toFixed(2)}s">${t > 0 ? "▲" : "▼"} ${L[lv][0]}</span>`; }).join("");
+      let lastX = -99; const tags = ev.filter(([i]) => { const p = Math.min(91, Math.max(9, i / B * 100)); if (p - lastX < 16) return false; lastX = p; return true; }).slice(0, 7).map(([i, v, t, lv]) => { const lp = Math.min(91, Math.max(9, X(i) / W * 100)), tp = Y(v) / H * 100, below = t < 0 || tp < 16; return `<span class="${t > 0 ? "up" : "dn"}${below ? " bl" : ""}" style="left:${lp.toFixed(2)}%;top:${tp.toFixed(2)}%;--d:${(i / B * 2.6).toFixed(2)}s">${t > 0 ? "▲" : "▼"} ${L[lv][0]}</span>`; }).join("");
       const xt = [0, 0.5, 1].map(f => `<span>${fI(Math.round(N * f))}${f === 1 ? " mani" : ""}</span>`).join("");
       const strip = SG.map(([a, b, lv]) => { const wd = (b - a) / B * 100; return `<span style="--w:${wd.toFixed(2)}%;--c:${C[lv]}" title="${L[lv][0]}">${wd > 9 ? L[lv][0] : ""}</span>`; }).join("") + (bust > 0 ? `<span class="off" style="--w:${((B - bust) / B * 100).toFixed(2)}%">${(B - bust) / B > 0.12 ? "fermo" : ""}</span>` : "");
       const lvs = [...new Set(SG.map(z => z[2]))].sort((p, q) => p - q);
       const wl = lv => { const w = Math.round((wr - dr * (lv - st)) * 10) / 10; return (w > 0 ? "+" : w < 0 ? "−" : "") + String(Math.abs(w)).replace(".", ","); };
       const leg = `<div class="lx-plan-leg">${lvs.map(lv => `<span><i style="--c:${C[lv]}"></i>${L[lv][0]} · ${wl(lv)} bb/100</span>`).join("")}<span><i class="tu"></i>soglia per salire</span><span><i class="td"></i>soglia per scendere</span></div>`;
       const res = bust > 0 ? `<b class="r">Bankroll finito dopo ${fI(bust * 100)} mani.</b> Con queste soglie e questo winrate il piano non ha retto: prova a scendere prima o a partire più in basso.` : `<b>Finisci a ${L[s][0]} con ${eu(x)}</b> (partivi da ${L[st][0]} con ${eu(e)}). Livello più alto raggiunto: ${L[hi][0]}.`;
-      return `<p class="lx-cap">Il colore della linea è il limite a cui giochi. Quando il bankroll tocca la linea tratteggiata verde sali, quando scende sotto quella rossa torni giù.</p>${leg}
+      return `<p class="lx-cap">Il colore della linea è il limite a cui giochi. Quando il bankroll tocca la linea tratteggiata verde sali, quando scende sotto quella rossa torni giù. La verde manca dove al limite sopra non saresti vincente.</p>${leg}
         <div class="lx-plan-plot"><svg viewBox="0 0 ${W} ${H}" class="lx-plan-svg lx-rv" role="img" aria-label="Bankroll simulato in ${fI(N)} mani, da ${L[st][0]} a ${L[s][0]}">${gl}${th}${lines}${mk}</svg><div class="lx-plan-y">${ylab}</div><div class="lx-plan-tags">${tags}</div></div>
         <div class="lx-plan-x">${xt}</div>
         <div class="lx-plan-strip lx-late" aria-label="Limite giocato nel tempo">${strip}</div>
@@ -509,7 +527,7 @@ const UI = (() => {
       return `<div class="lx-plan" data-lv="${D.lv}" data-n="100000" data-dr="2">
         <div class="lx-plan-hd"><b class="lx-plan-h">1 · La tua situazione</b><button type="button" class="lx-replay lx-plan-ex" data-lxpex>Carica l'esempio</button></div>
         <div class="lx-coin-row lx-plan-lv"><span>Giochi a</span>${LXW.LV.map(([n], i) => `<button type="button" class="${i === D.lv ? "on" : ""}" data-lxplv="${i}">${n}</button>`).join("")}</div>
-        <div class="lx-plan-in"><label><span>Bankroll</span><input type="number" inputmode="decimal" min="0" step="10" value="${D.e}" data-lxpe aria-label="Bankroll in euro"><em>€</em></label><label><span>Mani a questo limite</span><input type="number" inputmode="numeric" min="0" step="1000" value="${D.h}" data-lxph aria-label="Mani giocate a questo limite"></label><label><span>Winrate (vincita)</span><input type="number" inputmode="decimal" step="0.5" value="${D.wr}" data-lxpwr aria-label="Winrate in bb/100"><em>bb/100</em></label><label><span>EV · facoltativo</span><input type="number" inputmode="decimal" step="0.5" value="" placeholder="come la vincita" data-lxpev aria-label="Winrate EV in bb/100, facoltativo"><em>bb/100</em></label></div>
+        <div class="lx-plan-in"><label><span>Bankroll</span><input type="number" inputmode="decimal" min="0" step="10" value="${D.e}" data-lxpe aria-label="Bankroll in euro"><em>€</em></label><label><span>Mani a questo limite</span><input type="number" inputmode="numeric" min="0" step="1000" value="${D.h}" data-lxph aria-label="Mani giocate a questo limite"></label><label><span>Winrate (vincita)</span><input type="number" inputmode="decimal" step="0.5" value="${D.wr}" data-lxpwr aria-label="Winrate in bb/100"><em>bb/100</em></label><label><span>EV · facoltativo</span><input type="number" inputmode="decimal" step="0.5" value="" placeholder="come la vincita" data-lxpev aria-label="Winrate EV in bb/100, facoltativo"><em>bb/100</em></label><label><span>Oscillazione · facoltativo</span><input type="number" inputmode="decimal" min="30" max="300" step="5" value="" placeholder="90, la stima tipica" data-lxpsd aria-label="Oscillazione tipica in bb ogni 100 mani (deviazione standard), facoltativo"><em>bb/100</em></label></div>
         <div class="lx-coin-row lx-plan-dr"><span>Salendo il winrate cala di</span>${[0, 1, 2, 3].map(d => `<button type="button" class="${d === 2 ? "on" : ""}" data-lxpdr="${d}">${d ? "−" + d : "0"} bb/100</button>`).join("")}<small>a ogni livello: lì gli avversari sono più forti</small></div>
         <b class="lx-plan-h">2 · Il tuo piano</b>
         <div class="lx-coin-row"><span>Approccio</span>${P.map(([t, u, d]) => `<button type="button" class="${u === D.up && d === D.dn ? "on" : ""}" data-lxpp="${u},${d}">${t}</button>`).join("")}<em class="lx-plan-c" data-pc hidden>Piano personalizzato</em></div>
@@ -522,7 +540,7 @@ const UI = (() => {
           <div class="lx-coin-row"><span>Mani</span>${[50000, 100000, 200000].map(n => `<button type="button" class="${n === 100000 ? "on" : ""}" data-lxpn="${n}">${n === 50000 ? "50.000" : n === 100000 ? "100.000" : "200.000"}</button>`).join("")}</div>
           <div><button type="button" class="lx-gs-new" data-lxpsim>Simula il percorso</button></div>
           <div data-psim></div>
-          <p class="lx-cap">Ipotesi: a ogni livello sopra il tuo il winrate cala di quanto hai scelto (e sotto sale di altrettanto), con un'oscillazione tipica di 90bb ogni 100 mani. Il tuo piano resta salvato sul tuo profilo.</p>
+          <p class="lx-cap">Ipotesi: a ogni livello sopra il tuo il winrate cala di quanto hai scelto (e sotto sale di altrettanto), con l'oscillazione che hai scritto o, se non l'hai scritta, 90bb ogni 100 mani. Come nella risposta, sali solo dove resti vincente e un limite alla volta: dopo ogni cambio di limite giochi almeno 20.000 mani prima di salire ancora. Il tuo piano resta salvato sul tuo profilo.</p>
         </div>
       </div>`;
     },
@@ -722,7 +740,7 @@ const UI = (() => {
   });
   // costruisci il tuo piano: lettura dei controlli, ridisegno, salvataggio nel profilo (S.bplan) e ripristino quando la scheda compare
   const planNum = (el, d, lo, hi) => { const v = parseFloat(String(el && el.value).replace(",", ".")); return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
-  const planRead = box => { const q = k => box.querySelector(k); return { lv: Math.min(LXW.LV.length - 1, Math.max(0, +box.dataset.lv || 0)), e: planNum(q("[data-lxpe]"), 0, 0, 10000000), h: Math.round(planNum(q("[data-lxph]"), 0, 0, 100000000)), wr: planNum(q("[data-lxpwr]"), 0, -100, 100), ev: String(q("[data-lxpev]") ? q("[data-lxpev]").value : "").trim() === "" ? null : planNum(q("[data-lxpev]"), 0, -100, 100), up: +q("[data-lxpu]").value, dn: +q("[data-lxpd]").value, n: +box.dataset.n || 100000, dr: box.dataset.dr != null && box.dataset.dr !== "" ? +box.dataset.dr : 2 }; };
+  const planRead = box => { const q = k => box.querySelector(k); return { lv: Math.min(LXW.LV.length - 1, Math.max(0, +box.dataset.lv || 0)), e: planNum(q("[data-lxpe]"), 0, 0, 10000000), h: Math.round(planNum(q("[data-lxph]"), 0, 0, 100000000)), wr: planNum(q("[data-lxpwr]"), 0, -100, 100), ev: String(q("[data-lxpev]") ? q("[data-lxpev]").value : "").trim() === "" ? null : planNum(q("[data-lxpev]"), 0, -100, 100), sd: String(q("[data-lxpsd]") ? q("[data-lxpsd]").value : "").trim() === "" ? null : planNum(q("[data-lxpsd]"), 90, 30, 300), up: +q("[data-lxpu]").value, dn: +q("[data-lxpd]").value, n: +box.dataset.n || 100000, dr: box.dataset.dr != null && box.dataset.dr !== "" ? +box.dataset.dr : 2 }; };
   const planUpd = (box, keepSim) => {
     if (!box) return; const q = k => box.querySelector(k); let P = planRead(box);
     if (P.dn > P.up) { q("[data-lxpd]").value = P.up; P = planRead(box); }
@@ -735,15 +753,15 @@ const UI = (() => {
     if (!keepSim) { q("[data-psim]").innerHTML = ""; const sb = q("[data-lxpsim]"); if (sb) sb.textContent = "Simula il percorso"; }
   };
   const planSave = box => { try { const P = planRead(box); if (typeof S === "object" && S) { S.bplan = P; if (typeof persist === "function") persist(); } } catch (er) {} };
-  const planSet = (box, B) => { const q = k => box.querySelector(k); if (B.lv != null) box.dataset.lv = B.lv; if (B.e != null) q("[data-lxpe]").value = B.e; if (B.h != null) q("[data-lxph]").value = B.h; if (B.wr != null) q("[data-lxpwr]").value = B.wr; if (q("[data-lxpev]")) q("[data-lxpev]").value = B.ev == null ? "" : B.ev; if (B.up) q("[data-lxpu]").value = B.up; if (B.dn) q("[data-lxpd]").value = B.dn; if (B.n) box.dataset.n = B.n; if (B.dr != null) box.dataset.dr = B.dr; planUpd(box); };
+  const planSet = (box, B) => { const q = k => box.querySelector(k); if (B.lv != null) box.dataset.lv = B.lv; if (B.e != null) q("[data-lxpe]").value = B.e; if (B.h != null) q("[data-lxph]").value = B.h; if (B.wr != null) q("[data-lxpwr]").value = B.wr; if (q("[data-lxpev]")) q("[data-lxpev]").value = B.ev == null ? "" : B.ev; if (q("[data-lxpsd]")) q("[data-lxpsd]").value = B.sd == null ? "" : B.sd; if (B.up) q("[data-lxpu]").value = B.up; if (B.dn) q("[data-lxpd]").value = B.dn; if (B.n) box.dataset.n = B.n; if (B.dr != null) box.dataset.dr = B.dr; planUpd(box); };
   const planHydrate = root => {
     if (!root || !root.querySelectorAll) return; let B = null; try { B = typeof S === "object" && S ? S.bplan : null; } catch (er) {} if (!B || B.lv == null) return;
     const L = [...root.querySelectorAll(".lx-plan:not([data-hy])")]; if (root.matches && root.matches(".lx-plan:not([data-hy])")) L.push(root);
     L.forEach(box => { box.dataset.hy = "1"; planSet(box, B); });
   };
   if (typeof MutationObserver === "function") new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(nd => { if (nd.nodeType === 1) planHydrate(nd); }))).observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("input", e => { const t = e.target; if (t && t.matches && t.matches("[data-lxpe],[data-lxph],[data-lxpwr],[data-lxpev],[data-lxpu],[data-lxpd]")) planUpd(t.closest(".lx-plan")); });
-  document.addEventListener("change", e => { const t = e.target; if (t && t.matches && t.matches("[data-lxpe],[data-lxph],[data-lxpwr],[data-lxpev],[data-lxpu],[data-lxpd]")) planSave(t.closest(".lx-plan")); });
+  document.addEventListener("input", e => { const t = e.target; if (t && t.matches && t.matches("[data-lxpe],[data-lxph],[data-lxpwr],[data-lxpev],[data-lxpsd],[data-lxpu],[data-lxpd]")) planUpd(t.closest(".lx-plan")); });
+  document.addEventListener("change", e => { const t = e.target; if (t && t.matches && t.matches("[data-lxpe],[data-lxph],[data-lxpwr],[data-lxpev],[data-lxpsd],[data-lxpu],[data-lxpd]")) planSave(t.closest(".lx-plan")); });
   document.addEventListener("click", e => {
     const pl = e.target.closest("[data-lxplv]");
     if (pl) { const box = pl.closest(".lx-plan"); if (!box) return; box.dataset.lv = pl.dataset.lxplv; planUpd(box); planSave(box); return; }
@@ -756,7 +774,7 @@ const UI = (() => {
     const pn = e.target.closest("[data-lxpn]");
     if (pn) { const box = pn.closest(".lx-plan"); if (!box) return; box.dataset.n = pn.dataset.lxpn; planUpd(box); planSave(box); return; }
     const ps = e.target.closest("[data-lxpsim]");
-    if (ps) { const box = ps.closest(".lx-plan"); if (!box) return; const P = planRead(box); box.querySelector("[data-psim]").innerHTML = LXW.planSim(P.e, P.up, P.dn, P.ev != null ? P.ev : P.wr, P.n, P.lv, P.dr); ps.textContent = "Simula di nuovo"; return; }
+    if (ps) { const box = ps.closest(".lx-plan"); if (!box) return; const P = planRead(box); box.querySelector("[data-psim]").innerHTML = LXW.planSim(P.e, P.up, P.dn, P.ev != null ? P.ev : P.wr, P.n, P.lv, P.dr, P.sd != null ? P.sd : 90, P.h); ps.textContent = "Simula di nuovo"; return; }
   });
   // bankroll: ridisegna calcolatore e rischio
   const brcUpd = box => {

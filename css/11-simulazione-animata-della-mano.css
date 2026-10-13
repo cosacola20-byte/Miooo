@@ -379,6 +379,12 @@ svg .lx-pp,svg .lx-fd,.lx-rv .dot{transform-box:fill-box;transform-origin:center
 .lx-plan-do ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
 .lx-plan-do li{font-size:14.5px;line-height:1.45}.lx-plan-do li::marker{font-weight:900;color:var(--good)}
 .lx-plan-st li{font-size:13.5px}
+.lx-plan-ck{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+.lx-plan-ck>div{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.lx-plan-ck i{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:13px;color:var(--surface)}
+.lx-plan-ck .y i{background:var(--good)}.lx-plan-ck .n i{background:var(--bad)}.lx-plan-ck .s i{background:var(--gold)}
+.lx-plan-ck>div>span{font-size:13px;line-height:1.35;color:var(--ink2)}.lx-plan-ck b{display:block;font-size:13px;color:var(--ink)}
+.lx-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 @media (max-width:620px){.lx-plan-in{grid-template-columns:1fr}}
 .lx-steps.lx-plan-st{grid-template-columns:1fr}
 
