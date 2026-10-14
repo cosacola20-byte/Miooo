@@ -43,6 +43,7 @@
 .lx-tab.g th{background:var(--acc);color:var(--acc-ink)}
 /* carte e spot */
 .lx-c{display:inline-flex;align-items:center;justify-content:center;min-width:1.9em;padding:0 .25em;height:1.55em;border-radius:5px;background:#fff;color:#1a1a1a;border:1px solid #cfd6d2;font-weight:800;font-size:.95em;line-height:1;margin:0 1px;vertical-align:-.15em;box-shadow:0 1px 0 rgba(0,0,0,.12)}
+.lx-cs{white-space:nowrap}
 .lx-c.h{color:#c62828}.lx-c.d{color:#1e6fd9}.lx-c.c{color:#1c8a44}.lx-c.s{color:#1a1a1a}
 .lx-c.big{flex-direction:column;width:46px;height:62px;font-size:22px;border-radius:8px;gap:2px}
 .lx-c.big i{font-style:normal;font-size:19px}

@@ -425,7 +425,8 @@ const UI = (() => {
   const RN = { r1: "2 coppie o meglio", r2: "Top pair / overpair", r3: "Coppia media o bassa", r4: "Progetti", r5: "Aria, A-high" };
   return {
     // carte in linea nel testo: ${UI.c("A♠K♦")}
-    c: s => split(s).map(x => card(x)).join(""),
+    // carte nel testo: restano sulla stessa riga
+    c: s => `<span class="lx-cs">${split(s).map(x => card(x)).join("")}</span>`,
     // spot: {hero:"A♣K♥", pos:"BTN", board:"K♠7♦2♣", info:[["Formato","NL25"],["Preflop","BTN 2,5bb, BB chiama"]]}
     spot: o => `<div class="lx-spot">${o.hero ? `<div><small>${o.hl ? esc(o.hl) : "Hero" + (o.pos ? " (" + esc(o.pos) + ")" : "")}</small><div class="lx-cards">${split(o.hero).map(x => card(x, 1)).join("")}</div></div>` : ""}${o.board ? `<div class="lx-felt"><small>Board</small><div class="lx-cards">${split(o.board).map(x => card(x, 1)).join("")}</div></div>` : ""}${o.info ? `<dl>${o.info.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>` : ""}</div>`,
     // range a categorie: rows=[["K♠7♦2♣ BTN",[2,17,19,0,62]], ...] percentuali r1..r5; legend=true
@@ -497,12 +498,18 @@ const UI = (() => {
     // o = { cycle, hero:{pos,cards}, ev:[[t,pos,tipo,testo,chip]], pot:[[t,testo]], deal:t, hcards:t, end:{t,testo,info}, log:[[t,testo]] }
     hand: (o) => {
       const id = "lx-ha-" + (++HAN), C = o.cycle || 18, P = t => Math.max(0, Math.min(100, t / C * 100)).toFixed(2);
-      const POS = { BTN: [50, 85], SB: [13, 64], BB: [13, 28], UTG: [50, 16], HJ: [87, 28], CO: [87, 64] }, CEN = [50, 46];
-      const BUB = { BTN: [76, 88], SB: [22, 79], BB: [20, 46], UTG: [67, 30], HJ: [80, 44], CO: [80, 79] }, CHP = { BTN: [50, 64], SB: [24, 60], BB: [29, 37], UTG: [38, 31], HJ: [71, 37], CO: [72, 58] };
+      // posti in senso orario dal basso; il tavolo ruota come nei client: Hero sta sempre in basso al centro
+      const ORD = ["BTN", "SB", "BB", "UTG", "HJ", "CO"], rot = o.hero ? Math.max(0, ORD.indexOf(o.hero.pos)) : 0, slot = pos => (ORD.indexOf(pos) - rot + 6) % 6, at = (L, pos) => L[slot(pos)];
+      const SEAT = [[50, 85], [13, 64], [13, 28], [50, 16], [87, 28], [87, 64]], CHPS = [[50, 63], [28, 64], [28, 28], [42, 36], [71, 37], [72, 58]], DS = [[37, 84], [21, 84], [24, 21], [44, 14], [76, 21], [76, 71]], HB = [76, 88];
+      const POS = Object.fromEntries(ORD.map(p => [p, at(SEAT, p)])), CHP = Object.fromEntries(ORD.map(p => [p, at(CHPS, p)])), CEN = [50, 46];
       const lerp = (a, k) => [a[0] + (CEN[0] - a[0]) * k, a[1] + (CEN[1] - a[1]) * k];
       let css = "", k = 0;
       const anim = (from, to, t1, t2 = C - 0.7, fade = 0.35) => { const c = "a" + (++k); css += `@keyframes ${id}-${c}{0%,${P(t1)}%{${from}}${P(t1 + fade)}%,${P(t2)}%{${to}}${P(Math.min(C, t2 + fade))}%,100%{${from}}}.${id} .${c}{animation:${id}-${c} ${C}s linear infinite}`; return c; };
-      const show = (t1, t2) => anim("opacity:0;transform:translate(-50%,-50%) scale(.6)", "opacity:1;transform:translate(-50%,-50%) scale(1)", t1, t2);
+      const show = (t1, t2, fade) => anim("opacity:0;transform:translate(-50%,-50%) scale(.6)", "opacity:1;transform:translate(-50%,-50%) scale(1)", t1, t2, fade);
+      // il fumetto dell'azione copre la targhetta «100bb» di chi agisce, come nei client; sui posti ai lati resta dentro il tavolo. Quello di Hero sta accanto, per non coprire «Hero»
+      const bubAt = (pos, txt) => { const sl = slot(pos), [x, y] = POS[pos], hw = Math.max(52, 20 + txt.length * 5) / 2 + 3;
+        if (sl === 0 && o.hero) return ["", `left:${HB[0]}%;top:${HB[1]}%`];
+        return [" pl", `left:${sl === 1 || sl === 2 ? `max(${x}%,${hw}px)` : sl === 4 || sl === 5 ? `min(${x}%,calc(100% - ${hw}px))` : x + "%"};top:calc(${y}% + var(--lx-ha-lo))`]; };
       const fold = Object.fromEntries(o.ev.filter(e => e[2] === "fold").map(e => [e[1], e[0]]));
       // board facoltativo: [[t,"K♠7♦2♣"],[t,"4♥"],[t,"9♣"]]; carte avversarie a showdown: reveal [[t,"CO","A♦Q♦"]]
       const BT = (o.board || []).map(b => b[0]), nextB = t => BT.find(x => x > t), rev = Object.fromEntries((o.reveal || []).map(r => [r[1], r]));
@@ -511,17 +518,18 @@ const UI = (() => {
         const hero = o.hero && o.hero.pos === pos, dim = fold[pos] != null ? anim("opacity:1", "opacity:.38", fold[pos]) : "";
         const backs = hero ? "" : `<span class="lx-ha-bk ${anim("opacity:0;transform:translateY(-14px)", "opacity:1;transform:none", (o.deal || 1) + Object.keys(POS).indexOf(pos) * .12, fold[pos] != null ? fold[pos] : rev[pos] ? rev[pos][0] - .05 : C - 0.7)}"><i></i><i></i></span>` + (rev[pos] ? `<span class="lx-ha-hc ${anim("opacity:0;transform:translateY(-10px) rotateY(90deg)", "opacity:1;transform:none", rev[pos][0])}">${cardsHtml(rev[pos][2])}</span>` : "");
         const hc = hero ? `<span class="lx-ha-hc ${anim("opacity:0;transform:translateY(-10px) rotateY(90deg)", "opacity:1;transform:none", o.hcards || 2)}">${o.hero.cards.replace(/10/g, "T").match(/[2-9TJQKA][♠♥♦♣]/g).map(c => `<b class="lx-c ${({ "♠": "s", "♥": "h", "♦": "d", "♣": "c" })[c[1]]}">${c[0] === "T" ? "10" : c[0]}${c[1]}</b>`).join("")}</span>` : "";
-        return `<div class="lx-ha-seat${hero ? " hero" : ""} ${dim}" style="left:${x}%;top:${y}%">${hc}${backs}<span class="lx-ha-av">${pos}</span><span class="lx-ha-st">${hero ? "Hero · " : ""}100bb</span></div>`;
+        const sl = slot(pos), side = sl === 1 || sl === 2 ? " sl" : sl === 4 || sl === 5 ? " sr" : "";
+        return `<div class="lx-ha-seat${hero ? " hero" : ""}${side} ${dim}" style="left:${x}%;top:${y}%">${hc}${backs}<span class="lx-ha-av">${pos}</span><span class="lx-ha-st">${hero ? "Hero · " : ""}100bb</span></div>`;
       }).join("");
       const ev = o.ev.map(([t, pos, tipo, txt, chip], i) => {
-        const ns = o.ev.slice(i + 1).find(e => e[1] === pos), nb = nextB(t), til = Math.min(ns ? ns[0] - .05 : C - 0.7, nb != null ? nb - .05 : C - 0.7);
-        const [x, y] = BUB[pos], b = tipo === "post" ? "" : `<span class="lx-ha-bub ${tipo} ${show(t, til)}" style="left:${x}%;top:${y}%">${txt}</span>`;
+        const ns = o.ev.slice(i + 1).find(e => e[1] === pos), nb = nextB(t), til = Math.min(ns ? ns[0] - .05 : C - 0.7, nb != null ? nb - .05 : C - 0.7, tipo === "fold" ? t + 1.8 : C - 0.7);
+        const [pl, st] = bubAt(pos, txt), b = tipo === "post" ? "" : `<span class="lx-ha-bub ${tipo}${pl} ${show(t, til, pl ? .15 : undefined)}" style="${st}">${txt}</span>`;
         const nx = o.ev.slice(i + 1).find(e => e[1] === pos && e[4]), [cx, cy] = CHP[pos];
         const c = chip ? `<span class="lx-ha-chip ${tipo === "allin" ? "big " : ""}${show(t + .15, Math.min(nx ? nx[0] + .1 : C - 0.7, nb != null ? nb - .05 : C - 0.7))}" style="left:${cx}%;top:${cy}%"><i></i>${chip}</span>` : "";
         return b + c;
       }).join("");
       const pots = o.pot.map(([t, txt], i) => `<span class="lx-ha-pot ${show(t, i + 1 < o.pot.length ? o.pot[i + 1][0] - .05 : C - 0.7)}">Piatto <b>${txt}</b></span>`).join("");
-      const btn = POS.BTN, db = `<span class="lx-ha-d" style="left:${btn[0] - 13}%;top:${btn[1] - 3}%">D</span>`;
+      const btn = at(DS, "BTN"), db = `<span class="lx-ha-d" style="left:${btn[0]}%;top:${btn[1]}%">D</span>`;
       const end = o.end ? `<div class="lx-ha-end ${anim("opacity:0;transform:translate(-50%,8px)", "opacity:1;transform:translate(-50%,0)", o.end.t)}">${o.end.testo}</div>` : "";
       const log = (o.log || []).map(([t, txt]) => `<li class="${anim("opacity:.18", "opacity:1", t)}">${txt}</li>`).join("");
       const brd = o.board ? `<div class="lx-ha-board">${o.board.map(([t, str]) => `<span class="${anim("opacity:0;transform:translateY(-8px)", "opacity:1;transform:none", t)}">${cardsHtml(str)}</span>`).join("")}</div>` : "";
@@ -666,6 +674,11 @@ const UI = (() => {
     multi: (o = {}) => { const eq = o.eq || [], n0 = o.n0 || 1, msg = o.msg || [], q = x => JSON.stringify(x).replace(/'/g, "&#39;"); return `<div class="lx-multi" data-hand="${o.hand || ""}" data-eq='${q(eq)}' data-msg='${q(msg)}'><div class="lx-coin-row"><span>Avversari</span>${eq.map((_, i) => `<button type="button" class="${i + 1 === n0 ? "on" : ""}" data-lxmulti="${i + 1}" aria-pressed="${i + 1 === n0 ? "true" : "false"}">${i + 1}</button>`).join("")}</div><div data-mout aria-live="polite">${LXW.multiOut(o.hand || "", eq, n0, msg)}</div>${o.cap ? `<p class="lx-cap">${o.cap}</p>` : ""}</div>`; },
     // range di open per posizione, con i pulsanti delle posizioni: UI.rfi("ep")
     rfi: (pos = "ep") => `<div class="lx-rfi"><div class="lx-coin-row"><span>Posizione</span>${[["ep", "UTG"], ["mp", "HJ"], ["co", "CO"], ["btn", "BTN"], ["sb", "SB"]].map(([k, n]) => `<button type="button" class="${k === pos ? "on" : ""}" data-lxrfi="${k}" aria-pressed="${k === pos ? "true" : "false"}">${n}</button>`).join("")}</div><div data-rfio aria-live="polite">${LXW.rfiOut(pos)}</div></div>`,
+    // scelta tra più risposte con spiegazione (come UI.tf, ma con N pulsanti): UI.pick([["situazione", indice giusto, "perché"], ...], { labels: ["Value", "Bluff", "Check"] })
+    pick: (items, o = {}) => { const Lb = o.labels || ["A", "B", "C"], hint = o.hint || "Tocca una risposta per ogni situazione.";
+      return `<div class="lx-tf lx-pick" data-hint="${hint}">${items.map(([q, a, e]) => `<div class="lx-tf-i" data-a="${a}"><p>${q}</p><div class="lx-tf-b">${Lb.map((l, k) => `<button type="button" data-lxpk="${k}">${l}</button>`).join("")}</div><p class="lx-tf-e" hidden><b>${Lb[a]}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+    // le due domande prima di ogni puntata, come schema che compare un passo alla volta quando entra nello schermo: UI.twoq()
+    twoq: () => `<div class="lx-2q lx-anim"><div class="lx-2q-r lx-fd" style="--d:.1s"><div class="q"><small>Domanda 1 · valore</small><b>Ci sono mani peggiori della mia che pagano?</b></div><span class="ar">Sì</span><div class="a g">Punta per valore</div></div><div class="lx-2q-no lx-fd" style="--d:.55s">No</div><div class="lx-2q-r lx-fd" style="--d:.9s"><div class="q"><small>Domanda 2 · bluff</small><b>Ci sono mani migliori della mia che foldano?</b></div><span class="ar">Sì</span><div class="a b">Bluff</div></div><div class="lx-2q-no lx-fd" style="--d:1.35s">No</div><div class="lx-2q-r lx-pp" style="--d:1.7s"><div class="a n">Check<span>nessun bersaglio: vai allo showdown o lascia il piatto</span></div></div></div>`,
     // check del tilt: UI.tilt([["Segnale", "descrizione"], ...])
     tilt: items => `<div class="lx-tilt"><div class="lx-tilt-h"><b>Il check del tilt</b><small>Spunta quello che senti adesso. Rifallo dopo ogni colpo grosso.</small></div><div class="lx-tilt-l">${items.map(([t, d]) => `<label class="lx-tilt-i"><input type="checkbox" data-lxtilt><span><b>${t}</b>${d}</span></label>`).join("")}</div><div data-tout aria-live="polite">${LXW.tiltOut(0)}</div></div>`,
     // tabella: UI.tab(["Size","Fold","MDF"], [["1/3","25%","75%"],...], {num:[1,2]})
@@ -815,10 +828,17 @@ const UI = (() => {
       it.querySelectorAll("[data-lxtf]").forEach(b => { b.disabled = true; if (+b.dataset.lxtf === a) b.classList.add("right"); if (b === tf) b.classList.add("pick"); });
       it.querySelector(".lx-tf-e").hidden = false; tfScore(box); return;
     }
+    const pk = e.target.closest("[data-lxpk]");
+    if (pk) {
+      const it = pk.closest(".lx-tf-i"), box = pk.closest(".lx-tf"); if (!it || !box || it.dataset.done) return; it.dataset.done = "1";
+      const a = +it.dataset.a, ok = +pk.dataset.lxpk === a; it.classList.add(ok ? "ok" : "ko");
+      it.querySelectorAll("[data-lxpk]").forEach(b => { b.disabled = true; if (+b.dataset.lxpk === a) b.classList.add("right"); if (b === pk) b.classList.add("pick"); });
+      it.querySelector(".lx-tf-e").hidden = false; tfScore(box); return;
+    }
     const tfr = e.target.closest("[data-lxtfr]");
     if (tfr) {
       const box = tfr.closest(".lx-tf"); if (!box) return;
-      box.querySelectorAll(".lx-tf-i").forEach(it => { delete it.dataset.done; it.classList.remove("ok", "ko"); it.querySelector(".lx-tf-e").hidden = true; it.querySelectorAll("[data-lxtf]").forEach(b => { b.disabled = false; b.classList.remove("right", "pick"); }); });
+      box.querySelectorAll(".lx-tf-i").forEach(it => { delete it.dataset.done; it.classList.remove("ok", "ko"); it.querySelector(".lx-tf-e").hidden = true; it.querySelectorAll("[data-lxtf],[data-lxpk]").forEach(b => { b.disabled = false; b.classList.remove("right", "pick"); }); });
       box.querySelector("[data-tfs]").textContent = box.dataset.hint || "Tocca Vero o Falso per ogni frase."; return;
     }
   });
