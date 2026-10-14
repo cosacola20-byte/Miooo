@@ -14,8 +14,8 @@ ${UI.coin()}
 <div class="lx-box gold"><span class="lx-tag">Cosa hai visto</span><p>Con pochi lanci puoi chiudere in perdita anche con la moneta a tuo favore. Con migliaia di lanci il vantaggio viene fuori quasi sempre. <b>Nel poker la moneta truccata sei tu</b>, quando decidi meglio dei tuoi avversari.</p></div>
 <p class="lx-cap">Nel poker il vantaggio per mano è ancora più piccolo e le oscillazioni più grandi: servono decine di migliaia di mani perché si veda. Lo approfondisci in «Fortuna e varianza».</p>
 <h4>Lo stesso succede nel calcio</h4>
-<p>Una squadra di <b>Serie A</b> gioca contro una di <b>Serie B</b> e vince 7 partite su 10 (ipotizziamo niente pareggi).</p>
-<div class="lx-grid"><div class="lx-k r"><small>1 partita</small><b>Può vincere la Serie B</b><p>Succede 3 volte su 10: una partita sola la decidono anche gli episodi.</p></div><div class="lx-k g"><small>1.000 partite</small><b>Circa 700 a 300</b><p>Su tante partite gli episodi si compensano e viene fuori la qualità.</p></div></div>
+<p>In <b>Coppa Italia</b>, dal 2020-21 al 2024-25, una squadra di <b>Serie A</b> ha affrontato una di <b>Serie B</b> 87 volte. La A ha passato il turno 68 volte, circa <b>8 su 10</b>; nei 90 minuti ha vinto 54 partite, ne ha pareggiate 19 e perse 14.</p>
+<div class="lx-grid"><div class="lx-k r"><small>1 partita</small><b>Può vincere la Serie B</b><p>È successo 19 volte su 87, circa 2 su 10: una partita sola la decidono anche gli episodi.</p></div><div class="lx-k g"><small>1.000 partite</small><b>Circa 800 a 200</b><p>Su tante partite gli episodi si compensano e viene fuori la qualità.</p></div></div>
 
 <div class="lx-sec"><b>1</b><h4>Contro chi giochi davvero</h4></div>
 <p>In ogni piatto ci sono i soldi messi dai giocatori. La room ne trattiene una piccola parte, la <b>rake</b>, e il resto va a chi vince la mano. Un esempio:</p>
