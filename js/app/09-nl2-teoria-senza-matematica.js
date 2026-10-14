@@ -806,40 +806,39 @@ const UI = (() => {
       return;
     }
     const gn = e.target.closest("[data-lxgn]"), gnew = e.target.closest("[data-lxgnew]");
-    if (gn || gnew) { const box = (gn || gnew).closest(".lx-gs"); if (box) guessNew(box, gn ? +gn.dataset.lxgn : +box.dataset.n); return; }
+    if (gn || gnew) { const box = (gn || gnew).closest(".lx-gs"); if (!box) return; const had = gnew && gnew === document.activeElement; guessNew(box, gn ? +gn.dataset.lxgn : +box.dataset.n); if (had) { const f = box.querySelector("[data-lxgp]"); if (f) f.focus(); } return; }
     const gp = e.target.closest("[data-lxgp]");
     if (gp) {
       const box = gp.closest(".lx-gs"); if (!box || box.dataset.done) return; box.dataset.done = "1";
       let L = [[0], [0]]; try { L = JSON.parse(box.dataset.l); } catch (er) {}
-      const N = +box.dataset.n, w = +box.dataset.w, p = +gp.dataset.lxgp, res = LXW.guessMsg(L, w, p, N);
+      const N = +box.dataset.n, w = +box.dataset.w, p = +gp.dataset.lxgp, res = LXW.guessMsg(L, w, p, N), had = box.contains(document.activeElement);
       box.querySelector("[data-gch]").innerHTML = LXW.guessSvg(L, N, true, w);
       box.querySelectorAll("[data-lxgp]").forEach(b => { b.disabled = true; b.classList.toggle("on", b === gp); if (b === gp) b.classList.add(res.ok ? "ok" : "ko"); const i = b.querySelector("i"); if (i) i.className = +b.dataset.lxgp === w ? "g" : "r"; });
       box.querySelector("[data-gout]").innerHTML = res.html + `<button type="button" class="lx-gs-new" data-lxgnew>Nuova coppia</button>`;
+      if (had) box.querySelector("[data-lxgnew]").focus();
       let sc = {}; try { sc = JSON.parse(box.dataset.sc || "{}"); } catch (er) {} const c = sc[N] || [0, 0]; sc[N] = [c[0] + (res.ok ? 1 : 0), c[1] + 1]; box.dataset.sc = JSON.stringify(sc);
       box.querySelector("[data-gsc]").innerHTML = LXW.guessScore(sc);
       return;
     }
     const me = e.target.closest("[data-lxmeth]");
     if (me) { const box = me.closest(".lx-meth"); if (!box) return; box.querySelectorAll("[data-lxmeth]").forEach(b => { b.classList.toggle("on", b === me); b.setAttribute("aria-pressed", b === me ? "true" : "false"); }); box.querySelectorAll("[data-mc]").forEach(c => c.hidden = c.dataset.mc !== me.dataset.lxmeth); return; }
-    const tf = e.target.closest("[data-lxtf]");
+    // vero o falso (data-lxtf) e scelta tra più risposte (data-lxpk, UI.pick): stessa logica.
+    // Il pulsante che ha il focus si disattiva o sparisce: il focus passa alla spiegazione o alla prima risposta, così un altro Invio resta nella scheda e non fa partire il quiz
+    const tf = e.target.closest("[data-lxtf],[data-lxpk]");
     if (tf) {
       const it = tf.closest(".lx-tf-i"), box = tf.closest(".lx-tf"); if (!it || !box || it.dataset.done) return; it.dataset.done = "1";
-      const a = +it.dataset.a, ok = +tf.dataset.lxtf === a; it.classList.add(ok ? "ok" : "ko");
-      it.querySelectorAll("[data-lxtf]").forEach(b => { b.disabled = true; if (+b.dataset.lxtf === a) b.classList.add("right"); if (b === tf) b.classList.add("pick"); });
-      it.querySelector(".lx-tf-e").hidden = false; tfScore(box); return;
-    }
-    const pk = e.target.closest("[data-lxpk]");
-    if (pk) {
-      const it = pk.closest(".lx-tf-i"), box = pk.closest(".lx-tf"); if (!it || !box || it.dataset.done) return; it.dataset.done = "1";
-      const a = +it.dataset.a, ok = +pk.dataset.lxpk === a; it.classList.add(ok ? "ok" : "ko");
-      it.querySelectorAll("[data-lxpk]").forEach(b => { b.disabled = true; if (+b.dataset.lxpk === a) b.classList.add("right"); if (b === pk) b.classList.add("pick"); });
-      it.querySelector(".lx-tf-e").hidden = false; tfScore(box); return;
+      const k = tf.dataset.lxtf != null ? "lxtf" : "lxpk", a = +it.dataset.a, ok = +tf.dataset[k] === a, had = it.contains(document.activeElement); it.classList.add(ok ? "ok" : "ko");
+      it.querySelectorAll(`[data-${k}]`).forEach(b => { b.disabled = true; if (+b.dataset[k] === a) b.classList.add("right"); if (b === tf) b.classList.add("pick"); });
+      const ex = it.querySelector(".lx-tf-e"); ex.hidden = false; if (had) { ex.tabIndex = -1; ex.focus({ preventScroll: true }); }
+      tfScore(box); return;
     }
     const tfr = e.target.closest("[data-lxtfr]");
     if (tfr) {
-      const box = tfr.closest(".lx-tf"); if (!box) return;
+      const box = tfr.closest(".lx-tf"); if (!box) return; const had = tfr === document.activeElement;
       box.querySelectorAll(".lx-tf-i").forEach(it => { delete it.dataset.done; it.classList.remove("ok", "ko"); it.querySelector(".lx-tf-e").hidden = true; it.querySelectorAll("[data-lxtf],[data-lxpk]").forEach(b => { b.disabled = false; b.classList.remove("right", "pick"); }); });
-      box.querySelector("[data-tfs]").textContent = box.dataset.hint || "Tocca Vero o Falso per ogni frase."; return;
+      box.querySelector("[data-tfs]").textContent = box.dataset.hint || "Tocca Vero o Falso per ogni frase.";
+      if (had) { const f = box.querySelector("[data-lxtf],[data-lxpk]"); if (f) f.focus(); }
+      return;
     }
   });
   document.addEventListener("change", e => {
