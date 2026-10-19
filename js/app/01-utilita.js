@@ -50,7 +50,7 @@ function sixTable(o) {
     const dx = 50 + (x - 50) * (k === 1 || k === 5 ? 0.9 : 0.8) + (k === 0 ? 17 : k === 3 ? -9 : 0), dy = 46 + (y - 46) * 0.78 + (k === 1 || k === 5 ? -22 : k === 2 || k === 4 ? 8 : k === 0 ? -6 : 0);
     const btn = p === "BTN" ? `<div class="p6-dealer" style="left:${dx}%;top:${dy}%">D</div>` : "";
     const cards = me ? (o.heroCards ? `<div class="p6-hc">${cardsHtml(o.heroCards)}</div>` : "") : !fold ? `<div class="p6-back"><i></i><i></i></div>` : "";
-    const side = k === 1 || k === 2 ? "r" : k === 4 || k === 5 || k === 0 ? "l" : "b";
+    const side = k === 1 || k === 2 || k === 3 ? "r" : "l";
     const tag = fold ? `<em class="p6-tag k-fold ${side}">Fold</em>` : S0.tag ? `<em class="p6-tag act ${kindOf(S0.tag)} ${side}">${S0.tag}</em>` : "";
     const av = me ? (typeof gMascot === "function" ? gMascot("think", 54) : "") : (typeof gwAv === "function" ? gwAv(p, true) : "");
     return `${bet}${btn}<div class="p6-seat ${me ? "me" : ""} ${fold ? "fold" : ""} ${S0.st === "wait" ? "wait" : ""} s${k}" style="left:${x}%;top:${y}%">${cards}<div class="p6-av">${av}</div><div class="p6-plate"><b>${me ? "Tu · " + p : p}</b><span>${fmtBB(S0.stk != null ? S0.stk : Math.max(0, (o.stack || 100) - (S0.bet || 0)))}</span></div>${tag}</div>`;

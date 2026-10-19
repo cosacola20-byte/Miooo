@@ -126,27 +126,28 @@ DRILLS.outs = {
 };
 
 /* ---------- «Dì il bersaglio»: la mano si gioca davanti a te, street per street, poi tocca a te ----------
-   Ogni copione segue solo le azioni scritte nello spot: niente size o azioni inventate. */
+   Ogni copione segue le azioni scritte nello spot, ognuna con la sua size: quella dello spot quando c'è,
+   altrimenti le size standard del corso (open 2,5bb, dallo SB 3bb, 3-bet in posizione 7,5bb, 1/3 al flop, 2/3 al turn). */
 const TG_RP = {
-  "Ks7d2c|AhKd": { v: "BB", h: "BTN", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["v", "Check"]] },
-  "8h7h5c|AcQd": { v: "BB", h: "BTN", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["v", "Check"]] },
+  "Ks7d2c|AhKd": { v: "BB", h: "BTN", pre: [["h", "Apre 2,5bb"], ["v", "Chiama"]], flop: [["v", "Check"]] },
+  "8h7h5c|AcQd": { v: "BB", h: "BTN", pre: [["h", "Apre 2,5bb"], ["v", "Chiama"]], flop: [["v", "Check"]] },
   "KcQs6d3h2c|QhJh": { v: "Station", turn: [["v", "Check"], ["h", "Check"]], river: [["v", "Check"]] },
-  "KsQd7s4c2d|6h5h": { v: "Reg", flop: [["h", "Punta"], ["v", "Chiama"]], turn: [["h", "Punta"], ["v", "Chiama"]], river: [["v", "Check"]] },
-  "KsQd7s4c2d|9c9d": { v: "Avversario", flop: [["h", "Punta"], ["v", "Chiama"]], turn: [["h", "Punta"], ["v", "Chiama"]], river: [["v", "Check"]] },
-  "9s6d2cAh|QsJs": { v: "BB", h: "BTN", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["h", "C-bet 1/3"], ["v", "Chiama"]], turn: [["v", "Check"]] },
-  "AdJc8s4h2c|KdKc": { v: "Nit", flop: [["v", "Check"], ["h", "Punta"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Punta"], ["v", "Chiama"]], river: [["v", "Check"]] },
-  "Js7h3d|QcQd": { v: "CO", pre: [["v", "Apre"], ["h", "3-bet"], ["v", "Chiama"]], flop: [["v", "Check"]], pot3: 1 },
-  "Th9h4c2d3h|Ah5h": { v: "BB", flop: [["v", "Check"], ["h", "Punta"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Punta"], ["v", "Chiama"]], river: [["v", "Check"]] },
-  "Qs8s3d2c|As5s": { v: "BB", h: "BTN", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["h", "C-bet"], ["v", "Chiama"]], turn: [["v", "Check"]] },
-  "Jh9h4c2s|JsTc": { v: "BB", h: "BTN", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["h", "C-bet"], ["v", "Chiama"]], turn: [["v", "Check"]] },
-  "KcJd4s2h9c|7h6h": { v: "Station", flop: [["h", "Punta"], ["v", "Chiama"]], turn: [["h", "Punta"], ["v", "Chiama"]], river: [["v", "Check"]] },
-  "Kd7s7c|Ah4h": { v: "BB", h: "BTN", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["v", "Check"]] },
+  "KsQd7s4c2d|6h5h": { v: "Reg", flop: [["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["h", "Punta 2/3"], ["v", "Chiama"]], river: [["v", "Check"]] },
+  "KsQd7s4c2d|9c9d": { v: "Avversario", flop: [["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["h", "Punta 2/3"], ["v", "Chiama"]], river: [["v", "Check"]] },
+  "9s6d2cAh|QsJs": { v: "BB", h: "BTN", pre: [["h", "Apre 2,5bb"], ["v", "Chiama"]], flop: [["h", "C-bet 1/3"], ["v", "Chiama"]], turn: [["v", "Check"]] },
+  "AdJc8s4h2c|KdKc": { v: "Nit", flop: [["v", "Check"], ["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Punta 2/3"], ["v", "Chiama"]], river: [["v", "Check"]] },
+  "Js7h3d|QcQd": { v: "CO", pre: [["v", "Apre 2,5bb"], ["h", "3-bet 7,5bb"], ["v", "Chiama"]], flop: [["v", "Check"]], pot3: 1 },
+  "Th9h4c2d3h|Ah5h": { v: "BB", flop: [["v", "Check"], ["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Punta 2/3"], ["v", "Chiama"]], river: [["v", "Check"]] },
+  "Qs8s3d2c|As5s": { v: "BB", h: "BTN", pre: [["h", "Apre 2,5bb"], ["v", "Chiama"]], flop: [["h", "C-bet 1/3"], ["v", "Chiama"]], turn: [["v", "Check"]] },
+  "Jh9h4c2s|JsTc": { v: "BB", h: "BTN", pre: [["h", "Apre 2,5bb"], ["v", "Chiama"]], flop: [["h", "C-bet 1/3"], ["v", "Chiama"]], turn: [["v", "Check"]] },
+  "KcJd4s2h9c|7h6h": { v: "Station", flop: [["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["h", "Punta 2/3"], ["v", "Chiama"]], river: [["v", "Check"]] },
+  "Kd7s7c|Ah4h": { v: "BB", h: "BTN", pre: [["h", "Apre 2,5bb"], ["v", "Chiama"]], flop: [["v", "Check"]] },
 };
 /* copioni delle linee dei problemi di river generati (le stesse azioni scritte nel testo della domanda) */
 const TG_LINE = {
-  "srp-A": { v: "BB", h: "BTN", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["v", "Check"], ["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Punta 2/3"], ["v", "Chiama"]], river: [["v", "Check"]] },
-  "srp-B": { v: "BB", h: "BTN", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["v", "Check"], ["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Check"]], river: [["v", "Check"]] },
-  "sb-A": { v: "BB", h: "SB", pre: [["h", "Apre"], ["v", "Chiama"]], flop: [["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["h", "Punta 2/3"], ["v", "Chiama"]] },
+  "srp-A": { v: "BB", h: "BTN", pre: [["h", "Apre 2,5bb"], ["v", "Chiama"]], flop: [["v", "Check"], ["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Punta 2/3"], ["v", "Chiama"]], river: [["v", "Check"]] },
+  "srp-B": { v: "BB", h: "BTN", pre: [["h", "Apre 2,5bb"], ["v", "Chiama"]], flop: [["v", "Check"], ["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Check"]], river: [["v", "Check"]] },
+  "sb-A": { v: "BB", h: "SB", pre: [["h", "Apre 3bb"], ["v", "Chiama"]], flop: [["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["h", "Punta 2/3"], ["v", "Chiama"]] },
   "3bp-A": { v: "CO", h: "BTN", pre: [["v", "Apre 2,2bb"], ["h", "3-bet 7bb"], ["v", "Chiama"]], flop: [["v", "Check"], ["h", "Punta 1/3"], ["v", "Chiama"]], turn: [["v", "Check"], ["h", "Punta 2/3"], ["v", "Chiama"]], river: [["v", "Check"]], pot3: 1 },
 };
 const TG_ST = [["pre", "Preflop", 0], ["flop", "Flop", 3], ["turn", "Turn", 4], ["river", "River", 5]];

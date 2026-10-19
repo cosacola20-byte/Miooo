@@ -69,6 +69,8 @@ function startFree(d) {
   render(); window.scrollTo({ top: 0 });
 }
 function makeQ(did) {
+  /* ogni domanda ha avversari nuovi, animali acquatici diversi */
+  if (typeof aqShuffle === "function") aqShuffle();
   for (let k = 0; k < 5; k++) {
     const p = DRILLS[did].sample(run.ctx);
     if (!p) return null;

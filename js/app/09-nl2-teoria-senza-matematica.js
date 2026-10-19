@@ -389,6 +389,15 @@ const LXW = (() => {
       if (v >= 35) return ["y", "Ricreativo largo", "Gioca tante mani: a volte rilancia, a volte paga.", "35-60 / 15-25", "osservalo ancora: allo showdown arriva con mani deboli (paga troppo) o molla spesso (folda troppo)?"];
       return ["n", "Da osservare", "Numeri nella media, ma paga più di quanto rilancia.", "—", "raccogli altre mani e chiediti sempre: paga troppo o folda troppo?"];
     },
+    /* HUD della lezione «Tracker e HUD»: gli stessi tre avversari dopo 25 e dopo 600 mani */
+    HUD_P: [["Il vicino", [64, 12, 2], [52, 6, 3], "Pesce palla"], ["Lo sconosciuto", [8, 8, 0], [24, 19, 7], "Polpo mimetico"], ["Il rilanciatore", [40, 32, 14], [43, 31, 12], "Piranha"]],
+    hudOut(n) {
+      const big = n >= 100;
+      const seats = LXW.HUD_P.map(([nm, s25, s600, sp]) => { const [v, p, t] = big ? s600 : s25, [c, kind] = LXW.profKind(v, p);
+        return `<div class="lx-hud-s"><div class="lx-hud-box"><span><b>${v}</b><small>VPIP</small></span><span><b>${p}</b><small>PFR</small></span><span><b>${t}</b><small>3B</small></span><em>${n} mani</em></div>${typeof aqAvatarOf === "function" ? aqAvatarOf(sp, true) : ""}<strong>${nm}</strong><p class="lx-hud-k ${c}">${kind}</p></div>`; }).join("");
+      const note = big ? "Con 600 mani VPIP e PFR sono affidabili: lo sconosciuto, che dopo 25 mani sembrava un nit, è un reg. Il 3-bet invece chiede ancora più mani." : "Con 25 mani i numeri sono solo indizi: bastano poche mani buone o cattive per spostarli di 20 punti. Tocca 600 per vedere come cambiano.";
+      return `<div class="lx-hud-t">${seats}</div><p class="lx-cap">${note}</p>`;
+    },
     profOut(v, p) { const [c, n, d, t, x] = LXW.profKind(v, p); return `<div class="lx-prof-r ${c}"><small>Profilo</small><b>${n}</b><p>${d}</p>${t !== "—" ? `<p class="lx-prof-t">Numeri tipici (VPIP / PFR): ${t}</p>` : ""}<p class="lx-prof-c"><b>Contro di lui:</b> ${x}</p></div>`; },
     // una mano contro sempre più avversari: fiches degli avversari, equity e messaggio per quel numero
     multiOut(hand, eq, n, msg) {
@@ -672,6 +681,8 @@ const UI = (() => {
     duel: (A, B, lab = "Scegli") => `<div class="lx-duel"><div class="lx-coin-row"><span>${lab}</span>${[A, B].map((x, i) => `<button type="button" class="${i ? "" : "on"}" data-lxduel="${i}" aria-pressed="${i ? "false" : "true"}">${x[0]}</button>`).join("")}</div>${[A, B].map((x, i) => `<div class="lx-duel-l" data-duel="${i}" aria-live="polite"${i ? " hidden" : ""}>${x[1].map(([t, d, g], k) => `<div class="lx-duel-r ${g ? "g" : "r"}" style="--d:${(k * 0.09).toFixed(2)}s"><i aria-hidden="true">${g ? "✓" : "✗"}</i><span><b>${t}</b>${d}</span></div>`).join("")}</div>`).join("")}</div>`,
     // quanto vince una mano forte contro 1, 2, 3... avversari: UI.multi({ hand: "AA", eq: [85.2, 73.5, ...], n0: 4, msg: [...], cap })
     multi: (o = {}) => { const eq = o.eq || [], n0 = o.n0 || 1, msg = o.msg || [], q = x => JSON.stringify(x).replace(/'/g, "&#39;"); return `<div class="lx-multi" data-hand="${o.hand || ""}" data-eq='${q(eq)}' data-msg='${q(msg)}'><div class="lx-coin-row"><span>Avversari</span>${eq.map((_, i) => `<button type="button" class="${i + 1 === n0 ? "on" : ""}" data-lxmulti="${i + 1}" aria-pressed="${i + 1 === n0 ? "true" : "false"}">${i + 1}</button>`).join("")}</div><div data-mout aria-live="polite">${LXW.multiOut(o.hand || "", eq, n0, msg)}</div>${o.cap ? `<p class="lx-cap">${o.cap}</p>` : ""}</div>`; },
+    // HUD al tavolo: tre avversari con VPIP, PFR e 3-bet dopo 25 o 600 mani: UI.hud()
+    hud: () => `<div class="lx-hud"><div class="lx-coin-row"><span>Mani giocate con loro</span>${[25, 600].map(n => `<button type="button" class="${n === 25 ? "on" : ""}" data-lxhud="${n}" aria-pressed="${n === 25 ? "true" : "false"}">${n}</button>`).join("")}</div><div data-hudo aria-live="polite">${LXW.hudOut(25)}</div></div>`,
     // range di open per posizione, con i pulsanti delle posizioni: UI.rfi("ep")
     rfi: (pos = "ep") => `<div class="lx-rfi"><div class="lx-coin-row"><span>Posizione</span>${[["ep", "UTG"], ["mp", "HJ"], ["co", "CO"], ["btn", "BTN"], ["sb", "SB"]].map(([k, n]) => `<button type="button" class="${k === pos ? "on" : ""}" data-lxrfi="${k}" aria-pressed="${k === pos ? "true" : "false"}">${n}</button>`).join("")}</div><div data-rfio aria-live="polite">${LXW.rfiOut(pos)}</div></div>`,
     // scelta tra più risposte con spiegazione (come UI.tf, ma con N pulsanti): UI.pick([["situazione", indice giusto, "perché"], ...], { labels: ["Value", "Bluff", "Check"] })
@@ -785,6 +796,8 @@ const UI = (() => {
     if (s) s.innerHTML = done < it.length ? `${done} su ${it.length}: continua con le altre.` : `Giuste <b>${ok} su ${it.length}</b>. <button type="button" class="lx-tf-r" data-lxtfr>Rifai</button>`;
   };
   document.addEventListener("click", e => {
+    const hd = e.target.closest("[data-lxhud]");
+    if (hd) { const box = hd.closest(".lx-hud"); if (!box) return; box.querySelectorAll("[data-lxhud]").forEach(b => { const on = b === hd; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); box.querySelector("[data-hudo]").innerHTML = LXW.hudOut(+hd.dataset.lxhud); return; }
     const isn = e.target.closest("[data-lxison],[data-lxisop]");
     if (isn) { const box = isn.closest(".lx-iso"); if (!box) return; const k = isn.dataset.lxison != null ? "lxison" : "lxisop"; if (k === "lxison") box.dataset.n = isn.dataset.lxison; else box.dataset.oop = isn.dataset.lxisop; box.querySelectorAll(`[data-${k}]`).forEach(b => { const on = b === isn; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false"); }); box.querySelector("[data-isout]").innerHTML = LXW.isoOut(+box.dataset.n, +box.dataset.oop); return; }
     const fx = e.target.closest("[data-lxfx]");

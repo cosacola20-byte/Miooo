@@ -3,7 +3,8 @@
 const GW_AVS = ["🦊", "🐻", "🦉", "🐺", "🦁", "🐯", "🐸", "🐼", "🦈", "🐙", "🦅", "🐲"];
 const GW_AVC = ["#e67e22", "#8e5a3c", "#6c5ce7", "#546e7a", "#d4a017", "#e17055", "#27ae60", "#34495e", "#0984e3", "#b33771", "#795548", "#16a085"];
 const gwHashN = s => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
-const gwAv = (nm, big) => { const k = gwHashN(nm) % GW_AVS.length; return `<span class="gwav${big ? " big" : ""}" style="--ac:${GW_AVC[k]}">${GW_AVS[k]}</span>`; };
+/* avversari: animali acquatici (66-avatar-acquatici.js); le emoji restano solo come riserva */
+const gwAv = (nm, big) => { if (typeof aqAvatar === "function") return aqAvatar(nm, big); const k = gwHashN(nm) % GW_AVS.length; return `<span class="gwav${big ? " big" : ""}" style="--ac:${GW_AVC[k]}">${GW_AVS[k]}</span>`; };
 const gwStarsOf = g => 5 - Math.min(4, g);
 const gwStarsHtml = (n, cls) => `<span class="gwstars ${cls || ""}">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= n ? "on" : ""}" style="--d:${i * 70}ms">★</i>`).join("")}</span>`;
 const GW_RATE = ["Perfetta!", "Ottima", "Imprecisa", "Sbagliata", "Errore grave"];

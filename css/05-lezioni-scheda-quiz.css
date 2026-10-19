@@ -504,3 +504,6 @@ button.co-wt{border:0;background:none;font:inherit;font-size:11px;color:var(--in
 .co-altro{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;margin-top:8px;flex:1;min-width:0}.co-altro input{flex:1;min-width:0;font:inherit;font-size:14px;padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
 .co-lx{grid-column:1/-1;max-width:520px}.co-lx .co-altro{margin-top:0}
 .co-fs[hidden]{display:none}
+
+/* medaglie: quante volte hai superato l'esame di quel livello */
+.tcount{font-style:normal;font-size:.8em;color:#ffd23f;font-weight:900}

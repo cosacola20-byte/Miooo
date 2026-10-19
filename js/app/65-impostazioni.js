@@ -28,7 +28,8 @@ const PREF_MOTION_MIN = ':root[data-motion="reduce"] *:not(.lx-ha *){animation:n
 function prefApply() {
   const R = document.documentElement;
   if (PREF.theme === "light" || PREF.theme === "dark") R.dataset.theme = PREF.theme; else delete R.dataset.theme;
-  for (const [k, def] of [["felt", "verde"], ["scene", "auto"], ["deck", ""]]) { if (PREF[k] && PREF[k] !== def) R.dataset[k] = PREF[k]; else delete R.dataset[k]; }
+  /* attributi con nomi propri (data-tav, data-scena, data-mazzo): un attributo su <html> non deve coincidere con quelli che i gestori dei clic cercano con closest() */
+  for (const [k, at, def] of [["felt", "tav", "verde"], ["scene", "scena", "auto"], ["deck", "mazzo", ""]]) { if (PREF[k] && PREF[k] !== def) R.dataset[at] = PREF[k]; else delete R.dataset[at]; }
   if (PREF.motion === "reduce") {
     R.dataset.motion = "reduce";
     if (!document.getElementById("prefMotion")) { const st = document.createElement("style"); st.id = "prefMotion"; st.textContent = prefMotionCss() || PREF_MOTION_MIN; document.head.appendChild(st); }

@@ -19,6 +19,7 @@ const LEVELS = [
       { id: 208, t: "Chi paga e chi folda", plan: [["lez", 8, { id: "fish" }], ["target", 6]] },
       { id: 207, t: "Contro i limper", plan: [["lez", 8, { id: "limp" }], ["vslimp", 14]] },
       { id: 209, t: "Postflop semplice", plan: [["lez", 8, { id: "post" }], ["vslimp", 6]] },
+      { id: 210, t: "Tracker e HUD", plan: [["lez", 8, { id: "tracker" }]] },
       { ...WS(0, 4, "Esame NL2"), plan: [["lez", 12, { lv: "nl2" }], ["preflop", 8, { spots: ["rfi_ep", "rfi_mp", "rfi_co", "rfi_btn", "rfi_sb"] }], ["vslimp", 8], ["target", 4]] }] },
   { id: "nl5", stake: "NL5", col: "#d63c3c", ink: "#fff", t: "I primi numeri e il preflop solido", d: "La matematica del poker un mattone alla volta: combinazioni, range, equity, outs, pot odds ed EV. Poi il preflop: difesa del BB, 3-bet o fold, risposta al 3-bet.",
     learn: ["Combinazioni e range", "Equity, outs e pot odds", "L'EV e la decisione giusta", "Difesa del BB, 3-bet e risposta al 3-bet"],
@@ -135,10 +136,10 @@ function gExamVerdict() {
   const s = SESS.find(x => x.id === run.id); if (!s || !s.exam || run.final == null) return "";
   const li = LEVELS.findIndex(L => L.s.some(x => x.id === run.id)), L = LEVELS[li], nx0 = LEVELS[li + 1], nx = nx0 && !nx0.secret ? nx0 : null, sc = run.final, need = examPass(L);
   if (sc >= need) { S.examOk = S.examOk || {}; const d = S.examOk[run.id] || []; if (!d.includes(today())) { S.examOk[run.id] = [...d, today()].slice(-10); persist(); } }
-  if (sc >= need && !run.prize) { const nw = prizeAward(L); if (nw) { run.prize = nw; setTimeout(() => { try { gConfetti(PRIZES[nw].maxi ? 6000 : 3000); if (PRIZES[nw].maxi) setTimeout(() => gConfetti(4000), 1500); } catch (e) {} }, 300); } }
+  if (sc >= need && !run.prize && !run.prizeRep) { const nw = prizeAward(L); if (nw) { run.prize = nw; setTimeout(() => { try { gConfetti(PRIZES[nw].maxi ? 6000 : 3000); if (PRIZES[nw].maxi) setTimeout(() => gConfetti(4000), 1500); } catch (e) {} }, 300); } else { run.prizeRep = prizeRepeat(L); if (run.prizeRep) setTimeout(() => { try { gConfetti(PRIZES[L.id].maxi ? 4000 : 1800); } catch (e) {} }, 300); } }
   const LV_REV = L.id === "nl1000" && sc >= need && !S.liveSeen ? `<div class="live-reveal"><span class="live-rev-eye">Livello segreto sbloccato</span>${chip(LEVELS.find(x => x.id === "live"))}<h2>LIVE · Il poker dal vivo</h2><p>Hai superato l'esame NL1000: si è aperto un livello che non compariva nella scala. Tavoli veri, stack profondi, regole del tavolo e ricreativi da leggere. Lo trovi in fondo alla scala del Programma.</p></div>` : "";
   if (LV_REV) { S.liveSeen = today(); persist(); setTimeout(() => { try { gConfetti(4000); } catch (e) {} }, 900); }
-  const PZ = (run.prize ? prizeHtml(run.prize) : "") + LV_REV + (sc >= need ? mmOfferHtml() : "");
+  const PZ = (run.prize ? prizeHtml(run.prize) : run.prizeRep ? prizeRepeatHtml(run.prizeRep) : "") + LV_REV + (sc >= need ? mmOfferHtml() : "");
   const P = levelProg(L), R = P.R;
   const chip = lv => `<span class="pchip big${lv.gold ? " gold" : ""}${lv.secret ? " secret" : ""}" style="--c:${lv.col};--ink:${lv.ink};--sz:96px"><i></i><b style="font-size:calc(var(--sz)*${lv.secret ? .2 : [.3, .3, .28, .24, .19][lv.stake.length - 2]})">${lv.stake.replace("NL", "")}</b><em>${lv.secret ? "♠" : "NL"}</em></span>`;
   if (sc >= need && P.passed) return PZ + `<div class="exv up"><div class="exv-chips">${chip(L)}<span class="exv-arrow">➜</span>${nx ? chip(nx) : ""}</div><span class="exv-eye">Level up!</span><h2>${nx ? `Sei promosso a ${nx.stake}` : "Hai completato la scalata fino a NL1000"}</h2><p>Esame ${sc}% (serve ${need}%) e tutti i requisiti di ${L.stake} completati.${nx ? ` Da domani si gioca il livello "${esc(nx.t)}".` : ""}</p></div>`;

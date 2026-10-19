@@ -10,15 +10,15 @@
   --a-fold:#5f6b74;--a-fold2:#434d55;--a-check:#3b86e3;--a-check2:#2563c4;--a-call:#22a86a;--a-call2:#15925f;
   --a-bet:#f5c542;--a-bet2:#d99a00;--a-raise:#ef7a43;--a-raise2:#d1561f;--a-allin:#e04848;--a-allin2:#b52525;
 }
-:root[data-felt="blu"]{--felt1:#1d5fb4;--felt2:#174c94;--felt3:#103670;--felt4:#0b2753;--rim-out:#0b0d10;--rim:#3a3f46;--rim-hi:#8b939c;--felt-line:rgba(150,195,255,.32)}
-:root[data-felt="smeraldo"]{--felt1:#22b277;--felt2:#16895a;--felt3:#0d5e3e;--felt4:#08442c;--rim-out:#050807;--rim:#1c2421;--rim-hi:#56665f;--felt-line:rgba(190,250,220,.25)}
-:root[data-felt="bordeaux"]{--felt1:#ad3a4e;--felt2:#86283b;--felt3:#5b1828;--felt4:#40101c;--rim-out:#1e1405;--rim:#9c7424;--rim-hi:#f2d27a;--felt-line:rgba(255,215,160,.25)}
-:root[data-felt="notte"]{--felt1:#56636e;--felt2:#3e4852;--felt3:#2a3239;--felt4:#1c2227;--rim-out:#0b0d0f;--rim:#5d6870;--rim-hi:#c8d2d8;--felt-line:rgba(220,230,240,.22)}
-:root[data-scene="notteblu"]{--scene1:#15233a;--scene2:#070c16}
-:root[data-scene="acciaio"]{--scene1:#1d232b;--scene2:#08090b}
-:root[data-scene="foresta"]{--scene1:#134a33;--scene2:#0a2e1f}
-:root[data-scene="oceano"]{--scene1:#123a78;--scene2:#061b3f}
-:root[data-scene="vinaccia"]{--scene1:#3a1220;--scene2:#14060b}
+:root[data-tav="blu"]{--felt1:#1d5fb4;--felt2:#174c94;--felt3:#103670;--felt4:#0b2753;--rim-out:#0b0d10;--rim:#3a3f46;--rim-hi:#8b939c;--felt-line:rgba(150,195,255,.32)}
+:root[data-tav="smeraldo"]{--felt1:#22b277;--felt2:#16895a;--felt3:#0d5e3e;--felt4:#08442c;--rim-out:#050807;--rim:#1c2421;--rim-hi:#56665f;--felt-line:rgba(190,250,220,.25)}
+:root[data-tav="bordeaux"]{--felt1:#ad3a4e;--felt2:#86283b;--felt3:#5b1828;--felt4:#40101c;--rim-out:#1e1405;--rim:#9c7424;--rim-hi:#f2d27a;--felt-line:rgba(255,215,160,.25)}
+:root[data-tav="notte"]{--felt1:#56636e;--felt2:#3e4852;--felt3:#2a3239;--felt4:#1c2227;--rim-out:#0b0d0f;--rim:#5d6870;--rim-hi:#c8d2d8;--felt-line:rgba(220,230,240,.22)}
+:root[data-scena="notteblu"]{--scene1:#15233a;--scene2:#070c16}
+:root[data-scena="acciaio"]{--scene1:#1d232b;--scene2:#08090b}
+:root[data-scena="foresta"]{--scene1:#134a33;--scene2:#0a2e1f}
+:root[data-scena="oceano"]{--scene1:#123a78;--scene2:#061b3f}
+:root[data-scena="vinaccia"]{--scene1:#3a1220;--scene2:#14060b}
 
 /* --- scena e bordo: tutti i tavoli --- */
 .ptbl,.p6{border-radius:22px;background:radial-gradient(130% 110% at 50% 0%,var(--scene1),var(--scene2));box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 10px 30px rgba(0,0,0,.25)}
@@ -54,12 +54,12 @@
 .opt.act-fold .k{background:linear-gradient(180deg,var(--a-fold),var(--a-fold2))}.opt.act-check .k{background:linear-gradient(180deg,var(--a-check),var(--a-check2))}.opt.act-call .k{background:linear-gradient(180deg,var(--a-call),var(--a-call2))}.opt.act-bet .k{background:linear-gradient(180deg,var(--a-bet),var(--a-bet2));color:#2a1a00}.opt.act-raise .k{background:linear-gradient(180deg,var(--a-raise),var(--a-raise2))}.opt.act-allin .k{background:linear-gradient(180deg,var(--a-allin),var(--a-allin2))}
 
 /* --- mazzi: «Colori» (quello di sempre), «Classico» (bianco, rosso e nero), «4 colori» (bianco, semi colorati) --- */
-:root[data-deck="classico"] .pc,:root[data-deck="4c"] .pc,:root[data-deck="classico"] .tc,:root[data-deck="4c"] .tc{background:linear-gradient(180deg,#fff,#eef0f2);color:#1a1a1a;border:1px solid #cfd4d8}
-:root[data-deck="classico"] .pc.su-h,:root[data-deck="classico"] .pc.su-d,:root[data-deck="classico"] .tc.su-h,:root[data-deck="classico"] .tc.su-d{color:#d42a2a}
-:root[data-deck="4c"] .pc.su-h,:root[data-deck="4c"] .tc.su-h{color:#e03131}:root[data-deck="4c"] .pc.su-d,:root[data-deck="4c"] .tc.su-d{color:#2f6fe8}:root[data-deck="4c"] .pc.su-c,:root[data-deck="4c"] .tc.su-c{color:#16a34a}:root[data-deck="4c"] .pc.su-s,:root[data-deck="4c"] .tc.su-s{color:#26292d}
-:root[data-deck="classico"] .lx-c.d{color:#c62828}:root[data-deck="classico"] .lx-c.c{color:#1a1a1a}
-:root[data-deck="colori"] .lx-c{color:#fff;border-color:transparent}
-:root[data-deck="colori"] .lx-c.s{background:linear-gradient(160deg,#3a4046,#1c2024)}:root[data-deck="colori"] .lx-c.h{background:linear-gradient(160deg,#ec574d,#c0281f)}:root[data-deck="colori"] .lx-c.d{background:linear-gradient(160deg,#3b8ced,#1d5fbd)}:root[data-deck="colori"] .lx-c.c{background:linear-gradient(160deg,#2fb465,#197c43)}
+:root[data-mazzo="classico"] .pc,:root[data-mazzo="4c"] .pc,:root[data-mazzo="classico"] .tc,:root[data-mazzo="4c"] .tc{background:linear-gradient(180deg,#fff,#eef0f2);color:#1a1a1a;border:1px solid #cfd4d8}
+:root[data-mazzo="classico"] .pc.su-h,:root[data-mazzo="classico"] .pc.su-d,:root[data-mazzo="classico"] .tc.su-h,:root[data-mazzo="classico"] .tc.su-d{color:#d42a2a}
+:root[data-mazzo="4c"] .pc.su-h,:root[data-mazzo="4c"] .tc.su-h{color:#e03131}:root[data-mazzo="4c"] .pc.su-d,:root[data-mazzo="4c"] .tc.su-d{color:#2f6fe8}:root[data-mazzo="4c"] .pc.su-c,:root[data-mazzo="4c"] .tc.su-c{color:#16a34a}:root[data-mazzo="4c"] .pc.su-s,:root[data-mazzo="4c"] .tc.su-s{color:#26292d}
+:root[data-mazzo="classico"] .lx-c.d{color:#c62828}:root[data-mazzo="classico"] .lx-c.c{color:#1a1a1a}
+:root[data-mazzo="colori"] .lx-c{color:#fff;border-color:transparent}
+:root[data-mazzo="colori"] .lx-c.s{background:linear-gradient(160deg,#3a4046,#1c2024)}:root[data-mazzo="colori"] .lx-c.h{background:linear-gradient(160deg,#ec574d,#c0281f)}:root[data-mazzo="colori"] .lx-c.d{background:linear-gradient(160deg,#3b8ced,#1d5fbd)}:root[data-mazzo="colori"] .lx-c.c{background:linear-gradient(160deg,#2fb465,#197c43)}
 
 /* --- distribuzione: le carte coperte arrivano una sedia alla volta (0,14 s), la seconda carta 0,07 s dopo la prima --- */
 .ptbl-grp .pc,.ptbl-hc .pc,.p6-hc .pc{position:relative}
@@ -167,3 +167,7 @@
 .opts.actrow .opt:hover:not([disabled]){filter:brightness(1.08)}
 .opts.actrow .opt.correct{box-shadow:0 0 0 3px #fff,0 0 0 6px #34c77f}.opts.actrow .opt.wrong{box-shadow:0 0 0 3px #fff,0 0 0 6px #ea5a5a}
 .opts.actrow .opt[disabled]:not(.correct):not(.wrong){opacity:.55}
+
+/* avatar acquatici degli avversari: animale disegnato su un cerchio d'acqua */
+.gwav.aqav{background:radial-gradient(circle at 40% 30%,#9fd6f2 0%,#4f9fd0 55%,#2b6e9e 100%);font-size:0;overflow:hidden;box-shadow:inset 0 -3px 6px rgba(0,30,60,.35),inset 0 2px 3px rgba(255,255,255,.35)}
+.gwav.aqav svg{width:92%;height:92%;display:block}

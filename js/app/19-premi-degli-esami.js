@@ -20,12 +20,25 @@ const goldFelt = () => prizeHas("nl1000") && S.felt === "oro";
 /* assegna il premio una sola volta per livello: restituisce l'id del livello se è nuovo */
 function prizeAward(L) {
   const P = PRIZES[L.id]; if (!P || prizeHas(L.id)) return null;
-  S.prizes = { ...(S.prizes || {}), [L.id]: today() };
+  S.prizes = { ...(S.prizes || {}), [L.id]: today() }; S.prizeN = { ...(S.prizeN || {}), [L.id]: 1 };
   try { gAddXP(P.xp); } catch (e) {}
   if (P.back) S.back = P.back;
   if (P.maxi) S.felt = "oro";
   persist();
   return L.id;
+}
+/* ogni esame superato dopo il primo: una medaglia in più per quel livello e il 25% degli XP del premio (NL1000: 2.500) */
+function prizeRepeat(L) {
+  const P = PRIZES[L.id]; if (!P || !prizeHas(L.id)) return null;
+  const n = ((S.prizeN || {})[L.id] || 1) + 1, xp = Math.round(P.xp * 0.25);
+  S.prizeN = { ...(S.prizeN || {}), [L.id]: n };
+  try { gAddXP(xp); } catch (e) {}
+  persist();
+  return { id: L.id, n, xp };
+}
+function prizeRepeatHtml(r) {
+  const L = LEVELS.find(x => x.id === r.id), P = PRIZES[r.id]; if (!L || !P) return "";
+  return `<div class="prize${P.maxi ? " maxi" : ""}"><span class="prize-eye">${P.maxi ? "Maxi premio, di nuovo" : "Esame superato di nuovo"}</span>${trophyChip(L, true, P.maxi ? 100 : 80)}<h2>${P.t} ×${r.n}</h2><ul class="prize-list"><li><b>+${fmt(r.xp)} XP</b></li><li>Medaglia n° <b>${r.n}</b> di ${L.stake} nella bacheca dei trofei</li></ul></div>`;
 }
 const trophyChip = (L, on, sz) => `<span class="trophy ${on ? "on" : "off"} ${PRIZES[L.id] && PRIZES[L.id].maxi ? "maxi" : ""}" style="--c:${L.col};--ink:${L.ink};--sz:${sz || 64}px"><i class="tr-cup"></i><b>${L.stake.replace("NL", "")}</b></span>`;
 function prizeHtml(id) {
@@ -36,7 +49,7 @@ function prizeHtml(id) {
 /* bacheca nella scheda Progressi */
 function trophyCase() {
   const TLV = LEVELS.filter(L => PRIZES[L.id]), got = TLV.filter(L => prizeHas(L.id)).length;
-  let h = `<section class="panel tcase" style="margin-top:16px"><div class="eyebrow">Bacheca dei trofei</div><h3 style="margin:4px 0 8px">${got} trofei su ${TLV.length}</h3><div class="tgrid">${TLV.map(L => { const on = prizeHas(L.id), P = PRIZES[L.id]; return `<div class="tcell ${on ? "on" : ""} ${P.maxi ? "maxi" : ""}">${trophyChip(L, on, P.maxi ? 78 : 60)}<b>${P.t}</b><small>${on ? `Vinto il ${S.prizes[L.id].split("-").reverse().join("/")}` : `Supera l'esame ${L.stake}`}</small></div>`; }).join("")}</div>`;
+  let h = `<section class="panel tcase" style="margin-top:16px"><div class="eyebrow">Bacheca dei trofei</div><h3 style="margin:4px 0 8px">${got} trofei su ${TLV.length}</h3><div class="tgrid">${TLV.map(L => { const on = prizeHas(L.id), P = PRIZES[L.id]; return `<div class="tcell ${on ? "on" : ""} ${P.maxi ? "maxi" : ""}">${trophyChip(L, on, P.maxi ? 78 : 60)}<b>${P.t}${on && ((S.prizeN || {})[L.id] || 1) > 1 ? ` <em class="tcount">×${S.prizeN[L.id]}</em>` : ""}</b><small>${on ? `Vinto il ${S.prizes[L.id].split("-").reverse().join("/")}` : `Supera l'esame ${L.stake}`}</small></div>`; }).join("")}</div>`;
   h += `<div class="tbacks"><span class="eyebrow">Dorso delle carte nei minigiochi</span><div class="tbk">${BACKS.map(([b, n]) => { const ok = backOk(b); return `<button class="tbk-b ${curBack() === b ? "on" : ""}" ${ok ? `data-back="${b}"` : "disabled"} title="${esc(n)}${ok ? "" : " (da sbloccare)"}">${aofBack(b)}<small>${ok ? esc(n) : "Bloccato"}</small></button>`; }).join("")}</div></div>`;
   if (prizeHas("nl1000")) h += `<div class="tbacks"><span class="eyebrow">Tavolo dei minigiochi</span><div class="tbk"><button class="tbk-b ${!goldFelt() ? "on" : ""}" data-felt="verde"><span class="tfelt"></span><small>Verde</small></button><button class="tbk-b ${goldFelt() ? "on" : ""}" data-felt="oro"><span class="tfelt oro"></span><small>Oro</small></button></div><p style="margin:10px 0 0"><button class="btn primary" data-diploma="1">Scarica il diploma</button></p></div>`;
   h += eggHall();
@@ -44,7 +57,7 @@ function trophyCase() {
 }
 document.addEventListener("click", e => {
   const b = e.target.closest && e.target.closest("[data-back]"); if (b) { S.back = b.dataset.back; persistSoon(); if (tab === "progress" && !run) renderProgress(); return; }
-  const f = e.target.closest && e.target.closest("[data-felt]"); if (f) { S.felt = f.dataset.felt; persistSoon(); if (tab === "progress" && !run) renderProgress(); return; }
+  const f = e.target.closest && e.target.closest("button[data-felt]"); if (f) { S.felt = f.dataset.felt; persistSoon(); if (tab === "progress" && !run) renderProgress(); return; }
   const d = e.target.closest && e.target.closest("[data-diploma]"); if (d) { e.preventDefault(); diplomaOpen(); }
 });
 /* diploma: chiede il nome e crea un PNG */
