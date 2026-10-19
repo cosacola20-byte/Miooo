@@ -59,8 +59,10 @@
 /* mano animata: board, check e call, carte a showdown */
 .lx-ha-board{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);display:flex;gap:4px;z-index:3}
 .lx-ha-board>span{display:flex;gap:3px}
-.lx-ha-board .lx-c{font-size:13px;padding:3px 5px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4)}
-@media (max-width:520px){.lx-ha-board{gap:2px}.lx-ha-board>span{gap:2px}.lx-ha-board .lx-c{font-size:10px;padding:2px 3px}}
+/* carte del board grandi come quelle in mano */
+.lx-ha-board .lx-c{font-size:17px;height:1.9em;min-width:2em;padding:0 4px;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.45)}
+@media (max-width:520px){.lx-ha-board{gap:3px}.lx-ha-board>span{gap:3px}.lx-ha-board .lx-c{font-size:14px;padding:0 3px}}
+@media (max-width:360px){.lx-ha-board,.lx-ha-board>span{gap:2px}.lx-ha-board .lx-c{font-size:11px;padding:0 2px}}
 .lx-ha-tbl.hasb .lx-ha-pot{top:53%}
 .lx-ha-tbl.hasb .lx-ha-end{top:61%}
 .lx-ha-bub.check{background:#2c4a63;color:#e3eef8}
