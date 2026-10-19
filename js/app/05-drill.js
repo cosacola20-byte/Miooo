@@ -170,14 +170,14 @@ function tgReplayRun(root, s, q) {
   const el = root.querySelector("[data-tgr]"); if (!el) return;
   const { steps } = tgScript(s), opts = [...document.querySelectorAll(".opts .opt")];
   let i = 0, tm = null, done = false;
-  const bub = (w, a) => { const b = el.querySelector(`[data-tgb="${w}"]`); if (!b) return; b.textContent = a; b.className = "tgr-bub on " + (/check/i.test(a) ? "ck" : /chiama/i.test(a) ? "cl" : "bt"); };
+  const bub = (w, a) => { const b = el.querySelector(`[data-tgb="${w}"]`); if (!b) return; b.textContent = a; if (!done) tActSound(a); b.className = "tgr-bub on " + (/check/i.test(a) ? "ck" : /chiama/i.test(a) ? "cl" : "bt"); };
   const apply = x => {
     if (x.st != null) { el.querySelectorAll("[data-tgs]").forEach(t => t.classList.toggle("on", +t.dataset.tgs === x.st)); el.querySelectorAll("[data-tgs]").forEach(t => t.classList.toggle("past", +t.dataset.tgs < x.st));
-      el.querySelectorAll("[data-tgc]").forEach(c => { if (+c.dataset.tgc < x.nc) c.classList.add("up"); }); el.querySelectorAll(".tgr-bub").forEach(b => b.classList.remove("on")); }
+      let fl = 0; el.querySelectorAll("[data-tgc]").forEach(c => { if (+c.dataset.tgc < x.nc && !c.classList.contains("up")) { c.classList.add("up"); if (!done) tSnd.flip(0.08 * fl++); } }); el.querySelectorAll(".tgr-bub").forEach(b => b.classList.remove("on")); }
     else bub(x.w, x.a);
   };
   const finish = () => { if (done) return; done = true; clearTimeout(tm); for (; i < steps.length; i++) apply(steps[i]); el.classList.add("end"); q.hold = false; opts.forEach(o => { o.disabled = false; o.classList.remove("tgr-wait"); }); const sk = el.querySelector("[data-tgskip]"); if (sk) sk.textContent = "↻ Rivedi"; if (run && run.q === q) run.t0 = Date.now(); };
-  const tick = () => { if (!document.body.contains(el) || !run || run.q !== q) return; if (i >= steps.length) return finish(); const x = steps[i++]; apply(x); const sp = run && run.ctx && run.ctx.tgSkip ? 0.5 : 1; tm = setTimeout(tick, sp * (x.st != null ? (x.nc ? 700 : 350) : 520)); };
+  const tick = () => { if (!document.body.contains(el) || !run || run.q !== q) return; if (i >= steps.length) return finish(); const x = steps[i++]; apply(x); const sp = run && run.ctx && run.ctx.tgSkip ? 0.5 : 1; tm = setTimeout(tick, sp * animK() * (x.st != null ? (x.nc ? 700 : 350) : 520)); };
   el.querySelector("[data-tgskip]").onclick = () => { if (!done) { if (run && run.ctx) run.ctx.tgSkip = 1; return finish(); } /* rivedi: rigioca solo l'animazione, le opzioni restano attive */
     done = false; i = 0; el.classList.remove("end"); el.querySelectorAll("[data-tgc]").forEach(c => c.classList.remove("up")); el.querySelectorAll(".tgr-bub").forEach(b => b.classList.remove("on")); el.querySelector("[data-tgskip]").textContent = "Salta ▸"; tm = setTimeout(tick, 300); };
   if (isExamRun() || calmMotion()) return finish();

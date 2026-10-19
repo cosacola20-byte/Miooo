@@ -157,18 +157,20 @@ function renderRun() {
   } else if (run.stage === "q" || run.stage === "fb") {
     const q = run.q, d = DRILLS[did];
     if (run.stage === "q" && isExamRun() && !q.examT) q.examT = examSecs(q);
+    if (run.stage === "q" && q.opts && !q.actSorted) { q.actSorted = true; actSort(q.opts); }
     const TT = q.examT || d.time, timedQ = q.timed || !!q.examT;
     h += `<div class="qcard ${isExamRun() ? "examq" : ""}"><div class="qhead">${isExamRun() ? `<span class="exam-badge">🏆 Esame</span>` : ""}<span class="eyebrow">${isExamRun() ? `Domanda ${run.plan.slice(0, run.di).reduce((a, p) => a + p[1], 0) + run.qi + 1} di ${run.plan.reduce((a, p) => a + p[1], 0)}` : `${esc(q.title)}${q.noCount ? "" : ` · ${run.qi + 1}/${count}`}`}</span>${q.lesId && LESSONS[q.lesId] && !isExamRun() ? `<button class="lesrev" id="lesRev" title="Rileggi la scheda">📖 Scheda</button>` : ""}${timedQ && run.stage === "q" ? `<span class="timer ${q.examT ? "exam" : ""}" id="timer" title="${q.examT ? "Esame: tempo in base alla lunghezza della domanda" : ""}">${TT}s</span>` : ""}</div>${q.body}`;
-    if (q.layout === "sliders") h += `<div style="margin-top:14px"><button class="btn primary" id="submitSl">Conferma la stima</button></div>`;
+    if (q.layout === "sliders" || q.submit) h += `<div style="margin-top:14px"><button class="btn primary" id="submitSl" ${q.submitOff ? "disabled" : ""}>${q.submit || "Conferma la stima"}</button></div>`;
+    else if (q.noOpts) h += "";
     else h += `<div class="opts ${q.layout || ""} ${q.opts.length <= 4 && q.opts.every(o => actKind(o.label) && String(o.label).replace(/<[^>]+>/g, "").trim().length <= 16) ? "actrow" : ""}">${q.opts.map((o, k) => `<button class="opt ${q.center ? "center" : ""} ${actKind(o.label)}" data-k="${k}">${q.center ? "" : `<span class="k">${k + 1}</span>`}<span>${o.label}</span></button>`).join("")}</div>`;
     h += `<div id="fb"></div></div>`;
     $("#view").innerHTML = h + `</div>`;
-    tlTableize($("#view")); qvApply($("#view"), q);
+    tlTableize($("#view")); qvApply($("#view"), q); orkiAsk($("#view")); if (run.stage === "q") tDealSounds($("#view"));
     if ($("#lesRev")) $("#lesRev").onclick = () => gModal(`<div class="lesbody"><h3 style="margin:0 0 8px">${esc(LESSONS[q.lesId].t)}</h3>${lesGloss(q.lesId, LESSONS[q.lesId].card)}</div>`);
     if (q.mount) q.mount();
     run.t0 = Date.now();
-    if (q.layout === "sliders") $("#submitSl").onclick = () => answer(q.read());
-    else document.querySelectorAll(".opt").forEach(b => b.onclick = () => answer(q.opts[+b.dataset.k].v, +b.dataset.k));
+    if (q.layout === "sliders" || q.submit) $("#submitSl").onclick = () => answer(q.read());
+    else document.querySelectorAll(q.optSel || ".opt").forEach(b => b.onclick = () => answer(q.opts[+b.dataset.k].v, +b.dataset.k));
     if (timedQ) {
       const t0 = Date.now();
       timerId = setInterval(() => { const left = TT - Math.floor((Date.now() - t0) / 1000); const el = $("#timer"); if (el) { el.textContent = Math.max(0, left) + "s"; el.classList.toggle("low", left <= 5); } if (left <= 0) { clearTimer(); answer(undefined, -1, true); } }, 250);
@@ -180,7 +182,7 @@ function renderRun() {
     fxSumRun(r);
     $("#cont").onclick = () => { if (isLast) finishRun(); else { run.di++; run.qi = 0; run.stage = "intro"; renderRun(); } };
   } else if (run.stage === "end") {
-    h += gExamVerdict() + gPlaceVerdict() + gF0Verdict() + gEndScreen();
+    h += gExamVerdict() + gPlaceVerdict() + gF0Verdict() + gEndScreen() + lavagnaEnd();
     $("#view").innerHTML = h + `</div>`;
     const rid = run.id, kind = run.kind;
     $("#back").onclick = () => setTab(kind === "session" || kind === "place" ? "program" : "free");
@@ -191,6 +193,7 @@ function renderRun() {
     gEndFx();
   }
   $("#quit").onclick = () => setTab(run?.kind === "free" ? "free" : "program");
+  runSnap();
 }
 function skipDrill() {
   run.results.push({ d: run.plan[run.di][0], n: 0, ok: 0, score: null });
@@ -207,6 +210,7 @@ function answer(v, k, timeout) {
     let base = null; try { const ok = (q.opts || []).find(o => { try { return q.check(o.v).score >= 100; } catch (e) { return false; } }); base = ok ? q.check(ok.v) : q.check(v); } catch (e) { base = null; }
     res = { ...(base || { expl: "" }), score: 0, expl: `<p class="tout">⏱ <b>Tempo scaduto.</b></p>` + ((base && base.expl) || "") };
   } else res = q.check(v);
+  if (!timeout && k != null && k >= 0 && q.opts && q.opts[k]) tActSound(q.opts[k].label);
   run.stage = "fb";
   eggOnAnswer(q, res);
   if (res.score != null) {
@@ -216,8 +220,8 @@ function answer(v, k, timeout) {
     if (q.reviewItem) reviewAnswered(q.reviewItem, res.score);
     else if (res.score < 60 && !(DRILLS[q.skill] || {}).noReview) addReview(q.skill, q.params);
   } else { run.scores.push(null); run.lastScoreIdx = run.scores.length - 1; }
-  document.querySelectorAll(".opt").forEach((b, i) => {
-    b.disabled = true;
+  document.querySelectorAll(q.optSel || ".opt").forEach((b, i) => {
+    b.disabled = true; if (!q.opts || !q.opts[i]) return;
     const ov = q.opts[i].v;
     if (res.correct != null && (ov === res.correct || (res.correctAll || []).includes(ov))) b.classList.add("correct");
     if (i === k && res.score != null && res.score < 100) b.classList.add(res.score > 0 ? "partial" : "wrong");
@@ -233,20 +237,20 @@ function answer(v, k, timeout) {
   const last = run.qi >= count - 1 || !!q.stop;
   if (isExamRun()) {
     /* esame: nessuna correzione domanda per domanda, solo «risposta registrata»; il risultato arriva alla fine */
-    document.querySelectorAll(".opt").forEach(b => { b.classList.remove("correct", "wrong", "partial"); b.disabled = true; });
-    const ch = k != null && k >= 0 ? document.querySelector(`.opt[data-k="${k}"]`) : null; if (ch) ch.classList.add("examsel");
+    document.querySelectorAll(q.optSel || ".opt").forEach(b => { b.classList.remove("correct", "wrong", "partial"); b.disabled = true; });
+    const ch = k != null && k >= 0 ? document.querySelector(`${q.optSel || ".opt"}[data-k="${k}"]`) : null; if (ch) ch.classList.add("examsel");
     $("#fb").innerHTML = `<div class="exam-fb ${timeout ? "tout" : ""}"><b>${timeout ? "⏱ Tempo scaduto" : "✓ Risposta registrata"}</b><small>${last ? "Fine di questa parte" : "Prossima domanda..."}</small><button class="btn small" id="nextQ">Avanti</button></div>`;
     $("#nextQ").onclick = nextQ;
     const stamp = run.qi + ":" + run.di; setTimeout(() => { if (run && run.stage === "fb" && run.qi + ":" + run.di === stamp) nextQ(); }, timeout ? 1200 : 700);
     persistSoon(); return;
   }
-  fxAnswer(k, res);
+  fxAnswer(k, res); orkiReact(res);
   $("#fb").innerHTML = `<div class="feedback ${cls}"><div class="fbhead">${gMascot(res.score == null ? "think" : res.score >= 100 ? "happy" : res.score > 0 ? "think" : "sad", 44)}<h4>${head} <span class="muted" style="font-weight:400;font-size:13px">· ${fmt(ms / 1000, 1)} s</span></h4><span class="fbx">${gx}</span></div>${res.expl}${res.score != null && res.score < 60 && !q.reviewItem && !(DRILLS[q.skill] || {}).noReview ? `<p class="muted" style="margin-top:6px;font-size:13px">${q.skill === "hands" ? "La trovi nella scheda Errori finché non la giochi giusta." : "Tornerà nel ripasso domani e resta nella scheda Errori."}</p>` : ""}</div><div class="nextrow"><span class="kbd">Invio per continuare</span><button class="btn3d" id="nextQ">${last ? "Fine drill" : "Avanti"}</button></div>`;
   if (q.after) q.after();
   $("#nextQ").onclick = nextQ;
   if ((q.autoNext && res.score >= 100) || res.auto || (PREF.auto && res.score >= 100)) { const stamp = run.qi + ":" + run.di; setTimeout(() => { if (run && run.stage === "fb" && run.qi + ":" + run.di === stamp) nextQ(); }, res.autoMs || (q.autoNext || res.auto ? 900 : 1400)); }
   if (!$("#htarget")) $("#nextQ").focus({ preventScroll: true });
-  persistSoon();
+  persistSoon(); runSnap();
 }
 let psT = null;
 function persistSoon() { clearTimeout(psT); psT = setTimeout(persist, 1500); }
@@ -326,5 +330,5 @@ function skipF0() {
   });
   setTimeout(() => { layer.remove(); done(); }, 1250);
 }
-function finishRun() { saveResults(false); run.stage = "end"; render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+function finishRun() { runSnapClear(); saveResults(false); run.stage = "end"; render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
 

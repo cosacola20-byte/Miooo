@@ -16,6 +16,6 @@ document.addEventListener("keydown", e => {
   if ((e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") && e.key !== "Enter") return;
   if (e.target.id === "htarget" && e.key === "Enter") return;
   if (e.key === "Enter") { const b = $("#go") || $("#nextQ") || $("#cont") || $("#submitSl:not([hidden])"); if (b) { e.preventDefault(); b.click(); } }
-  else if (run.stage === "q" && /^[1-9]$/.test(e.key)) { const b = document.querySelector(`.opt[data-k="${+e.key - 1}"]`); if (b) b.click(); }
+  else if (run.stage === "q" && /^[1-9]$/.test(e.key)) { const b = document.querySelector(`${(run.q && run.q.optSel) || ".opt"}[data-k="${+e.key - 1}"]`); if (b) b.click(); }
 });
 

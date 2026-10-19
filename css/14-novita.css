@@ -1,0 +1,168 @@
+/* ===== riprendi da dove eri ===== */
+.resume{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:10px 12px 10px 10px;border-radius:16px;background:var(--surface);border:1.5px solid color-mix(in srgb,var(--acc) 45%,var(--line));box-shadow:0 6px 18px rgba(0,0,0,.08);animation:fxdrawer .45s cubic-bezier(.32,.72,0,1) both}
+.resume .gmascot,.resume svg{flex:0 0 auto}
+.resume-t{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.resume-t small{font-size:12px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.resume-t b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resume-t span{font-size:13px;color:var(--ink2)}
+.resume .btn{flex:0 0 auto}
+.resume-x{flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:0;background:transparent;color:var(--ink2);font-size:16px;cursor:pointer}
+.resume-x:hover{background:var(--line)}
+@media (max-width:420px){.resume{flex-wrap:wrap}.resume-t{flex-basis:calc(100% - 100px)}.resume .btn{margin-left:52px}}
+
+/* ===== esercizi visivi ===== */
+/* tocca il posto: senza piatto né nomi, i posti si toccano */
+.seatq .p6-mid{display:none}
+.seatq .p6-seat.pick{cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.seatq .p6-seat.pick .p6-av{border-radius:50%;transition:box-shadow .15s,transform .15s}
+.seatq .p6-seat.pick:hover .p6-av,.seatq .p6-seat.pick:focus-visible .p6-av{box-shadow:0 0 0 3px rgba(255,255,255,.85),0 0 18px rgba(255,255,255,.35);transform:scale(1.06)}
+.seatq .p6-plate b{min-height:15px}
+.seatq .p6-plate:not(.shown) b{letter-spacing:.2em}
+.seatq .p6-plate.shown b{animation:fxpill .35s cubic-bezier(.2,.9,.3,1.3)}
+.seatq .p6-seat.pick.correct .p6-av,.seatq .p6-seat.pick.correct:hover .p6-av{box-shadow:0 0 0 4px #34c77f,0 0 22px rgba(52,199,127,.7);animation:fxok .28s cubic-bezier(.2,.9,.3,1.2)}
+.seatq .p6-seat.pick.wrong .p6-av,.seatq .p6-seat.pick.wrong:hover .p6-av{box-shadow:0 0 0 4px #ea5a5a,0 0 18px rgba(234,90,90,.6);animation:fxko .38s linear}
+.sq-d{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#f5c542;color:#2a1d00;font-size:11px;font-weight:900;vertical-align:1px}
+
+/* la mano migliore: carte da toccare */
+.bh{margin:6px 0 4px;padding:14px 12px 10px;border-radius:20px;background:radial-gradient(120% 120% at 50% 0%,var(--felt1,#1f8a55),var(--felt3,#0c4a2d));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 8px 22px rgba(0,0,0,.2)}
+.bh-row{display:flex;flex-direction:column;align-items:center;gap:6px}
+.bh-row+.bh-row{margin-top:12px}
+.bh-row small{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.bh-cards{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.bh-c{padding:0;border:0;background:none;border-radius:11px;cursor:pointer;transition:transform .15s cubic-bezier(.2,.9,.3,1.3),box-shadow .15s;-webkit-tap-highlight-color:transparent}
+.bh-c .pc{pointer-events:none}
+.bh-c.on{transform:translateY(-8px);box-shadow:0 0 0 3px #f5c542,0 8px 16px rgba(0,0,0,.35)}
+.bh-c:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.bh-c.no{animation:fxko .38s linear}
+.bh-c:disabled{cursor:default}
+.bh-c.best{box-shadow:0 0 0 3px #34c77f,0 6px 14px rgba(0,0,0,.3)}
+.bh-c.miss{box-shadow:0 0 0 3px #ea5a5a,0 6px 14px rgba(0,0,0,.3);opacity:.8}
+.bh-cnt{margin:10px 0 0;text-align:center;color:rgba(255,255,255,.85);font-size:13px}
+.bh-cnt b{color:#f5d06b;font-size:15px}
+@media (max-width:400px){.bh-cards{gap:4px}.bh .pc{width:40px;height:56px}.bh .pc .r{font-size:22px}}
+/* chi vince allo showdown */
+.bw-felt{position:relative;margin:4px 0 10px;padding:22px 10px 16px;border-radius:20px;background:radial-gradient(120% 120% at 50% 0%,var(--felt1,#1f8a55),var(--felt3,#0c4a2d));display:flex;justify-content:center}
+.bw-st{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.bw-board .cards{display:flex;gap:5px}
+.bw-o{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bw-n{font-weight:800;min-width:0}
+.bw-o .cards{display:flex;gap:3px;margin-left:auto}
+.bw-l{margin:0 0 6px;padding-left:18px}
+
+/* scegli la size */
+.bs{margin:6px 0 4px}
+.bs-felt{display:flex;align-items:flex-end;justify-content:space-around;gap:12px;min-height:118px;padding:18px 12px 14px;border-radius:20px;background:radial-gradient(120% 120% at 50% 0%,var(--felt1,#1f8a55),var(--felt3,#0c4a2d));color:#fff}
+.bs-pot,.bs-bet{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.bs-pot>span:last-child{font-size:13px;background:rgba(0,0,0,.35);padding:3px 10px;border-radius:99px}
+.bs-pot b{color:#f5d06b}
+.bs-bet b{font-family:var(--f-display);font-size:26px;line-height:1;color:#ffe27a}
+.bs-bet small{font-size:12px;opacity:.85}
+.bs-stack{min-height:16px;display:flex;align-items:flex-end}
+.bs-ctl{display:flex;align-items:center;gap:10px;margin-top:12px}
+.bs-step{flex:0 0 auto;width:40px;height:40px;border-radius:50%;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);font-size:22px;font-weight:800;line-height:1;cursor:pointer}
+.bs-step:active{transform:translateY(2px);border-bottom-width:2px}
+.bs-range{flex:1;min-width:0;height:34px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+.bs-range::-webkit-slider-runnable-track{height:10px;border-radius:99px;background:linear-gradient(90deg,#f5c542 var(--p,0%),var(--line) var(--p,0%))}
+.bs-range::-moz-range-track{height:10px;border-radius:99px;background:linear-gradient(90deg,#f5c542 var(--p,0%),var(--line) var(--p,0%))}
+.bs-range::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:-9px;border-radius:50%;background:#fff;border:3px solid #c8971f;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.bs-range::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #c8971f;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.bs-range:focus-visible{outline:2px solid var(--acc);outline-offset:4px;border-radius:8px}
+.bs-scale{display:flex;justify-content:space-between;padding:0 50px;font-size:12px;color:var(--ink2)}
+
+/* da bb a euro */
+.be{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0 10px;padding:16px 12px;border-radius:20px;background:radial-gradient(120% 120% at 50% 0%,var(--felt1,#1f8a55),var(--felt3,#0c4a2d));color:#fff}
+.be-lim{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 14px;border-radius:14px;background:rgba(0,0,0,.35)}
+.be-lim b{font-family:var(--f-display);font-size:22px;color:#f5d06b;line-height:1}
+.be-lim span{font-size:12px;opacity:.85;white-space:nowrap}
+.be-stk{display:flex;flex-direction:column;align-items:center;gap:6px}
+.be-stk b{font-family:var(--f-display);font-size:24px;line-height:1}
+
+/* ===== lavagna di fine lezione ===== */
+.lav{position:relative;margin:18px auto 6px;max-width:640px}
+.lav-eye{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:0 0 8px 4px}
+.lav-frame{position:relative;padding:12px 12px 22px;border-radius:14px;background:linear-gradient(160deg,#c9a06a,#8a5f33 55%,#6a4524);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.25),0 12px 28px rgba(0,0,0,.28)}
+.lav-board{position:relative;padding:20px 20px 18px;border-radius:6px;min-height:150px;color:#f4f1e8;background:radial-gradient(120% 90% at 30% 10%,rgba(255,255,255,.07),transparent 60%),linear-gradient(170deg,#2f6a4c,#1f4d37 60%,#163829);box-shadow:inset 0 0 0 2px rgba(0,0,0,.25),inset 0 0 40px rgba(0,0,0,.35);font-family:"Caveat","Segoe Print","Comic Sans MS",cursive;font-size:23px;line-height:1.22;overflow:hidden}
+/* polvere di gesso e vecchie scritte cancellate */
+.lav-board::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background:radial-gradient(60% 18% at 70% 20%,rgba(255,255,255,.06),transparent 70%),radial-gradient(40% 14% at 20% 80%,rgba(255,255,255,.05),transparent 70%),repeating-linear-gradient(115deg,rgba(255,255,255,.015) 0 2px,transparent 2px 7px)}
+.lv-l{position:relative;margin:0 0 8px;text-shadow:0 0 1px rgba(244,241,232,.55);animation:lvwrite .55s steps(14,end) both;animation-delay:calc(.35s + var(--i) * .42s)}
+@keyframes lvwrite{0%{clip-path:inset(0 100% 0 0);opacity:.9}100%{clip-path:inset(0 0 0 0);opacity:1}}
+.lv-t{font-size:30px;font-weight:700;margin-bottom:10px;padding-bottom:4px;border-bottom:2px dashed rgba(244,241,232,.35)}
+.lv-n{display:inline-block;padding:0 8px;border:2px solid #ffe27a;border-radius:10px;color:#ffe27a;font-size:24px;transform:rotate(-3deg)}
+.lv-h{font-size:22px;color:#ffe27a;text-decoration:underline wavy rgba(255,226,122,.55) 1.5px;text-underline-offset:5px}
+.lv-i{padding-left:6px}
+.lv-i b{color:#ffe27a}
+.lv-gold,.lv-trap,.lv-end{margin-top:12px;padding:6px 10px 8px;border-radius:10px}
+.lv-gold{border:2px solid rgba(255,226,122,.75);background:rgba(255,226,122,.06)}
+.lv-gold b{display:block;color:#ffe27a;font-size:20px}
+.lv-trap{border:2px dashed rgba(255,140,140,.6)}
+.lv-trap b{display:block;color:#ff9b9b;font-size:20px}
+.lv-end b{display:block;color:#9fe2bf;font-size:20px}
+.lv-s{font-weight:700}.lv-s.h{color:#ff6b6b}.lv-s.d{color:#7fb0ff}.lv-s.c{color:#6ee49a}.lv-s.s{color:#f4f1e8}
+.lav-tray{position:absolute;left:24px;right:24px;bottom:6px;height:8px;border-radius:3px;background:linear-gradient(180deg,#9a6c3c,#5c3b1f);box-shadow:0 2px 3px rgba(0,0,0,.3)}
+.lv-chalk{position:absolute;bottom:5px;left:18%;width:34px;height:7px;border-radius:3px;background:#f4f1e8;box-shadow:inset -4px 0 0 rgba(0,0,0,.08)}
+.lv-chalk.y{left:calc(18% + 44px);width:26px;background:#ffe27a;transform:rotate(-6deg)}
+.lv-eraser{position:absolute;bottom:4px;right:16%;width:58px;height:14px;border-radius:4px;background:linear-gradient(180deg,#d9c39a 0 45%,#3b3b44 45%)}
+.lav-orki{position:absolute;right:-6px;top:6px;transform:rotate(8deg);filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
+@media (max-width:480px){.lav-board{padding:16px 14px 14px;font-size:21px}.lv-t{font-size:26px;padding-right:46px}.lav-orki{right:-4px;top:12px}.lav-orki .mascot{width:52px;height:52px}}
+@media (prefers-reduced-motion:reduce){.lv-l{animation:none;clip-path:none}}
+
+/* ===== Orki guida ===== */
+/* sbatte gli occhi ogni 4-5 secondi (inizio diverso per ogni Orki) */
+.mascot .m-eye{transform-box:fill-box;transform-origin:center;animation:mblink 4.6s infinite}
+@keyframes mblink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.08)}}
+/* la domanda in un fumetto, come in una chat */
+.orki-ask{display:flex;align-items:flex-start;gap:10px;margin:2px 0 12px}
+.orki-av{flex:0 0 auto;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#e9f7ff,#a9daf2);box-shadow:0 0 0 2px var(--surface),0 3px 10px rgba(0,0,0,.15);animation:orkihead 5.7s ease-in-out infinite}
+.orki-av .mascot{width:44px;height:44px;animation:none}
+.orki-av.ok{animation:orkiok .5s cubic-bezier(.2,1.5,.4,1),orkihead 5.7s ease-in-out .5s infinite}
+.orki-av.ko{animation:fxko .38s linear,orkihead 5.7s ease-in-out .4s infinite}
+@keyframes orkihead{0%,100%{transform:rotate(0)}30%{transform:rotate(1.5deg)}60%{transform:rotate(-2.2deg)}80%{transform:rotate(.9deg)}}
+@keyframes orkiok{0%{transform:scale(1)}40%{transform:scale(1.18) translateY(-4px)}100%{transform:scale(1)}}
+.orki-bub{position:relative;flex:1;min-width:0;padding:10px 14px;border-radius:4px 16px 16px 16px;background:var(--surface2);border:1px solid var(--line);animation:orkibub .3s cubic-bezier(.2,.9,.3,1.2) both}
+.orki-bub::before{content:"";position:absolute;left:-7px;top:10px;border:7px solid transparent;border-left:0;border-right-color:var(--line)}
+.orki-bub::after{content:"";position:absolute;left:-5.5px;top:10px;border:7px solid transparent;border-left:0;border-right-color:var(--surface2)}
+.orki-bub .qtitle{margin:0}
+@keyframes orkibub{0%{opacity:0;transform:translateX(-8px) scale(.96)}100%{opacity:1;transform:none}}
+/* con Orki nel fumetto, il secondo Orki nella spiegazione non serve */
+.qcard:has(.orki-ask) .fbhead .mascot{display:none}
+@media (max-width:420px){.orki-av{width:40px;height:40px}.orki-av .mascot{width:36px;height:36px}.orki-bub{padding:8px 11px}}
+@media (prefers-reduced-motion:reduce){.mascot .m-eye,.orki-av{animation:none}}
+
+/* ===== collezione: tavoli da sbloccare ===== */
+:root[data-tav="corallo"]{--felt1:#e2674f;--felt2:#c4503b;--felt3:#9c3a2a;--felt4:#7a2b1f;--rim-out:#1a0d08;--rim:#d4a24c;--rim-hi:#f7dc8f;--felt-line:rgba(255,224,200,.32)}
+:root[data-tav="abisso"]{--felt1:#0f6e7e;--felt2:#0b4f5c;--felt3:#08363f;--felt4:#06262e;--rim-out:#020608;--rim:#101a20;--rim-hi:#39d0e0;--felt-line:rgba(80,230,255,.42)}
+:root[data-tav="aurora"]{--felt1:#5b3fa8;--felt2:#46308a;--felt3:#33236a;--felt4:#24164a;--rim-out:#0b0716;--rim:#2c2340;--rim-hi:#9be7c4;--felt-line:rgba(155,231,196,.36)}
+.feltpick button.lock{position:relative;cursor:not-allowed;opacity:.55;filter:grayscale(.5)}
+.feltpick button.lock::after{content:"🔒";position:absolute;inset:0;display:grid;place-items:center;font-size:12px}
+
+/* ===== collezione: cornici di Orki ===== */
+:root[data-cornice="argento"]{--fr1:#eef2f5;--fr2:#8a96a3}
+:root[data-cornice="oro"]{--fr1:#ffe27a;--fr2:#b8860b}
+:root[data-cornice="smeraldo"]{--fr1:#5ff0a6;--fr2:#0f7a45}
+:root[data-cornice="zaffiro"]{--fr1:#8fb6ff;--fr2:#1a3d9e}
+:root[data-cornice="rubino"]{--fr1:#ff8597;--fr2:#8c1027}
+:root[data-cornice="ametista"]{--fr1:#d4a8ff;--fr2:#5d2a9e}
+:root[data-cornice="onice"]{--fr1:#c9ced6;--fr2:#0b0b0d}
+:root[data-cornice="reale"]{--fr1:#fff3b0;--fr2:#c8971f}
+.coll-av[data-fr="argento"]{--fr1:#eef2f5;--fr2:#8a96a3}.coll-av[data-fr="oro"]{--fr1:#ffe27a;--fr2:#b8860b}.coll-av[data-fr="smeraldo"]{--fr1:#5ff0a6;--fr2:#0f7a45}.coll-av[data-fr="zaffiro"]{--fr1:#8fb6ff;--fr2:#1a3d9e}.coll-av[data-fr="rubino"]{--fr1:#ff8597;--fr2:#8c1027}.coll-av[data-fr="ametista"]{--fr1:#d4a8ff;--fr2:#5d2a9e}.coll-av[data-fr="onice"]{--fr1:#c9ced6;--fr2:#0b0b0d}.coll-av[data-fr="reale"]{--fr1:#fff3b0;--fr2:#c8971f}
+/* l'anello della cornice: un bordo sfumato attorno all'avatar, che non tocca le animazioni dell'avatar */
+:root[data-cornice] .brand .logo,:root[data-cornice] .p6-seat.me .p6-av,:root[data-cornice] .orki-av,.coll-av{position:relative}
+:root[data-cornice] .brand .logo::after,:root[data-cornice] .p6-seat.me .p6-av::after,:root[data-cornice] .orki-av::after,.coll-av:not([data-fr=""])::after{content:"";position:absolute;inset:-5px;border-radius:50%;padding:4px;pointer-events:none;background:linear-gradient(135deg,var(--fr1),var(--fr2) 45%,var(--fr1) 70%,var(--fr2));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);box-shadow:0 0 12px color-mix(in srgb,var(--fr1) 45%,transparent)}
+/* Orca reale: anello d'oro che gira */
+:root[data-cornice="reale"] .brand .logo::after,:root[data-cornice="reale"] .p6-seat.me .p6-av::after,:root[data-cornice="reale"] .orki-av::after,.coll-av[data-fr="reale"]::after{background:conic-gradient(from var(--fra,0deg),#fff3b0,#c8971f,#ffe27a,#8a5c0a,#fff3b0);animation:frspin 4s linear infinite}
+@property --fra{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes frspin{to{--fra:360deg}}
+/* la bacheca */
+.coll{margin-top:16px}
+.coll-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;margin-top:8px}
+.coll-f{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px 10px;border-radius:14px;border:2px solid var(--line);border-bottom-width:4px;background:var(--surface);color:var(--ink);cursor:pointer;font:inherit;text-align:center}
+.coll-f b{font-size:13.5px}
+.coll-f small{font-size:11.5px;color:var(--ink2);line-height:1.25}
+.coll-f.on{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 8%,var(--surface))}
+.coll-f.on small{color:var(--acc);font-weight:700}
+.coll-f.lock{cursor:default;opacity:.7}
+.coll-f.lock .coll-av,.coll-f.lock .coll-tav{filter:grayscale(1) brightness(.85)}
+.coll-av{width:48px;height:48px;margin:4px 0 2px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#e9f7ff,#a9daf2)}
+.coll-av .mascot{width:40px;height:40px;animation:none}
+.coll-tav{width:72px;height:44px;margin:6px 0 4px;border-radius:22px;background:radial-gradient(ellipse at 50% 40%,var(--c1),var(--c2));box-shadow:inset 0 0 0 4px var(--c3),0 3px 8px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:reduce){:root[data-cornice="reale"] .brand .logo::after,.coll-av[data-fr="reale"]::after{animation:none}}

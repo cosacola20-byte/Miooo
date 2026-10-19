@@ -77,6 +77,7 @@ function renderProgram() {
   document.querySelectorAll("[data-gpvgo]").forEach(b => b.onclick = () => gwProvaStart(b.dataset.gpvgo));
   document.querySelectorAll("[data-upgrade]").forEach(b => b.onclick = () => tlLockMsg({ why: "plan" }, +b.dataset.upgrade));
   const cs = document.querySelector(".car-step.sel"); if (cs && cs.scrollIntoView) cs.parentElement.scrollLeft = Math.max(0, cs.offsetLeft - cs.parentElement.clientWidth / 2 + 40);
+  if (typeof resumeBanner === "function") resumeBanner();
 }
 let PROG_SEL = null;
 

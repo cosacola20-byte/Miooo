@@ -48,7 +48,7 @@ function gMascot(mood, size) {
   <ellipse cx="33" cy="66" rx="4.4" ry="2.8" fill="#ff9fb3" opacity=".75"/>
   <ellipse cx="67" cy="66" rx="4.4" ry="2.8" fill="#ff9fb3" opacity=".75"/>
   <ellipse cx="40" cy="35" rx="9" ry="4" fill="#fff" opacity=".12"/>
-  ${eye(eyeL)}${eye(eyeR)}${mouth}${extra}
+  <g class="m-eye" style="animation-delay:-${(Math.random() * 4.6).toFixed(2)}s">${eye(eyeL)}${eye(eyeR)}</g>${mouth}${extra}
   <g transform="translate(80 78)"><circle r="8" fill="#15925f"/>${[0,60,120,180,240,300].map(a => `<rect x="-1.4" y="-8" width="2.8" height="3.4" rx=".8" fill="#fff" transform="rotate(${a})"/>`).join("")}<circle r="4.6" fill="#e8f7ef"/></g>
   </svg>`;
 }

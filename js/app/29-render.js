@@ -15,6 +15,7 @@ function renderStats() {
 function setTab(t) {
   clearTimer(); PRE_CAT = null;
   if (run && run.results.length && !run.saved) saveResults(true);
+  if (run) runSnapClear();
   tab = t; run = null;
   document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === t ? "true" : "false"));
   render(); tabsReveal();
@@ -32,6 +33,7 @@ function render() {
   renderStats();
   if (run) return renderRun();
   ({ program: renderProgram, free: renderFree, data: renderData, err: renderErrors, opp: renderOpp, solver: () => solverOk() ? renderSolver() : renderSolverLock(), equity: renderEquity, coach: renderCoach, mind: renderMind, progress: renderProgress, ref: renderRef })[tab]();
+  resumeBanner();
 }
 function renderFree() {
   const due = reviewDue().length;
