@@ -80,7 +80,7 @@ function eggBrunsonScan() {
 /* ---- Johnny Chan: allenamento in due giorni consecutivi ---- */
 function eggCheckChan() { try { if (eggHas("chan")) return; const set = new Set(S.days || []); if (set.has(today()) && set.has(addDays(-1))) { eggTrain(); eggUnlock("chan", 2600); } } catch (e) {} }
 function eggTrain() {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (calmMotion()) return;
   const t = document.createElement("div"); t.className = "egg-train"; t.innerHTML = `${eggIcon("chan", 70)}<span>The Orient Express</span>`; document.body.appendChild(t); setTimeout(() => t.remove(), 3200);
 }
 

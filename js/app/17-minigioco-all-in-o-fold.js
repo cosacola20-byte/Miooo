@@ -117,7 +117,7 @@ function aofChoose(choice) {
   const EJ = eqJob([H.h, H.v], H.shown); eqBackground(EJ);
   G.msg = res === "win" ? `Hai vinto ${AOF_WON[djCat(a)]}! +${fmt(gain)}` : res === "split" ? `Pareggio: piatto diviso, +${fmt(gain)}` : `Hai perso: l'avversario vince ${AOF_WON[djCat(bv)]}`;
   const act = $("#aofAct"); if (act) act.innerHTML = "";
-  const slow = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const slow = !calmMotion();
   const steps = [];
   steps.push(() => { const el = $("#aofVil"); if (el) { el.innerHTML = H.v.match(/../g).map(c => card(c)).join(""); el.classList.add("flip"); } const t = $("#aofVilTag"); if (t) t.textContent = aofCatOf([...H.V, ...H.B.slice(0, H.nb)]); const m = $("#aofMsg"); if (m) m.textContent = "All-in! L'avversario scopre le carte"; });
   const deal = (from, to, name) => steps.push(() => { for (let i = from; i < to; i++) { const s = document.querySelector(`[data-ab="${i}"]`); if (s) { s.innerHTML = card(H.b5[i]); s.classList.add("deal"); } } G.dealt = to; const z = $("#aofStreet"); if (z) z.textContent = name; const t1 = $("#aofMeTag"), t2 = $("#aofVilTag"); if (t1) t1.textContent = aofCatOf([...H.H, ...H.B.slice(0, to)]); if (t2) t2.textContent = aofCatOf([...H.V, ...H.B.slice(0, to)]); });

@@ -89,7 +89,7 @@ function shPick(i) {
   recordAnswer("strongest", ok ? 100 : 0, 0);
   try { if (ok) gSnd.ok(); else gSnd.bad(); } catch (e) {}
   shRender();
-  const slow = !matchMedia("(prefers-reduced-motion: reduce)").matches, rnd = G.round;
+  const slow = !calmMotion(), rnd = G.round;
   const step = () => {
     if (SHG !== G || G.round !== rnd || !run || run.kind !== "shgame") return;
     if (G.dealt < 5) { G.newFrom = G.dealt; G.dealt = G.dealt < 3 ? 3 : G.dealt + 1; shRender(); setTimeout(step, slow ? 420 : 0); return; }

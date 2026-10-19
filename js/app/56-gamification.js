@@ -71,6 +71,7 @@ const gSnd = {
 };
 /* coriandoli */
 function gConfetti(ms) {
+  if (typeof prefFx === "function" && !prefFx()) return;
   try {
     const c = document.createElement("canvas"); c.className = "confetti"; document.body.appendChild(c);
     const W = c.width = innerWidth, H = c.height = innerHeight, x = c.getContext("2d");

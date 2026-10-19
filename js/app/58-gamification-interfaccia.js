@@ -18,7 +18,6 @@ function gBindHeader() {
     else if (k === "rank") setTab("progress");
     else if (k === "review") startFree("review");
   });
-  const s = $("#gSound"); if (s) s.onclick = () => { gS().sound = !gS().sound; persist(); renderStats(); };
 }
 function gStreakModal() {
   const set = new Set(S.days), fr = new Set(gS().frozen || []), cells = [];

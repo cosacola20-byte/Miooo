@@ -179,7 +179,7 @@ function tgReplayRun(root, s, q) {
   const tick = () => { if (!document.body.contains(el) || !run || run.q !== q) return; if (i >= steps.length) return finish(); const x = steps[i++]; apply(x); const sp = run && run.ctx && run.ctx.tgSkip ? 0.5 : 1; tm = setTimeout(tick, sp * (x.st != null ? (x.nc ? 700 : 350) : 520)); };
   el.querySelector("[data-tgskip]").onclick = () => { if (!done) { if (run && run.ctx) run.ctx.tgSkip = 1; return finish(); } /* rivedi: rigioca solo l'animazione, le opzioni restano attive */
     done = false; i = 0; el.classList.remove("end"); el.querySelectorAll("[data-tgc]").forEach(c => c.classList.remove("up")); el.querySelectorAll(".tgr-bub").forEach(b => b.classList.remove("on")); el.querySelector("[data-tgskip]").textContent = "Salta ▸"; tm = setTimeout(tick, 300); };
-  if (isExamRun() || matchMedia("(prefers-reduced-motion: reduce)").matches) return finish();
+  if (isExamRun() || calmMotion()) return finish();
   q.hold = true; opts.forEach(o => { o.disabled = true; o.classList.add("tgr-wait"); });
   tm = setTimeout(tick, 350);
 }

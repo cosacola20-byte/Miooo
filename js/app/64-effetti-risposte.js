@@ -2,7 +2,6 @@
 /* livello della combo: 0 niente, 1 «caldo» (2 giuste di fila), 2 «fuoco» (3-4), 3 «zona» (5 o più) */
 const fxLevel = n => n >= 5 ? 3 : n >= 3 ? 2 : n >= 2 ? 1 : 0;
 const FX_NAME = ["", "In serie", "In fiamme", "Nella zona"];
-const fxCalm = () => { try { return matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } };
 /* indicatore della combo accanto alla barra di avanzamento (non in esame) */
 function fxComboPill() {
   if (!run || isExamRun()) return "";
@@ -15,7 +14,7 @@ function fxAnswer(k, res) {
   const pill = document.querySelector(".gbar .fxc"), n = run.combo || 0, lv = fxLevel(n);
   const tmp = document.createElement("span"); tmp.innerHTML = fxComboPill();
   if (pill) pill.replaceWith(...(tmp.firstChild ? [tmp.firstChild] : [])); else if (tmp.firstChild) { const x = document.querySelector(".gbar .xprun"); if (x) x.before(tmp.firstChild); }
-  if (res.score < 100 || fxCalm()) return;
+  if (res.score < 100 || !prefFx()) return;
   const b = k != null && k >= 0 ? document.querySelector(`.opt[data-k="${k}"]`) : null;
   if (b && lv >= 2) {
     const N = lv === 3 ? 18 : 10, wrap = document.createElement("span"); wrap.className = "fxspark lv" + lv; wrap.setAttribute("aria-hidden", "true");
@@ -35,7 +34,7 @@ function fxTiles(r) {
   return `<div class="fxsum${perfect ? " perfect" : ""}">${perfect ? `<div class="fxperf">${GIC.crown} Perfetto: ${sc.length} su ${sc.length}</div>` : ""}<div class="fxtiles" role="img" aria-label="${r.ok} risposte giuste su ${sc.length}">${sc.map((s, i) => `<span class="${s >= 100 ? "ok" : s > 0 ? "mid" : "ko"}" style="--d:${(.35 + i * .09).toFixed(2)}s">${s >= 100 ? "✓" : s > 0 ? "~" : "✕"}</span>`).join("")}</div>${best >= 3 ? `<div class="fxbest">${GIC.flame} Serie migliore: <b>${best}</b> di fila</div>` : ""}</div>`;
 }
 function fxSumRun(r) {
-  const el = document.querySelector(".sumgrid .big"); if (!el || r.score == null || fxCalm()) return;
+  const el = document.querySelector(".sumgrid .big"); if (!el || r.score == null || calmMotion()) return;
   const T = r.score, t0 = performance.now(); el.textContent = "0%";
   const f = t => { const k = Math.min(1, (t - t0) / 800), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(T * e) + "%"; if (k < 1) requestAnimationFrame(f); }; requestAnimationFrame(f);
   const sc = (r.sc || []).filter(s => s != null);

@@ -156,7 +156,7 @@ function gHeader() {
   <button class="gpill" data-gp="goal" title="XP di oggi: ${tx}/${g.goal}">${ring}<b>${tx} XP</b></button>
   <button class="gpill rank" data-gp="rank" title="Il tuo rango">${GIC.crown}<b>${esc(R.R.n)}</b></button>
   ${due ? `<button class="gpill" data-gp="review" title="Da ripassare">${GIC.book}<b>${due}</b></button>` : ""}
-  <button class="gpill ghost" id="gSound" title="${g.sound ? "Suoni attivi" : "Suoni spenti"}" aria-label="Suoni">${g.sound ? GIC.sound : GIC.mute}</button>`;
+  <button class="gpill ghost" data-prefs="1" title="Impostazioni (tema, animazioni, suoni)" aria-label="Impostazioni">${GIC_GEAR}</button>`;
 }
 
 

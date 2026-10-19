@@ -242,7 +242,7 @@ function answer(v, k, timeout) {
   $("#fb").innerHTML = `<div class="feedback ${cls}"><div class="fbhead">${gMascot(res.score == null ? "think" : res.score >= 100 ? "happy" : res.score > 0 ? "think" : "sad", 44)}<h4>${head} <span class="muted" style="font-weight:400;font-size:13px">· ${fmt(ms / 1000, 1)} s</span></h4><span class="fbx">${gx}</span></div>${res.expl}${res.score != null && res.score < 60 && !q.reviewItem && !(DRILLS[q.skill] || {}).noReview ? `<p class="muted" style="margin-top:6px;font-size:13px">${q.skill === "hands" ? "La trovi nella scheda Errori finché non la giochi giusta." : "Tornerà nel ripasso domani e resta nella scheda Errori."}</p>` : ""}</div><div class="nextrow"><span class="kbd">Invio per continuare</span><button class="btn3d" id="nextQ">${last ? "Fine drill" : "Avanti"}</button></div>`;
   if (q.after) q.after();
   $("#nextQ").onclick = nextQ;
-  if ((q.autoNext && res.score >= 100) || res.auto) { const stamp = run.qi + ":" + run.di; setTimeout(() => { if (run && run.stage === "fb" && run.qi + ":" + run.di === stamp) nextQ(); }, res.autoMs || 900); }
+  if ((q.autoNext && res.score >= 100) || res.auto || (PREF.auto && res.score >= 100)) { const stamp = run.qi + ":" + run.di; setTimeout(() => { if (run && run.stage === "fb" && run.qi + ":" + run.di === stamp) nextQ(); }, res.autoMs || (q.autoNext || res.auto ? 900 : 1400)); }
   if (!$("#htarget")) $("#nextQ").focus({ preventScroll: true });
   persistSoon();
 }
@@ -290,7 +290,7 @@ function saveResults(partial) {
 function skipLesson(id, el) {
   if ((S.skipped || {})[id]) return;
   const done = () => { S.skipped = { ...(S.skipped || {}), [id]: true }; persist(); renderProgram(); gToast("Lezione saltata. Se cambi idea, la ritrovi sotto le carte del livello."); };
-  if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return done();
+  if (!el || calmMotion()) return done();
   const r = el.getBoundingClientRect(), layer = document.createElement("div"); layer.className = "skip-dust"; document.body.appendChild(layer);
   const cols = ["#f5d06b", "#fff4cf", "#e9b949", "#ffffff", "#c9a227"];
   for (let i = 0; i < 80; i++) {
@@ -308,7 +308,7 @@ function skipF0() {
   if (!f0Open()) return;
   const done = () => { S.skipped = { ...(S.skipped || {}) }; f0Sess().forEach(s => { S.skipped[s.id] = true; }); persist(); renderProgram(); gToast("Fase 0 saltata: parti dalla prima lezione del NL2. Se cambi idea, le regole le ritrovi sotto le carte del livello."); };
   const els = [...document.querySelectorAll(".car-card.zero, .car-phase.f0")];
-  if (!els.length || matchMedia("(prefers-reduced-motion: reduce)").matches) return done();
+  if (!els.length || calmMotion()) return done();
   const layer = document.createElement("div"); layer.className = "skip-dust"; document.body.appendChild(layer);
   const cols = ["#f5d06b", "#fff4cf", "#e9b949", "#ffffff", "#c9a227"];
   els.forEach(el => {
