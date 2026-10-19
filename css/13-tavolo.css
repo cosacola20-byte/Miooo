@@ -1,0 +1,169 @@
+/* ===== tavolo, ispirato all'analisi del report: scena scura, panno con bordo colorato, colori delle azioni a due toni,
+   carte distribuite una sedia alla volta e board che si gira con un piccolo rimbalzo. Valori e grafica rifatti per Orca. ===== */
+
+/* --- temi (Impostazioni): tavolo = panno + bordo, sfondo = scena dietro il tavolo, mazzo = disegno delle carte --- */
+:root{
+  --felt1:#1f8a55;--felt2:#146b41;--felt3:#0c4a2d;--felt4:#093a23;
+  --rim-out:#1a0f07;--rim:#6a4b24;--rim-hi:#b5823f;
+  --scene1:#1b2a24;--scene2:#0b1310;--felt-line:rgba(190,240,210,.22);
+  /* azioni con i colori di Orca: fold grigio, check blu, call verde, bet oro, raise arancio, all-in rosso */
+  --a-fold:#5f6b74;--a-fold2:#434d55;--a-check:#3b86e3;--a-check2:#2563c4;--a-call:#22a86a;--a-call2:#15925f;
+  --a-bet:#f5c542;--a-bet2:#d99a00;--a-raise:#ef7a43;--a-raise2:#d1561f;--a-allin:#e04848;--a-allin2:#b52525;
+}
+:root[data-felt="blu"]{--felt1:#1d5fb4;--felt2:#174c94;--felt3:#103670;--felt4:#0b2753;--rim-out:#0b0d10;--rim:#3a3f46;--rim-hi:#8b939c;--felt-line:rgba(150,195,255,.32)}
+:root[data-felt="smeraldo"]{--felt1:#22b277;--felt2:#16895a;--felt3:#0d5e3e;--felt4:#08442c;--rim-out:#050807;--rim:#1c2421;--rim-hi:#56665f;--felt-line:rgba(190,250,220,.25)}
+:root[data-felt="bordeaux"]{--felt1:#ad3a4e;--felt2:#86283b;--felt3:#5b1828;--felt4:#40101c;--rim-out:#1e1405;--rim:#9c7424;--rim-hi:#f2d27a;--felt-line:rgba(255,215,160,.25)}
+:root[data-felt="notte"]{--felt1:#56636e;--felt2:#3e4852;--felt3:#2a3239;--felt4:#1c2227;--rim-out:#0b0d0f;--rim:#5d6870;--rim-hi:#c8d2d8;--felt-line:rgba(220,230,240,.22)}
+:root[data-scene="notteblu"]{--scene1:#15233a;--scene2:#070c16}
+:root[data-scene="acciaio"]{--scene1:#1d232b;--scene2:#08090b}
+:root[data-scene="foresta"]{--scene1:#134a33;--scene2:#0a2e1f}
+:root[data-scene="oceano"]{--scene1:#123a78;--scene2:#061b3f}
+:root[data-scene="vinaccia"]{--scene1:#3a1220;--scene2:#14060b}
+
+/* --- scena e bordo: tutti i tavoli --- */
+.ptbl,.p6{border-radius:22px;background:radial-gradient(130% 110% at 50% 0%,var(--scene1),var(--scene2));box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 10px 30px rgba(0,0,0,.25)}
+.p6{padding:44px 16px 64px;margin:4px auto 16px;max-width:640px}
+.lx-ha-tbl{background:radial-gradient(130% 110% at 50% 0%,var(--scene1),var(--scene2))}
+.ptbl-felt,.qfelt{box-shadow:inset 0 0 0 9px var(--rim),inset 0 0 0 10px var(--rim-hi),inset 0 0 0 13px var(--rim-out),inset 0 16px 34px rgba(0,0,0,.45),0 0 0 2px var(--rim-out),0 16px 30px rgba(0,0,0,.45)}
+.p6-felt{box-shadow:inset 0 0 0 9px var(--rim),inset 0 0 0 10px var(--rim-hi),inset 0 0 0 13px var(--rim-out),inset 0 12px 40px rgba(0,0,0,.4),0 0 0 2px var(--rim-out),0 16px 34px rgba(0,0,0,.45)}
+.gwfelt2{box-shadow:inset 0 0 0 11px var(--rim),inset 0 0 0 12px var(--rim-hi),inset 0 0 0 15px var(--rim-out),inset 0 18px 40px rgba(0,0,0,.45),0 0 0 2px var(--rim-out),0 18px 40px rgba(0,0,0,.5)}
+.lx-ha-felt{box-shadow:0 0 0 6px var(--rim),0 0 0 7px var(--rim-hi),0 0 0 10px var(--rim-out),inset 0 0 30px rgba(0,0,0,.45)}
+/* luce sul panno */
+.ptbl-felt::before,.p6-felt::before{content:"";position:absolute;inset:14px;border-radius:inherit;background:radial-gradient(60% 45% at 50% 30%,rgba(255,255,255,.10),transparent 70%);pointer-events:none}
+
+/* --- posti: targhette scure con cornice; Hero con cornice oro --- */
+.ptbl-plate,.p6-plate{background:linear-gradient(180deg,rgba(32,38,46,.96),rgba(12,15,19,.96));border:1.5px solid rgba(255,255,255,.14);box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08)}
+.ptbl-seat.hero .ptbl-plate,.p6-seat.me .p6-plate{border-color:#f5c542;box-shadow:0 0 0 2px rgba(245,197,66,.25),0 6px 16px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12)}
+.ptbl-plate .gwav,.ptbl-plate .mascot{border-radius:50%;box-shadow:0 0 0 2px #0b0e12,0 0 0 4px #9aa7b2}
+.ptbl-seat.hero .ptbl-plate .mascot{box-shadow:0 0 0 2px #0b0e12,0 0 0 4px #f5c542}
+.p6-plate em.act{color:#fff;background:var(--a-raise2);padding:0 6px;border-radius:99px;margin-top:2px}
+.p6-plate em.act.k-call,.p6-plate em.act.k-check{background:var(--a-call2)}.p6-plate em.act.k-bet{background:var(--a-bet2)}.p6-plate em.act.k-allin{background:var(--a-allin2)}
+
+/* --- colori delle azioni, due toni: fold azzurro scuro, check/call smeraldo, bet ambra, raise rosa, all-in viola --- */
+.lx-ha-bub.fold,.gwbub2.k-fold{background:linear-gradient(180deg,var(--a-fold),var(--a-fold2));color:#fff}
+.lx-ha-bub.check,.gwbub2.k-check{background:linear-gradient(180deg,var(--a-check),var(--a-check2));color:#fff}
+.lx-ha-bub.call,.gwbub2.k-call{background:linear-gradient(180deg,var(--a-call),var(--a-call2));color:#fff}
+.lx-ha-bub.bet,.gwbub2.k-bet{background:linear-gradient(180deg,var(--a-bet),var(--a-bet2));color:#2a1a00}
+.lx-ha-bub.raise,.gwbub2.k-raise{background:linear-gradient(180deg,var(--a-raise),var(--a-raise2));color:#fff}
+.lx-ha-bub.allin,.gwbub2.k-allin{background:linear-gradient(180deg,var(--a-allin),var(--a-allin2));color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.25),0 0 18px color-mix(in srgb,var(--a-allin) 70%,transparent)}
+.gwlg-a.k-fold{color:#aab4bb}.gwlg-a.k-check{color:#8cbcf5}.gwlg-a.k-call{color:#6fdc9f}.gwlg-a.k-bet{color:#f8cb5c}.gwlg-a.k-raise{color:#ff9a63}.gwlg-a.k-allin{color:#ff7a7a}
+/* opzioni dei quiz che sono un'azione: numero colorato e bordo a sinistra */
+.opt[class*="act-"]{border-left-width:5px}
+.opt.act-fold{border-left-color:var(--a-fold)}.opt.act-check{border-left-color:var(--a-check)}.opt.act-call{border-left-color:var(--a-call)}.opt.act-bet{border-left-color:var(--a-bet2)}.opt.act-raise{border-left-color:var(--a-raise)}.opt.act-allin{border-left-color:var(--a-allin)}
+.opt[class*="act-"] .k{color:#fff;border-color:transparent}
+.opt.act-fold .k{background:linear-gradient(180deg,var(--a-fold),var(--a-fold2))}.opt.act-check .k{background:linear-gradient(180deg,var(--a-check),var(--a-check2))}.opt.act-call .k{background:linear-gradient(180deg,var(--a-call),var(--a-call2))}.opt.act-bet .k{background:linear-gradient(180deg,var(--a-bet),var(--a-bet2));color:#2a1a00}.opt.act-raise .k{background:linear-gradient(180deg,var(--a-raise),var(--a-raise2))}.opt.act-allin .k{background:linear-gradient(180deg,var(--a-allin),var(--a-allin2))}
+
+/* --- mazzi: «Colori» (quello di sempre), «Classico» (bianco, rosso e nero), «4 colori» (bianco, semi colorati) --- */
+:root[data-deck="classico"] .pc,:root[data-deck="4c"] .pc,:root[data-deck="classico"] .tc,:root[data-deck="4c"] .tc{background:linear-gradient(180deg,#fff,#eef0f2);color:#1a1a1a;border:1px solid #cfd4d8}
+:root[data-deck="classico"] .pc.su-h,:root[data-deck="classico"] .pc.su-d,:root[data-deck="classico"] .tc.su-h,:root[data-deck="classico"] .tc.su-d{color:#d42a2a}
+:root[data-deck="4c"] .pc.su-h,:root[data-deck="4c"] .tc.su-h{color:#e03131}:root[data-deck="4c"] .pc.su-d,:root[data-deck="4c"] .tc.su-d{color:#2f6fe8}:root[data-deck="4c"] .pc.su-c,:root[data-deck="4c"] .tc.su-c{color:#16a34a}:root[data-deck="4c"] .pc.su-s,:root[data-deck="4c"] .tc.su-s{color:#26292d}
+:root[data-deck="classico"] .lx-c.d{color:#c62828}:root[data-deck="classico"] .lx-c.c{color:#1a1a1a}
+:root[data-deck="colori"] .lx-c{color:#fff;border-color:transparent}
+:root[data-deck="colori"] .lx-c.s{background:linear-gradient(160deg,#3a4046,#1c2024)}:root[data-deck="colori"] .lx-c.h{background:linear-gradient(160deg,#ec574d,#c0281f)}:root[data-deck="colori"] .lx-c.d{background:linear-gradient(160deg,#3b8ced,#1d5fbd)}:root[data-deck="colori"] .lx-c.c{background:linear-gradient(160deg,#2fb465,#197c43)}
+
+/* --- distribuzione: le carte coperte arrivano una sedia alla volta (0,14 s), la seconda carta 0,07 s dopo la prima --- */
+.ptbl-grp .pc,.ptbl-hc .pc,.p6-hc .pc{position:relative}
+.p6-back i,.ptbl-back i{animation:tbdeal .44s cubic-bezier(.3,1.45,.5,1) both}
+.p6-back i+i,.ptbl-back i+i{animation-delay:.07s}
+.p6-seat.s1 .p6-back i{animation-delay:.14s}.p6-seat.s1 .p6-back i+i{animation-delay:.21s}
+.p6-seat.s2 .p6-back i{animation-delay:.28s}.p6-seat.s2 .p6-back i+i{animation-delay:.35s}
+.p6-seat.s3 .p6-back i{animation-delay:.42s}.p6-seat.s3 .p6-back i+i{animation-delay:.49s}
+.p6-seat.s4 .p6-back i{animation-delay:.56s}.p6-seat.s4 .p6-back i+i{animation-delay:.63s}
+.p6-seat.s5 .p6-back i{animation-delay:.7s}.p6-seat.s5 .p6-back i+i{animation-delay:.77s}
+@keyframes tbdeal{0%{opacity:0;translate:0 -46px;scale:.5}}
+/* le tue carte (valori del report): partono da 240px più in alto, ruotate di -24° e al 60%, arrivano a 250 e 430 ms con
+   una molla (0,44 s, piccolo rimbalzo) e si girano insieme: a 990 ms sono di taglio (90°), poi -12° e ferme */
+.ptbl-hc .pc,.p6-hc .pc{animation:tbhero1 .99s linear .25s both}
+.ptbl-hc .pc+.pc,.p6-hc .pc+.pc{animation:tbhero2 .81s linear .43s both}
+@keyframes tbhero1{0%{transform:translateY(-240px) rotate(-24deg) rotateY(180deg) scale(.6);opacity:0;animation-timing-function:cubic-bezier(.3,1.45,.5,1)}8%{opacity:1}44.4%{transform:rotateY(180deg)}49.5%{transform:rotateY(180deg);animation-timing-function:ease-in}74.7%{transform:rotateY(90deg);animation-timing-function:ease-out}87%{transform:rotateY(-12deg);animation-timing-function:ease-in-out}}
+@keyframes tbhero2{0%{transform:translateY(-240px) rotate(-24deg) rotateY(180deg) scale(.6);opacity:0;animation-timing-function:cubic-bezier(.3,1.45,.5,1)}10%{opacity:1}54.3%{transform:rotateY(180deg);animation-timing-function:ease-in}69.1%{transform:rotateY(90deg);animation-timing-function:ease-out}84%{transform:rotateY(-12deg);animation-timing-function:ease-in-out}}
+/* board: si gira da coperto (180°), passa oltre di poco (-12°) e si ferma */
+.ptbl-grp .pc{animation:tbflip .5s linear both}
+@keyframes tbflip{0%{transform:rotateY(180deg) translateY(-14px) scale(.85);opacity:0;animation-timing-function:ease-in}10%{opacity:1}50%{transform:rotateY(90deg) translateY(-6px) scale(.95);animation-timing-function:ease-out}80%{transform:rotateY(-12deg) scale(1.02);animation-timing-function:ease-in-out}}
+/* il dorso resta visibile finché la carta è girata per più di 90° */
+.ptbl-grp .pc::after,.ptbl-hc .pc::after,.p6-hc .pc::after{content:"";position:absolute;inset:-1px;border-radius:inherit;background:repeating-linear-gradient(45deg,#8e1f1a 0 4px,#a8322b 4px 8px);border:2px solid #f3e6d0;opacity:0;pointer-events:none;animation:tbback .5s linear both;animation-delay:inherit}
+.ptbl-hc .pc::after,.p6-hc .pc::after{animation:tbbackh1 .99s linear .25s both}
+.ptbl-hc .pc+.pc::after,.p6-hc .pc+.pc::after{animation:tbbackh2 .81s linear .43s both}
+@keyframes tbback{0%,49.9%{opacity:1}50%,100%{opacity:0}}
+@keyframes tbbackh1{0%,74.6%{opacity:1}74.7%,100%{opacity:0}}
+@keyframes tbbackh2{0%,69%{opacity:1}69.1%,100%{opacity:0}}
+
+/* --- scelte del tema nelle impostazioni --- */
+.feltpick{display:flex;gap:8px;flex-wrap:wrap}
+.feltpick button{width:46px;height:30px;border-radius:15px;border:2px solid var(--line);cursor:pointer;background:radial-gradient(ellipse at 50% 40%,var(--c1),var(--c2));box-shadow:inset 0 0 0 3px var(--c3)}
+.feltpick button.on{border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--c3),0 0 0 3px color-mix(in srgb,var(--acc) 45%,transparent)}
+.feltpick button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.deckpick .pcmini{display:inline-grid;place-items:center;width:20px;height:27px;border-radius:4px;font-weight:800;font-size:12px;margin-right:2px;vertical-align:middle}
+
+/* ===== tavolo 6-max nello stile del report: pista interna, raggiera, avatar rotondi, fumetti con la punta, board a 5 caselle ===== */
+.p6,.ptbl,.lx-ha-tbl{background:radial-gradient(120% 100% at 50% 0%,var(--scene1),var(--scene2)),var(--scene2);background-image:radial-gradient(120% 100% at 50% 0%,var(--scene1),var(--scene2)),repeating-linear-gradient(45deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),repeating-linear-gradient(-45deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);background-blend-mode:normal,overlay,overlay}
+.p6{padding:58px 22px 74px}
+.p6-felt{height:270px;background:radial-gradient(ellipse at 50% 42%,var(--felt1) 0%,var(--felt2) 55%,var(--felt3) 100%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),0 0 0 9px var(--rim),0 0 0 10px var(--rim-hi),0 0 0 14px var(--rim-out),0 -2px 0 15px rgba(255,255,255,.05),0 22px 40px rgba(0,0,0,.6),inset 0 10px 40px rgba(0,0,0,.35)}
+.ptbl-felt{background:radial-gradient(ellipse at 50% 42%,var(--felt1) 0%,var(--felt2) 55%,var(--felt3) 100%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),0 0 0 9px var(--rim),0 0 0 10px var(--rim-hi),0 0 0 14px var(--rim-out),0 22px 40px rgba(0,0,0,.55),inset 0 10px 40px rgba(0,0,0,.35)}
+.lx-ha-felt{background:radial-gradient(ellipse at 50% 42%,var(--felt1) 0%,var(--felt2) 55%,var(--felt3) 100%)}
+/* pista interna e raggiera sul panno */
+.p6-felt .qrail,.ptbl-felt .qrail{inset:20% 17%;border:1.5px solid var(--felt-line);border-radius:999px}
+.p6-felt::after,.ptbl-felt::after,.lx-ha-felt::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:repeating-conic-gradient(from 7.5deg,var(--felt-line) 0 .45deg,transparent .45deg 45deg);-webkit-mask:radial-gradient(ellipse 50% 50% at 50% 50%,transparent 66%,#000 67%,#000 93%,transparent 94%);mask:radial-gradient(ellipse 50% 50% at 50% 50%,transparent 66%,#000 67%,#000 93%,transparent 94%);opacity:.75}
+.lx-ha-felt::after{opacity:.55}
+.p6-felt::before{display:none}
+/* centro: strada, piatto, board, informazioni */
+.p6-mid{gap:6px;top:48%}
+.p6-street{font-size:11px;font-weight:800;letter-spacing:.06em;color:#e6f0ff;background:rgba(255,255,255,.12);padding:3px 10px;border-radius:99px}
+.p6-pot{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0b1220;font-weight:800;font-size:13px;padding:3px 10px 3px 6px;border-radius:99px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.p6-pot i{width:20px;height:12px;border-radius:50%;background:radial-gradient(ellipse at 50% 35%,#ffe680,#f5b700 60%,#b47d00);box-shadow:0 -3px 0 #f5b700,0 -6px 0 #ffd84a}
+.p6-pot b{color:inherit}
+.p6-board{display:flex;gap:4px;align-items:center}.p6-board .cards{display:flex;gap:4px}
+.p6-slot{width:36px;height:50px;border-radius:6px;border:1.5px solid var(--felt-line);background:repeating-linear-gradient(135deg,rgba(255,255,255,.06) 0 4px,transparent 4px 8px)}
+.p6-board .pc{width:36px;height:50px;position:relative;box-shadow:0 4px 10px rgba(0,0,0,.45);animation:tbflip .5s linear both}
+.p6-board .pc:nth-child(2){animation-delay:.08s}.p6-board .pc:nth-child(3){animation-delay:.16s}.p6-board .pc:nth-child(4){animation-delay:.34s}.p6-board .pc:nth-child(5){animation-delay:.5s}
+.p6-board .pc::after{content:"";position:absolute;inset:-1px;border-radius:inherit;background:repeating-linear-gradient(45deg,#8e1f1a 0 4px,#a8322b 4px 8px);border:2px solid #f3e6d0;opacity:0;pointer-events:none;animation:tbback .5s linear both;animation-delay:inherit}
+.p6-info{font-size:10.5px;color:rgba(220,232,255,.6);letter-spacing:.02em}
+/* posti */
+.p6-seat{gap:0}
+.p6-av{position:relative;z-index:2;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#2a3340,#0c1016);box-shadow:0 0 0 2px #0b0e12,0 0 0 3.5px #59636e,0 6px 14px rgba(0,0,0,.55);overflow:hidden}
+.p6-av .gwav{width:46px;height:46px;font-size:24px;border-radius:50%;box-shadow:none}
+.p6-av .mascot{width:58px;height:58px;margin-top:6px}
+.p6-seat.me .p6-av{width:60px;height:60px;box-shadow:0 0 0 2px #0b0e12,0 0 0 4px #f5c542,0 0 20px rgba(245,197,66,.5),0 6px 14px rgba(0,0,0,.55);animation:tbglow 2.4s ease-in-out infinite}
+@keyframes tbglow{50%{box-shadow:0 0 0 2px #0b0e12,0 0 0 4px #ffe08a,0 0 28px rgba(245,197,66,.75),0 6px 14px rgba(0,0,0,.55)}}
+.p6-plate{position:relative;z-index:3;margin-top:-6px;min-width:66px;padding:0;border-radius:4px;overflow:hidden;border:0;background:#05070a;box-shadow:0 4px 10px rgba(0,0,0,.5);line-height:1.2}
+.p6-plate b{display:block;width:100%;text-align:center;background:#d5ddd9;color:#0b1410;font-size:11px;font-weight:900;padding:1px 6px;letter-spacing:.03em}
+.p6-plate span{display:block;text-align:center;color:#f2f5f8;font-size:12px;font-weight:700;padding:2px 6px}
+.p6-seat.me .p6-plate{min-width:80px;border:0;box-shadow:0 0 0 1.5px #f5c542,0 4px 10px rgba(0,0,0,.5)}
+.p6-seat.me .p6-plate b{background:#f5c542;color:#2a1d00}
+.p6-seat.fold .p6-av,.p6-seat.fold .p6-plate{opacity:.5;filter:grayscale(.7)}
+.p6-seat.fold{opacity:1;filter:none}
+/* carte: coperte dietro l'avatar, le tue grandi e inclinate accanto */
+.p6-back{position:absolute;z-index:1;top:-8px;left:calc(100% - 22px);margin:0}.p6-seat.s4 .p6-back,.p6-seat.s5 .p6-back{left:auto;right:calc(100% - 22px)}.p6-back i:first-child{transform:rotate(-8deg)}
+.p6-back i{width:20px;height:28px;border-radius:4px;background:repeating-linear-gradient(45deg,#8e1f1a 0 4px,#a8322b 4px 8px);border:1.5px solid #f3e6d0}
+.p6-seat.me .p6-hc{position:absolute;z-index:4;left:calc(100% - 6px);top:-4px;margin:0}
+.p6-seat.me .p6-hc .pc{width:44px;height:62px}
+.p6-seat.me .p6-hc .pc:first-child{transform:rotate(-8deg)}.p6-seat.me .p6-hc .pc+.pc{transform:rotate(9deg) translateY(4px);margin-left:-10px}
+/* fumetto dell'azione con la punta verso il giocatore */
+.p6-tag{position:absolute;z-index:5;font-style:normal;font-size:11.5px;font-weight:800;color:#fff;padding:4px 10px;border-radius:8px;white-space:nowrap;background:linear-gradient(180deg,var(--a-raise),var(--a-raise2));box-shadow:0 0 0 1px rgba(255,255,255,.18) inset,0 4px 10px rgba(0,0,0,.4);animation:tbbub .35s cubic-bezier(.25,1.4,.4,1) .55s both}
+.p6-tag::before{content:"";position:absolute;width:8px;height:8px;background:inherit;transform:rotate(45deg)}
+.p6-tag.k-fold{background:linear-gradient(180deg,var(--a-fold),var(--a-fold2));color:#e6ecef}
+.p6-tag.k-check{background:linear-gradient(180deg,var(--a-check),var(--a-check2))}.p6-tag.k-call{background:linear-gradient(180deg,var(--a-call),var(--a-call2))}
+.p6-tag.k-bet{background:linear-gradient(180deg,var(--a-bet),var(--a-bet2));color:#2a1a00}
+.p6-tag.k-allin{background:linear-gradient(180deg,var(--a-allin),var(--a-allin2))}
+.p6-tag.r{left:calc(100% + 8px);top:16px}.p6-tag.r::before{left:-3px;top:calc(50% - 4px)}
+.p6-tag.l{right:calc(100% + 8px);top:16px}.p6-tag.l::before{right:-3px;top:calc(50% - 4px)}
+.p6-tag.b{top:calc(100% + 6px);left:50%;translate:-50% 0}.p6-tag.b::before{top:-3px;left:calc(50% - 4px)}
+.p6-tag.t{bottom:calc(100% + 8px);left:50%;translate:-50% 0}.p6-tag.t::before{bottom:-3px;left:calc(50% - 4px)}
+@keyframes tbbub{0%{opacity:0;scale:.6}}
+/* fiches puntate: pillola scura con la pila */
+.p6-bet{gap:5px;background:rgba(5,8,14,.72);padding:2px 8px 2px 4px;border-radius:99px;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.p6-bet i,.p6-bet.big i{width:18px;height:11px;border-radius:50%;background:radial-gradient(ellipse at 50% 35%,#fff,#d9dee5 60%,#9aa3ad);box-shadow:0 -3px 0 #e9edf2,0 -5px 0 #c4cbd3;inset:auto}
+.p6-bet b{background:none;padding:0;font-size:12px}
+.p6-dealer{width:20px;height:20px;background:radial-gradient(circle at 40% 35%,#ffe680,#f5b700 70%,#b47d00);color:#3a2600;font-size:11px;box-shadow:0 0 0 1.5px #7a5400,0 2px 5px rgba(0,0,0,.5)}
+/* posizioni dei posti più distanti dal panno, come nei client */
+@media (max-width:520px){.p6{padding:52px 10px 70px}.p6-felt{height:240px}.p6-av{width:38px;height:38px}.p6-av .gwav{width:38px;height:38px;font-size:20px}.p6-seat.me .p6-av{width:50px;height:50px}.p6-plate{min-width:54px}.p6-plate b{font-size:10px}.p6-plate span{font-size:11px}.p6-slot,.p6-board .pc{width:28px;height:40px}.p6-board .pc .r{font-size:13px}.p6-board .pc .s{font-size:12px}.p6-seat.me .p6-hc .pc{width:38px;height:54px}.p6-tag{font-size:10.5px;padding:3px 7px}}
+
+/* pulsanti delle azioni sotto il tavolo: quando tutte le risposte sono azioni brevi */
+.opts.actrow{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:1fr;gap:10px}
+@media (max-width:440px){.opts.actrow{gap:6px}.opts.actrow .opt{font-size:13.5px;letter-spacing:.03em;padding:8px 6px}}
+.opts.actrow .opt{justify-content:center;text-align:center;min-height:56px;color:#fff;font-size:17px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;border:0;border-bottom:4px solid rgba(0,0,0,.28);border-radius:12px;position:relative}
+.opts.actrow .opt .k{position:absolute;left:6px;top:6px;width:18px;height:18px;min-width:0;font-size:10px;background:rgba(255,255,255,.22)!important;color:#fff;border:0}
+.opts.actrow .opt.act-fold{background:linear-gradient(180deg,var(--a-fold),var(--a-fold2))}.opts.actrow .opt.act-check{background:linear-gradient(180deg,var(--a-check),var(--a-check2))}.opts.actrow .opt.act-call{background:linear-gradient(180deg,var(--a-call),var(--a-call2))}.opts.actrow .opt.act-bet{background:linear-gradient(180deg,var(--a-bet),var(--a-bet2));color:#2a1a00}.opts.actrow .opt.act-raise{background:linear-gradient(180deg,var(--a-raise),var(--a-raise2))}.opts.actrow .opt.act-allin{background:linear-gradient(180deg,var(--a-allin),var(--a-allin2))}
+.opts.actrow .opt:hover:not([disabled]){filter:brightness(1.08)}
+.opts.actrow .opt.correct{box-shadow:0 0 0 3px #fff,0 0 0 6px #34c77f}.opts.actrow .opt.wrong{box-shadow:0 0 0 3px #fff,0 0 0 6px #ea5a5a}
+.opts.actrow .opt[disabled]:not(.correct):not(.wrong){opacity:.55}

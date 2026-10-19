@@ -49,7 +49,7 @@
 .lx-c.big i{font-style:normal;font-size:19px}
 .lx-spot{display:flex;flex-wrap:wrap;align-items:center;gap:14px;background:var(--surface2);border-radius:14px;padding:12px;margin:12px 0}
 .lx-spot>div>small,.lx-felt>small{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-.lx-felt{background:#0f5a3a;border-radius:12px;padding:8px 10px}.lx-felt>small{color:#bfe6d2}
+.lx-felt{background:var(--felt3,#0f5a3a);border-radius:12px;padding:8px 10px}.lx-felt>small{color:#bfe6d2}
 .lx-spot .lx-cards{display:flex;gap:5px}
 .lx-spot dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:13.5px;min-width:160px}
 .lx-spot dt{font-weight:700}.lx-spot dd{margin:0;color:var(--ink2)}

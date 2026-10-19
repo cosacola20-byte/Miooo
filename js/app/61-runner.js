@@ -158,7 +158,7 @@ function renderRun() {
     const TT = q.examT || d.time, timedQ = q.timed || !!q.examT;
     h += `<div class="qcard ${isExamRun() ? "examq" : ""}"><div class="qhead">${isExamRun() ? `<span class="exam-badge">🏆 Esame</span>` : ""}<span class="eyebrow">${isExamRun() ? `Domanda ${run.plan.slice(0, run.di).reduce((a, p) => a + p[1], 0) + run.qi + 1} di ${run.plan.reduce((a, p) => a + p[1], 0)}` : `${esc(q.title)}${q.noCount ? "" : ` · ${run.qi + 1}/${count}`}`}</span>${q.lesId && LESSONS[q.lesId] && !isExamRun() ? `<button class="lesrev" id="lesRev" title="Rileggi la scheda">📖 Scheda</button>` : ""}${timedQ && run.stage === "q" ? `<span class="timer ${q.examT ? "exam" : ""}" id="timer" title="${q.examT ? "Esame: tempo in base alla lunghezza della domanda" : ""}">${TT}s</span>` : ""}</div>${q.body}`;
     if (q.layout === "sliders") h += `<div style="margin-top:14px"><button class="btn primary" id="submitSl">Conferma la stima</button></div>`;
-    else h += `<div class="opts ${q.layout || ""}">${q.opts.map((o, k) => `<button class="opt ${q.center ? "center" : ""}" data-k="${k}">${q.center ? "" : `<span class="k">${k + 1}</span>`}<span>${o.label}</span></button>`).join("")}</div>`;
+    else h += `<div class="opts ${q.layout || ""} ${q.opts.length <= 4 && q.opts.every(o => actKind(o.label) && String(o.label).replace(/<[^>]+>/g, "").trim().length <= 16) ? "actrow" : ""}">${q.opts.map((o, k) => `<button class="opt ${q.center ? "center" : ""} ${actKind(o.label)}" data-k="${k}">${q.center ? "" : `<span class="k">${k + 1}</span>`}<span>${o.label}</span></button>`).join("")}</div>`;
     h += `<div id="fb"></div></div>`;
     $("#view").innerHTML = h + `</div>`;
     tlTableize($("#view")); qvApply($("#view"), q);

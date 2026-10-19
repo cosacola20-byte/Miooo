@@ -41,19 +41,26 @@ const fmtBB = x => fmtN(x) + "bb";
 function sixTable(o) {
   const hi = P6.indexOf(o.hero), seats = o.seats || {};
   const pot = o.pot != null ? o.pot : P6.reduce((a, p) => a + ((seats[p] && seats[p].bet) || 0), 0);
+  const kindOf = t => typeof actKind === "function" ? actKind(t).replace("act-", "k-") : "";
+  /* ogni posto: carte, avatar rotondo, targhetta a due fasce (posizione e stack) e fumetto dell'azione rivolto verso il centro */
   const seatHtml = (p, k) => {
     const S0 = seats[p] || { st: "fold" }, [x, y] = P6_SLOT[k], me = p === o.hero, fold = S0.st === "fold";
     const bx = 50 + (x - 50) * 0.58, by = 46 + (y - 46) * 0.52;
     const bet = S0.bet ? `<div class="p6-bet ${S0.bet > 1 ? "big" : ""}" style="left:${bx}%;top:${by}%"><i></i><b>${fmtN(S0.bet)}</b></div>` : "";
-    const dx = 50 + (x - 50) * 0.8 + (k === 0 ? 17 : k === 3 ? -9 : 0), dy = 46 + (y - 46) * 0.78 + (k === 1 || k === 5 ? -8 : k === 2 || k === 4 ? 8 : k === 0 ? -6 : 0);
+    const dx = 50 + (x - 50) * (k === 1 || k === 5 ? 0.9 : 0.8) + (k === 0 ? 17 : k === 3 ? -9 : 0), dy = 46 + (y - 46) * 0.78 + (k === 1 || k === 5 ? -22 : k === 2 || k === 4 ? 8 : k === 0 ? -6 : 0);
     const btn = p === "BTN" ? `<div class="p6-dealer" style="left:${dx}%;top:${dy}%">D</div>` : "";
     const cards = me ? (o.heroCards ? `<div class="p6-hc">${cardsHtml(o.heroCards)}</div>` : "") : !fold ? `<div class="p6-back"><i></i><i></i></div>` : "";
-    const tag = fold ? `<em>Fold</em>` : S0.tag ? `<em class="act">${S0.tag}</em>` : "";
-    return `${bet}${btn}<div class="p6-seat ${me ? "me" : ""} ${fold ? "fold" : ""} ${S0.st === "wait" ? "wait" : ""} s${k}" style="left:${x}%;top:${y}%">${cards}<div class="p6-plate"><b>${me ? "Tu · " + p : p}</b><span>${fmtBB(S0.stk != null ? S0.stk : Math.max(0, (o.stack || 100) - (S0.bet || 0)))}</span>${tag}</div></div>`;
+    const side = k === 1 || k === 2 ? "r" : k === 4 || k === 5 || k === 0 ? "l" : "b";
+    const tag = fold ? `<em class="p6-tag k-fold ${side}">Fold</em>` : S0.tag ? `<em class="p6-tag act ${kindOf(S0.tag)} ${side}">${S0.tag}</em>` : "";
+    const av = me ? (typeof gMascot === "function" ? gMascot("think", 54) : "") : (typeof gwAv === "function" ? gwAv(p, true) : "");
+    return `${bet}${btn}<div class="p6-seat ${me ? "me" : ""} ${fold ? "fold" : ""} ${S0.st === "wait" ? "wait" : ""} s${k}" style="left:${x}%;top:${y}%">${cards}<div class="p6-av">${av}</div><div class="p6-plate"><b>${me ? "Tu · " + p : p}</b><span>${fmtBB(S0.stk != null ? S0.stk : Math.max(0, (o.stack || 100) - (S0.bet || 0)))}</span></div>${tag}</div>`;
   };
-  const board = (o.board || []).filter(b => b.cards);
+  /* board: le carte uscite e caselle vuote per quelle che mancano, sempre 5 */
+  const board = (o.board || []).filter(b => b.cards), bc = board.map(b => b.cards).join(""), nb = Math.min(5, (bc.match(/../g) || []).length);
+  const slots = Array.from({ length: 5 - nb }, () => `<span class="p6-slot"></span>`).join("");
+  const street = o.street || (nb >= 5 ? "River" : nb === 4 ? "Turn" : nb === 3 ? "Flop" : "Preflop");
   return `<div class="p6"><div class="p6-felt"><div class="qrail"></div>
-    <div class="p6-mid">${board.length ? `<div class="ptbl-board">${board.map(b => `<div class="ptbl-grp"><span>${b.lbl}</span>${cardsHtml(b.cards, b.sm)}</div>`).join("")}</div>` : `<span class="ptbl-pre">${o.street || "Preflop"}</span>`}<span class="p6-pot">Piatto <b>${fmtBB(pot)}</b></span></div>
+    <div class="p6-mid" aria-label="${street}"><span class="p6-pot"><i></i>${fmtBB(pot)}</span><div class="p6-board">${bc ? cardsHtml(bc) : ""}${slots}</div></div>
     ${P6.map((p, i) => seatHtml(p, (i - hi + 6) % 6)).join("")}
   </div></div>`;
 }

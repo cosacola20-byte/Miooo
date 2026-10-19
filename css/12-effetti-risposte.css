@@ -1,10 +1,10 @@
 /* ===== effetti delle risposte ===== */
 /* opzione giusta: anello verde e piccolo rimbalzo; sbagliata: anello rosso e scossa */
 .opt{position:relative}
-.opt.correct{box-shadow:0 0 0 3px color-mix(in srgb,#34c77f 45%,transparent);animation:fxok .3s cubic-bezier(.2,.9,.3,1.25)}
-.opt.wrong{box-shadow:0 0 0 3px color-mix(in srgb,#ea5a5a 45%,transparent);animation:fxko .4s ease-out}
-@keyframes fxok{0%{transform:scale(1)}45%{transform:scale(1.06)}100%{transform:scale(1)}}
-@keyframes fxko{0%,100%{transform:translateX(0)}15%{transform:translateX(-9px)}32%{transform:translateX(8px)}50%{transform:translateX(-6px)}68%{transform:translateX(4px)}84%{transform:translateX(-2px)}}
+.opt.correct{box-shadow:0 0 0 3px color-mix(in srgb,#34c77f 45%,transparent);animation:fxok .28s cubic-bezier(.2,.9,.3,1.2)}
+.opt.wrong{box-shadow:0 0 0 3px color-mix(in srgb,#ea5a5a 45%,transparent);animation:fxko .38s linear}
+@keyframes fxok{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes fxko{0%,100%{transform:translateX(0)}16.7%{transform:translateX(-9px)}33.3%{transform:translateX(8px)}50%{transform:translateX(-6px)}66.7%{transform:translateX(4px)}83.3%{transform:translateX(-2px)}}
 
 /* indicatore della combo nella barra del drill: caldo, fuoco, zona */
 .fxc{display:inline-flex;align-items:center;gap:4px;padding:3px 10px 3px 6px;border-radius:99px;font-family:var(--f-display);font-weight:800;font-size:14px;line-height:1;white-space:nowrap;animation:fxpill .35s cubic-bezier(.2,.9,.3,1.3)}
@@ -26,24 +26,47 @@
 @keyframes fxsp{0%{transform:rotate(var(--a)) translateY(0) scale(1);opacity:1}100%{transform:rotate(var(--a)) translateY(calc(-1 * var(--d))) scale(.3);opacity:0}}
 
 /* lampo quando si entra nella zona (5 di fila, poi ogni 10) */
-.fxzone{position:fixed;inset:0;z-index:60;display:grid;place-items:center;pointer-events:none;background:radial-gradient(circle at 50% 45%,rgba(224,69,123,.22),transparent 60%);animation:fxzbg 1.25s ease-out forwards}
-.fxzone span{display:flex;flex-direction:column;align-items:center;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#8e44ad,#e0457b 55%,#ff8a1f);padding:12px 26px;border-radius:18px;box-shadow:0 10px 40px rgba(142,68,173,.5);animation:fxzslam 1.25s cubic-bezier(.2,.9,.3,1.2) forwards}
+.fxzone{position:fixed;inset:0;z-index:60;display:grid;place-items:center;pointer-events:none;background:radial-gradient(circle at 50% 45%,rgba(224,69,123,.22),transparent 60%);animation:fxzbg 1.7s linear forwards}
+.fxzone span{grid-area:1/1;display:flex;flex-direction:column;align-items:center;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#8e44ad,#e0457b 55%,#ff8a1f);padding:12px 26px;border-radius:18px;box-shadow:0 10px 40px rgba(142,68,173,.5);animation:fxzslam .45s cubic-bezier(.2,1.5,.4,1) both}
 .fxzone b{font-size:38px;letter-spacing:0;line-height:1}
-@keyframes fxzbg{0%{opacity:0}15%{opacity:1}75%{opacity:1}100%{opacity:0}}
-@keyframes fxzslam{0%{transform:scale(1.8);opacity:0}18%{transform:scale(.94);opacity:1}28%{transform:scale(1)}78%{transform:scale(1);opacity:1}100%{transform:scale(.9) translateY(-14px);opacity:0}}
+.fxzone .fxr{grid-area:1/1;width:160px;height:160px;border-radius:50%;border:3px solid #ffb21f;animation:fxzring .8s ease-out .1s both}.fxzone .fxr.r2{border-color:#e0457b;animation-delay:.3s}
+.fxzone .fxlines{grid-area:1/1;width:340px;height:340px;border-radius:50%;background:repeating-conic-gradient(rgba(255,255,255,.55) 0 2deg,transparent 2deg 22.5deg);-webkit-mask:radial-gradient(circle,transparent 38%,#000 40%,transparent 70%);mask:radial-gradient(circle,transparent 38%,#000 40%,transparent 70%);animation:fxzlines .7s ease-out both}
+/* il lampo resta 1,1 s, poi sparisce in 0,6 s */
+@keyframes fxzbg{0%{opacity:0}6%{opacity:1}64.7%{opacity:1}100%{opacity:0}}
+@keyframes fxzslam{0%{transform:scale(2.2);opacity:0}60%{transform:scale(.92);opacity:1}100%{transform:scale(1)}}
+@keyframes fxzring{0%{transform:scale(.3);opacity:1}100%{transform:scale(2.2);opacity:0}}
+@keyframes fxzlines{0%{transform:scale(.5) rotate(-10deg);opacity:0}30%{opacity:1}100%{transform:scale(1.3) rotate(0);opacity:0}}
+/* lampo bianco sull'opzione giusta da 3 di fila */
+.fxflash{position:absolute;inset:0;border-radius:inherit;background:#fff;pointer-events:none;animation:fxfl .45s ease-out forwards}
+@keyframes fxfl{0%{opacity:.75}100%{opacity:0}}
 
 /* riepilogo del drill: tessere che si girano una alla volta */
 .fxsum{margin:12px 0 4px}
 .fxtiles{display:flex;flex-wrap:wrap;gap:6px;perspective:600px}
-.fxtiles span{width:34px;height:40px;border-radius:9px;display:grid;place-items:center;font-weight:900;font-size:17px;color:#fff;animation:fxflip .45s cubic-bezier(.2,.9,.3,1.2) var(--d,0s) both;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.fxtiles span{position:relative;width:34px;height:40px;border-radius:9px;display:grid;place-items:center;font-weight:900;font-size:17px;color:#fff;animation:fxflip .3s ease-out var(--d,0s) both;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.fxtiles span.ok{animation:fxflip .3s ease-out var(--d,0s) both,fxtok .35s cubic-bezier(.2,.9,.3,1.2) calc(var(--d,0s) + .3s)}
+.fxtiles span.ko{animation:fxflip .3s ease-out var(--d,0s) both,fxtko .3s linear calc(var(--d,0s) + .3s)}
+.fxtiles span.ring::after{content:"";position:absolute;inset:-3px;border-radius:12px;border:2px solid #f5b700;opacity:0;animation:fxring .5s ease-out calc(var(--d,0s) + .3s) 2}
+@keyframes fxtok{0%{scale:.7}60%{scale:1.15}100%{scale:1}}
+@keyframes fxtko{25%{translate:-3px 0}75%{translate:3px 0}}
+@keyframes fxring{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.35)}}
 .fxtiles .ok{background:#1b8f4f}.fxtiles .mid{background:#b8860b}.fxtiles .ko{background:#c23434}
-@keyframes fxflip{0%{transform:rotateY(90deg) scale(.7);opacity:0}60%{transform:rotateY(0) scale(1.12);opacity:1}100%{transform:rotateY(0) scale(1);opacity:1}}
+@keyframes fxflip{0%{transform:rotateY(90deg);opacity:0}100%{transform:rotateY(0);opacity:1}}
 .fxbest{margin-top:8px;display:inline-flex;align-items:center;gap:4px;font-size:14px;color:var(--ink2)}.fxbest .gic{width:18px;height:18px}
 .fxperf{display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;padding:5px 12px;border-radius:99px;background:linear-gradient(135deg,#f5b700,#ff8a1f);color:#2a1d00;font-family:var(--f-display);font-weight:800;font-size:15px;animation:fxpill .5s cubic-bezier(.2,.9,.3,1.3) .3s both}
 .fxperf .gic{width:20px;height:20px}
+.sumgrid .big.fxland{animation:fxland .45s cubic-bezier(.2,1.5,.4,1)}
+@keyframes fxland{0%{transform:scale(1.4)}100%{transform:scale(1)}}
+.fxc.lv1{background-image:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 45%,transparent 60%);background-size:250% 100%;animation:fxpill .35s cubic-bezier(.2,.9,.3,1.3),fxshine 6s linear infinite}
+@keyframes fxshine{0%{background-position:130% 0}18%,100%{background-position:-130% 0}}
 .fxperf .gic path,.fxperf .gic rect{fill:#2a1d00}
 .fxsum.perfect .fxtiles .ok{background:linear-gradient(160deg,#22b062,#137a43);box-shadow:0 0 0 2px rgba(245,183,0,.55),0 2px 0 rgba(0,0,0,.18)}
 
+.feedback{animation:fxdrawer .5s cubic-bezier(.32,.72,0,1) both}
+@keyframes fxdrawer{0%{transform:translateY(60px);opacity:0}100%{transform:none;opacity:1}}
+/* domanda: entra in 0,2 s, gli elementi uno dopo l'altro (0, 0,1 e 0,16 s) */
+.runner .qcard:not(.intro)>*{animation:fxqin .2s ease-in-out both}.runner .qcard:not(.intro)>*:nth-child(2){animation-delay:.1s}.runner .qcard:not(.intro)>*:nth-child(n+3){animation-delay:.16s;animation-name:fxqin2}
+@keyframes fxqin{0%{transform:translateY(20px);opacity:0}}@keyframes fxqin2{0%{transform:translateY(50px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.fxzone,.fxspark{display:none}.fxtiles span{opacity:1}}
 
 /* ===== impostazioni ===== */

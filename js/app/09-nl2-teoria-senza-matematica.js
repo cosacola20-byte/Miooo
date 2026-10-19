@@ -532,7 +532,7 @@ const UI = (() => {
       const btn = at(DS, "BTN"), db = `<span class="lx-ha-d" style="left:${btn[0]}%;top:${btn[1]}%">D</span>`;
       const end = o.end ? `<div class="lx-ha-end ${anim("opacity:0;transform:translate(-50%,8px)", "opacity:1;transform:translate(-50%,0)", o.end.t)}">${o.end.testo}</div>` : "";
       const log = (o.log || []).map(([t, txt]) => `<li class="${anim("opacity:.18", "opacity:1", t)}">${txt}</li>`).join("");
-      const brd = o.board ? `<div class="lx-ha-board">${o.board.map(([t, str]) => `<span class="${anim("opacity:0;transform:translateY(-8px)", "opacity:1;transform:none", t)}">${cardsHtml(str)}</span>`).join("")}</div>` : "";
+      const brd = o.board ? `<div class="lx-ha-board">${o.board.map(([t, str]) => `<span class="${anim("opacity:0;transform:perspective(500px) rotateY(80deg) translateY(-6px)", "opacity:1;transform:none", t, C - 0.7, 0.45)}">${cardsHtml(str)}</span>`).join("")}</div>` : "";
       const frz = o.end ? Math.min(C - 0.75, o.end.t + 0.4) : C - 1;
       const sum = [...(o.reveal || []).map(([, pos, c]) => `${pos} mostra ${c}`), o.end ? o.end.testo.replace(/<[^>]+>/g, "") : ""].filter(Boolean).join(". ");
       return `<div class="lx-ha ${id}" style="--lx-ha-frz:-${frz.toFixed(2)}s"><style>${css}</style><div class="lx-ha-tbl${o.board ? " hasb" : ""}" aria-hidden="true"><div class="lx-ha-felt"></div>${seats}${db}${brd}${pots}${ev}${end}</div>${log ? `<ol class="lx-ha-log">${log}</ol>` : ""}${sum ? `<p class="lx-ha-sr">${sum}</p>` : ""}<p class="lx-cap">La mano si ripete da sola ogni ${C} secondi.</p></div>`;
