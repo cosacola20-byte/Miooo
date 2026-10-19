@@ -60,9 +60,11 @@ function gTone(seq) {
     seq.forEach(([f, d, st, type, vol]) => { const o = gAC.createOscillator(), g = gAC.createGain(); o.type = type || "triangle"; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t0 + st); g.gain.exponentialRampToValueAtTime(vol || 0.12, t0 + st + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + st + d); o.connect(g); g.connect(gAC.destination); o.start(t0 + st); o.stop(t0 + st + d + 0.05); });
   } catch (e) {}
 }
+let gOkN = 0;
 const gSnd = {
-  ok: () => gTone([[784, 0.12, 0], [1175, 0.2, 0.09]]),
-  bad: () => gTone([[220, 0.22, 0, "sawtooth", 0.05], [175, 0.28, 0.12, "sawtooth", 0.05]]),
+  /* ogni risposta giusta di fila suona un gradino più in alto (scala maggiore), un errore riporta all'inizio */
+  ok: () => { const m = 2 ** ([0, 2, 4, 5, 7, 9, 11, 12][Math.min(7, gOkN++)] / 12); gTone([[784 * m, 0.12, 0], [1175 * m, 0.2, 0.09]]); },
+  bad: () => { gOkN = 0; gTone([[220, 0.22, 0, "sawtooth", 0.05], [175, 0.28, 0.12, "sawtooth", 0.05]]); },
   combo: () => gTone([[988, 0.1, 0], [1319, 0.1, 0.07], [1568, 0.18, 0.14]]),
   done: () => gTone([[523, 0.14, 0], [659, 0.14, 0.12], [784, 0.14, 0.24], [1047, 0.35, 0.36]]),
   rank: () => gTone([[392, 0.16, 0], [523, 0.16, 0.14], [659, 0.16, 0.28], [784, 0.16, 0.42], [1047, 0.5, 0.56, "square", 0.06]]),

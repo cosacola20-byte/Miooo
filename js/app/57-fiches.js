@@ -110,7 +110,8 @@ function gOnAnswer(q, res, ms) {
     const d = DRILLS[q.skill]; if (q.timed && d && d.time && ms < d.time * 500) { xp += 2; extra = " · veloce"; }
     if (res.bonus) { xp += res.bonus; extra += " · difficile"; }
     if (ms < 8000) gQuestEv("fast", 1);
-    if ([5, 10, 20, 30, 50].includes(run.combo)) { gSnd.combo(); gToast(`${GIC.flame} Combo x${run.combo}!`); } else gSnd.ok();
+    /* la combo si vede nell'indicatore della barra e nel lampo «nella zona» (64-effetti-risposte.js) */
+    if ([5, 10, 20, 30, 50].includes(run.combo)) gSnd.combo(); else gSnd.ok();
     gQuestEv("combo", run.combo);
     if (q.skill === "concetti" || q.skill === "mindset") gQuestEv("concept", 1);
   } else if (res.score > 0) { xp = 5; run.combo = 0; gSnd.bad(); }
@@ -122,7 +123,7 @@ function gOnAnswer(q, res, ms) {
   if (dq.xpMul != null) xp = Math.max(1, Math.round(xp * dq.xpMul));
   gAddXP(xp); if (!dq.noBr) brResult(res.score);
   run.xpRun += xp;
-  return `<span class="xpgain">${xpTxt(xp)} ${brTxt((run.brRun || 0) - b0)}${extra}</span>${run.combo >= 3 ? `<span class="combo">${GIC.flame} ${run.combo}</span>` : ""}`;
+  return `<span class="xpgain">${xpTxt(xp)} ${brTxt((run.brRun || 0) - b0)}${extra}</span>`;
 }
 function gOnDrillEnd(did, scores) {
   const g = gS(); const sc = scores.filter(x => x != null);
