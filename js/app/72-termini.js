@@ -36,6 +36,8 @@ const TERMS = [
   [["call"], "Pagare la puntata o il rilancio dell'avversario per restare nella mano."],
   [["bet"], "Una puntata: la prima messa in un giro di puntate."],
   [["raise", "rilancio", "rilanci"], "Un rilancio: alzi la puntata di chi ha parlato prima di te."],
+  [["ante"], "Una piccola puntata obbligatoria che in alcune partite mettono tutti i giocatori prima delle carte, oltre ai bui."],
+  [["limp/raise"], "Limpare e poi, se qualcuno rilancia, rilanciare a propria volta."],
   [["all-in"], "Mettere in mezzo tutte le fiches che hai davanti."],
   [["open-raise"], "Il primo rilancio preflop, quando prima di te hanno foldato tutti."],
   [["value bet", "value"], "Puntare per valore: lo fai perché ti pagano mani peggiori della tua."],
@@ -98,7 +100,7 @@ function tipDef(w) {
   return Object.prototype.hasOwnProperty.call(TIP_CI, w.toLowerCase()) ? TIP_CI[w.toLowerCase()] : "";
 }
 /* dove non toccare il testo: grafica, pulsanti, carte, tavoli animati, termini già marcati */
-const TIP_SKIP = "svg,style,script,button,select,option,textarea,label,a,.lx-gl,.lx-tip,.lx-c,.lx-ha,.p6,.ptbl,.pc,.cards,.lx-hud-box,code";
+const TIP_SKIP = "svg,style,script,button,select,option,textarea,label,a,.lx-gl,.lx-tip,.lx-c,.lx-ha,.lx-ha-sr,.p6,.ptbl,.pc,.cards,.lx-hud-box,code";
 const TIP_CACHE = {};
 function tipWrap(html) {
   const t = document.createElement("template"); t.innerHTML = html;
@@ -117,7 +119,8 @@ function tipWrap(html) {
     }
     if (!last) return;
     if (last < s.length) f.appendChild(document.createTextNode(s.slice(last)));
-    n.replaceWith(f);
+    /* il testo resta un pezzo solo: dentro un contenitore flex o grid ogni span sarebbe un elemento a parte e la riga non andrebbe più a capo */
+    const w = document.createElement("span"); w.className = "lx-tipw"; w.appendChild(f); n.replaceWith(w);
   });
   return t.innerHTML;
 }
