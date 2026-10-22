@@ -32,7 +32,7 @@ const TERMS = [
   [["board"], "Le carte comuni scoperte al centro del tavolo, che usano tutti i giocatori."],
   [["street"], "Uno dei giri di puntate: preflop, flop, turn o river."],
   [["fold", "folda", "foldano", "foldare", "foldi", "foldo", "foldato", "foldata", "foldati", "foldando"], "Lasciare la mano: butti le carte e non rischi altro, ma perdi quello che hai già messo nel piatto."],
-  [["check", "checka", "checkano", "checkare"], "Passare la parola senza puntare. Si può solo se nessuno ha puntato prima in quel giro."],
+  [["check", "checka", "checkano", "checkare", "checkato", "checkata"], "Non puntare e lasciare la parola al giocatore dopo, restando nella mano. Si può solo se nessuno ha puntato prima in quel giro."],
   [["call"], "Pagare la puntata o il rilancio dell'avversario per restare nella mano."],
   [["bet"], "Una puntata: la prima messa in un giro di puntate."],
   [["raise", "rilancio", "rilanci"], "Un rilancio: alzi la puntata di chi ha parlato prima di te."],
