@@ -3289,8 +3289,7 @@ function lesGloss(id, html) {
   }).join("");
 }
 document.addEventListener("click", e => {
-  const g = e.target.closest("[data-gl]");
-  if (g) { const G = GLOSS[+g.dataset.gl], L = LESSONS[G[2]]; e.preventDefault(); e.stopPropagation(); return gModal(`<div class="lesbody"><span class="eyebrow">Glossario</span><h3 style="margin:4px 0 8px">${G[0][0]}</h3><p>${G[1]}</p>${L ? `<p class="muted" style="font-size:13px">Si spiega nella lezione <b>${lesNum(G[2])} ${L.t}</b>.</p>` : ""}</div>`); }
+  /* i termini del glossario ([data-gl]) aprono il fumetto della spiegazione: js/app/72-termini.js */
   const p = e.target.closest("[data-lespre]");
   if (p) { const L = LESSONS[p.dataset.lespre]; e.preventDefault(); e.stopPropagation(); return gModal(`<div class="lesbody"><span class="eyebrow">Ripasso · lezione ${lesNum(L.id)}</span><h3 style="margin:4px 0 8px">${L.t}</h3>${lesGloss(L.id, L.card)}</div>`); }
 }, true);
