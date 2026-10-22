@@ -177,3 +177,37 @@
 :root[data-theme="dark"] .tipbox{background:#eef3f0;color:#13201b}:root[data-theme="dark"] .tipbox b{color:#8a5d00}:root[data-theme="dark"] .tipbox small{color:#46554f}
 :root[data-theme="dark"] .tipbox::after{border-top-color:#eef3f0}:root[data-theme="dark"] .tipbox.below::after{border-top-color:transparent;border-bottom-color:#eef3f0}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tipbox{background:#eef3f0;color:#13201b}:root:not([data-theme="light"]) .tipbox b{color:#8a5d00}:root:not([data-theme="light"]) .tipbox small{color:#46554f}:root:not([data-theme="light"]) .tipbox::after{border-top-color:#eef3f0}:root:not([data-theme="light"]) .tipbox.below::after{border-top-color:transparent;border-bottom-color:#eef3f0}}
+
+/* ===== curiosità che si apre toccandola (UI.curio) ===== */
+.lx-curio{position:relative;margin:16px 0;border-radius:16px;padding:1.5px;background:linear-gradient(135deg,#f5c542,#8e44ad 55%,#2f9e6e);box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.lx-curio-h{position:relative;width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;border-radius:14.5px 14.5px 14.5px 14.5px;background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer;overflow:hidden;transition:border-radius .3s}
+.lx-curio.on .lx-curio-h{border-radius:14.5px 14.5px 0 0}
+/* riflesso che passa sulla barra chiusa ogni 6 secondi */
+.lx-curio-h::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(245,197,66,.28) 45%,transparent 60%);background-size:250% 100%;animation:fxshine 6s linear infinite}
+.lx-curio.on .lx-curio-h::after{animation:none;opacity:0}
+.lx-curio-h:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.lx-curio-ic{position:relative;flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,#f5c542 18%,var(--surface2));transition:background .35s,box-shadow .35s}
+.lx-curio-ic svg{fill:none;stroke:#b8860b;stroke-width:1.8}
+.lx-curio-ic .bulb{fill:transparent;transition:fill .35s}
+.lx-curio.on .lx-curio-ic{background:#ffe27a;box-shadow:0 0 0 4px rgba(255,226,122,.35),0 0 22px rgba(245,197,66,.7);animation:curioPop .5s cubic-bezier(.2,1.5,.4,1)}
+.lx-curio.on .lx-curio-ic .bulb{fill:#fff6c9}
+@keyframes curioPop{0%{transform:scale(1) rotate(0)}40%{transform:scale(1.25) rotate(-12deg)}100%{transform:scale(1) rotate(0)}}
+.lx-curio-t{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.lx-curio-t small{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8e44ad}
+.lx-curio-t b{font-size:15.5px}
+.lx-curio-cta{flex:0 0 auto;font-size:12.5px;font-weight:800;color:var(--ink2)}
+.lx-curio-ar{flex:0 0 auto;width:9px;height:9px;margin:-4px 4px 0 0;border-right:2.5px solid #8e44ad;border-bottom:2.5px solid #8e44ad;transform:rotate(45deg);transition:transform .45s cubic-bezier(.32,.72,0,1),margin .45s}
+.lx-curio.on .lx-curio-ar{transform:rotate(225deg);margin-top:4px}
+/* il corpo si allarga da 0 alla sua altezza */
+.lx-curio-b{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.32,.72,0,1)}
+.lx-curio.on .lx-curio-b{grid-template-rows:1fr}
+.lx-curio-b>div{overflow:hidden;min-height:0;border-radius:0 0 14.5px 14.5px;background:linear-gradient(180deg,color-mix(in srgb,#8e44ad 6%,var(--surface)),var(--surface))}
+.lx-curio-in{padding:4px 16px 14px;opacity:0;transform:translateY(14px);transition:opacity .3s,transform .45s cubic-bezier(.32,.72,0,1)}
+.lx-curio.on .lx-curio-in{opacity:1;transform:none;transition-delay:.12s}
+.lx-curio-in p{margin:8px 0 0;font-size:14.5px;line-height:1.55}
+/* scintille dalla lampadina */
+.lx-curio-sp{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+.lx-curio-sp i{position:absolute;width:5px;height:5px;margin:-2.5px;border-radius:50%;background:#ffd23f;box-shadow:0 0 6px #f5b700;animation:curioSp .7s ease-out forwards}
+.lx-curio-sp i:nth-child(3n){background:#c58bf0;box-shadow:0 0 6px #8e44ad}
+@keyframes curioSp{0%{transform:rotate(var(--a)) translateY(0) scale(1);opacity:1}100%{transform:rotate(var(--a)) translateY(calc(-1 * var(--d))) scale(.3);opacity:0}}
+@media (prefers-reduced-motion:reduce){.lx-curio-b,.lx-curio-in,.lx-curio-ar{transition:none}.lx-curio-h::after,.lx-curio.on .lx-curio-ic{animation:none}}

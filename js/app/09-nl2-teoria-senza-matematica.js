@@ -668,6 +668,8 @@ const UI = (() => {
     // vero o falso con spiegazione: UI.tf([["frase", true, "perché"], ...])
     tf: (items, o = {}) => { const Y = o.yes || "Vero", N = o.no || "Falso", hint = o.hint || "Tocca Vero o Falso per ogni frase.";
       return `<div class="lx-tf" data-hint="${hint}">${items.map(([q, a, e]) => `<div class="lx-tf-i" data-a="${a ? 1 : 0}"><p>${q}</p><div class="lx-tf-b">${o.noFirst ? `<button type="button" data-lxtf="0">${N}</button><button type="button" data-lxtf="1">${Y}</button>` : `<button type="button" data-lxtf="1">${Y}</button><button type="button" data-lxtf="0">${N}</button>`}</div><p class="lx-tf-e" hidden><b>${a ? Y : N}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+    // curiosità chiusa: si apre toccandola, con il riquadro che si allarga e la lampadina che si accende. UI.curio("titolo", "<p>testo</p>")
+    curio: (title, html) => `<div class="lx-curio"><button type="button" class="lx-curio-h" data-lxcurio aria-expanded="false"><span class="lx-curio-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path class="bulb" d="M12 2.5a6.5 6.5 0 0 0-3.9 11.7c.6.5 1 1.2 1 2V17h5.8v-.8c0-.8.4-1.5 1-2A6.5 6.5 0 0 0 12 2.5z"/><path d="M9.2 19h5.6M10 21.2h4" stroke-linecap="round"/></svg></span><span class="lx-curio-t"><small>Curiosità</small><b>${title}</b></span><span class="lx-curio-cta">Scopri</span><i class="lx-curio-ar" aria-hidden="true"></i></button><div class="lx-curio-b" inert><div><div class="lx-curio-in">${html}</div></div></div></div>`,
     // calcola la size dell'iso raise: limper (1-3) e posizione. UI.iso()
     iso: () => `<div class="lx-iso" data-n="1" data-oop="0"><div class="lx-coin-row"><span>Limper</span>${[1, 2, 3].map(n => `<button type="button" class="${n === 1 ? "on" : ""}" data-lxison="${n}" aria-pressed="${n === 1 ? "true" : "false"}">${n}</button>`).join("")}</div><div class="lx-coin-row"><span>Tu sei</span><button type="button" class="on" data-lxisop="0" aria-pressed="true">In posizione</button><button type="button" data-lxisop="1" aria-pressed="false">Fuori posizione</button></div><div data-isout aria-live="polite">${LXW.isoOut(1, 0)}</div></div>`,
     // chi hai davanti? Due cursori (VPIP e PFR) e alcuni esempi; il profilo cambia mentre muovi i cursori. UI.prof()
@@ -920,4 +922,17 @@ const UI = (() => {
     if (t.matches("[data-lxbbw]")) { const box = t.closest(".lx-bbc"), w = +t.value; box.querySelector("[data-bw]").textContent = LXW.sg(w) + " bb/100"; t.setAttribute("aria-valuetext", LXW.sg(w) + " bb/100"); box.querySelector("[data-bo]").innerHTML = LXW.bbcOut(w, +box.dataset.lv || 0.02); }
   });
 })();
-
+/* curiosità (UI.curio): apri e chiudi, con qualche scintilla quando si accende la lampadina */
+document.addEventListener("click", e => {
+  const h = e.target.closest && e.target.closest("[data-lxcurio]"); if (!h) return;
+  const box = h.closest(".lx-curio"), body = box && box.querySelector(".lx-curio-b"); if (!body) return;
+  const open = !box.classList.contains("on");
+  box.classList.toggle("on", open); h.setAttribute("aria-expanded", String(open));
+  if (open) body.removeAttribute("inert"); else body.setAttribute("inert", "");
+  const cta = h.querySelector(".lx-curio-cta"); if (cta) cta.textContent = open ? "Chiudi" : "Scopri";
+  if (open && (typeof prefFx !== "function" || prefFx())) {
+    const ic = h.querySelector(".lx-curio-ic"), w = document.createElement("span"); w.className = "lx-curio-sp"; w.setAttribute("aria-hidden", "true");
+    w.innerHTML = Array.from({ length: 12 }, (_, i) => `<i style="--a:${i * 30 + Math.round(Math.random() * 12)}deg;--d:${18 + Math.round(Math.random() * 14)}px"></i>`).join("");
+    ic.appendChild(w); setTimeout(() => w.remove(), 800);
+  }
+});
