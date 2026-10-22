@@ -247,7 +247,7 @@ ${UI.tf([["UTG, con " + UI.c("A♣T♦") + ".", false, "Da UTG hai cinque giocat
 ${UI.big([["Da UTG, HJ, CO e BTN", "2,5 bb", "il tuo open standard fino a NL10"], ["Dalla SB", "3 bb", "giochi fuori posizione contro il BB", "gold"]])}
 <p>Dalla SB giochi fuori posizione contro il BB: una size un po' più grande gli dà un prezzo peggiore per pagare. Il limp da primo non si usa: non vince mai subito e lascia entrare tutti a buon prezzo.</p>
 ${UI.tab(["Posizione", "Fino a NL10", "Dal NL25"], [["UTG, HJ, CO", "2,5 bb", "2,2 bb"], ["BTN", "2,5 bb", "2,5 bb"], ["SB", "3 bb", "3 bb"]], { num: [1, 2] })}
-<div class="lx-box tip"><span class="lx-tag">Anche la size è relativa</span><p>Dal NL25 l'open scende a <b>2,2 bb</b> da UTG, HJ e CO, resta <b>2,5 bb</b> dal BTN e <b>3 bb</b> dalla SB. Anche queste sono un punto di partenza: contro un tavolo che paga troppo si apre un po' più grande, contro chi rilancia spesso un po' più piccolo.</p></div>
+<div class="lx-box tip"><span class="lx-tag">Anche la size è relativa</span><p>Dal NL25 l'open scende a <b>2,2 bb</b> da UTG, HJ e CO, resta <b>2,5 bb</b> dal BTN e <b>3 bb</b> dalla SB. Anche queste sono un punto di partenza: contro un tavolo che paga troppo si apre un po' più grande; contro chi rilancia spesso si apre più piccolo, così perdi meno quando ti rilancia. E anche contro un BB che folda molto si può usare una size più piccola: per vincere i bui basta meno, e rischi meno le volte che paga.</p></div>
 
 <div class="lx-sec"><b>6</b><h4>I bui e chi hai dietro</h4></div>
 ${UI.stats([["-100", "bb/100 in BB se foldi sempre"], ["-35 / -50", "bb/100 in BB per un regular vincente (stima)"], ["-25 / -30", "bb/100 in SB per un regular vincente (stima)"]])}
