@@ -313,3 +313,10 @@
 .lx-sg-0{margin:14px 0;text-align:center;color:var(--ink2)}
 @media (min-width:760px){.lx-sg-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lx-sg-g h5{grid-column:1/-1}.lx-sg-g>.lx-sg-i+.lx-sg-i{margin-top:0}}
 @media (max-width:420px){.lx-sg-h{padding:12px}.lx-sg-ic{width:40px;height:40px}.lx-sg-go{padding:5px 10px}.lx-sg-b{padding:4px 10px 12px}}
+.lx-sg-v{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:700;color:var(--ink2);cursor:pointer;user-select:none}
+.lx-sg-v input{position:absolute;opacity:0;width:1px;height:1px}
+.lx-sg-v span{flex:0 0 auto;position:relative;width:40px;height:23px;border-radius:99px;background:var(--line);transition:background .2s}
+.lx-sg-v span::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.lx-sg-v input:checked+span{background:linear-gradient(135deg,#2f7de1,#8f5ad8)}.lx-sg-v input:checked+span::after{transform:translateX(17px)}
+.lx-sg-v input:focus-visible+span{outline:2px solid #2f7de1;outline-offset:2px}
+.lx-sg-i.v{padding-top:8px;padding-bottom:8px}.lx-sg-i.v .lx-sg-k b{font-size:14px}.lx-sg-i.v::before{opacity:.5}

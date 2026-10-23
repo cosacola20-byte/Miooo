@@ -138,17 +138,124 @@ const SG_STATS = [
   ["var", "Colori", "Colori dell'HUD", "Molti HUD colorano i numeri per fascia (per esempio rosso se molto basso, verde se molto alto). Le fasce le decidi tu nelle impostazioni."],
   ["var", "Nota", "Note e tag", "Il segno o il colore che metti su un giocatore per ricordarti cosa hai visto: utile quando le mani sono ancora poche."],
 ];
-UI.statGl = () => `<div class="lx-sg" data-sg><button type="button" class="lx-sg-h" aria-expanded="false" data-sgt><span class="lx-sg-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span><span class="lx-sg-t"><b>Glossario delle statistiche</b><small>${SG_STATS.length} statistiche di HM3, PT4 e Hand2Note, divise per street</small></span><span class="lx-sg-go" data-sgl>Apri</span></button><div class="lx-sg-b" data-sgb hidden></div></div>`;
+/* ---------- altre statistiche, una per una ---------- */
+SG_STATS.push(
+  ["gen", "Fold Turn Bet", "Fold to Turn Bet", "Quanto spesso folda a una puntata al turn, c-bet o no."],
+  ["pre", "Call Squeeze", "Call Squeeze", "Dopo aver aperto o pagato, quanto spesso paga lo squeeze."],
+  ["pre", "4-bet vs Squeeze", "4Bet vs Squeeze", "Dopo aver aperto, quanto spesso rilancia lo squeeze."],
+  ["pre", "Fold to Cold 4-bet", "Fold to Cold 4Bet", "Dopo aver fatto 3-bet, quanto spesso folda alla 4-bet di un terzo giocatore."],
+  ["pre", "Iso vs 1", "Iso Raise vs 1 Limper", "L'iso raise quando c'è un solo limper."],
+  ["pre", "Iso vs 2+", "Iso Raise vs 2+ Limpers", "L'iso raise quando i limper sono due o più."],
+  ["pre", "Fold to Iso IP / OOP", "Fold to Iso Raise IP / OOP", "Dopo aver limpato, il fold all'iso raise diviso tra in posizione e fuori posizione."],
+  ["pre", "BB Raise vs Limp", "BB Raise vs Limpers", "Dal BB, quanto spesso rilancia quando davanti ci sono solo limper.", "Basso: lascia vedere il flop gratis a tutti."],
+  ["bui", "BB Raise vs SB Limp", "BB Raise vs SB Complete", "Quando lo SB limpa, quanto spesso il BB rilancia."],
+  ["bui", "BB Check vs SB Limp", "BB Check vs SB Complete", "Quando lo SB limpa, quanto spesso il BB fa check e vede il flop gratis."],
+  ["bui", "SB Limp-Fold", "SB Limp-Fold vs BB Raise", "Lo SB limpa, il BB rilancia e lo SB folda."],
+  ["bui", "SB Limp-Call", "SB Limp-Call vs BB Raise", "Lo SB limpa, il BB rilancia e lo SB paga."],
+  ["bui", "SB Limp-Raise", "SB Limp-Raise vs BB Raise", "Lo SB limpa, il BB rilancia e lo SB rilancia ancora."],
+  ["bui", "BB Fold vs SB Open", "BB Fold to SB Open", "Quanto spesso il BB folda all'open dello SB."],
+  ["bui", "BB 3-bet vs SB", "BB 3Bet vs SB Open", "Quanto spesso il BB fa 3-bet contro l'open dello SB."],
+  ["bui", "SB Fold to BB 3-bet", "SB Fold to BB 3Bet", "Dopo aver aperto, quanto spesso lo SB folda alla 3-bet del BB."],
+  ["bui", "SB 4-bet vs BB", "SB 4Bet vs BB 3Bet", "Dopo aver aperto, quanto spesso lo SB rilancia la 3-bet del BB."],
+  ["fl", "Check-Call Flop", "Flop Check-Call", "Al flop fa check e paga la puntata che arriva."],
+  ["fl", "Check-Fold Flop", "Flop Check-Fold", "Al flop fa check e folda alla puntata che arriva."],
+  ["fl", "Call XR", "Call Flop Check-Raise", "Dopo aver puntato, quanto spesso paga il check-raise."],
+  ["fl", "Flop 3-bet", "Flop 3Bet / Reraise", "Rilancia di nuovo al flop dopo che la sua puntata è stata rilanciata.", "Ai micro è quasi sempre una mano fortissima."],
+  ["fl", "Fold to Flop 3-bet", "Fold to Flop 3Bet", "Dopo aver rilanciato al flop, quanto spesso folda al nuovo rilancio."],
+  ["fl", "Check-back Flop", "Flop Check Behind", "L'aggressore preflop in posizione non fa c-bet e checka anche lui: il contrario della c-bet in posizione."],
+  ["fl", "Float Flop", "Float Flop", "Paga la c-bet al flop in posizione, spesso con l'idea di prendersi il piatto più avanti."],
+  ["fl", "Limped Pot Bet", "Bet Flop in Limped Pot", "Nei piatti senza rilanci preflop, quanto spesso punta il flop quando gli altri hanno fatto check."],
+  ["tu", "Check-Call Turn", "Turn Check-Call", "Al turn fa check e paga la puntata che arriva."],
+  ["tu", "Check-Fold Turn", "Turn Check-Fold", "Al turn fa check e folda alla puntata che arriva."],
+  ["tu", "Call Turn XR", "Call Turn Check-Raise", "Dopo aver puntato il turn, quanto spesso paga il check-raise."],
+  ["tu", "Fold to Float", "Fold to Turn Float", "Dopo aver fatto c-bet al flop e check al turn, quanto spesso folda alla puntata dell'avversario."],
+  ["tu", "Fold Turn Raise", "Fold to Turn Raise (after Call)", "Dopo aver puntato il turn, quanto spesso folda quando l'avversario rilancia in posizione."],
+  ["ri", "Check-Call River", "River Check-Call", "Al river fa check e paga la puntata che arriva.", "Alto: paga il river con le mani medie, punta per valore contro di lui."],
+  ["ri", "Check-Fold River", "River Check-Fold", "Al river fa check e folda alla puntata che arriva.", "Alto: al river i bluff contro di lui funzionano."],
+  ["ri", "Call River Bet", "Call River Bet", "Quanto spesso paga una puntata al river, di qualsiasi tipo."],
+  ["ri", "Raise River Bet", "Raise River Bet", "Quanto spesso rilancia una puntata al river."],
+  ["ri", "Fold River Raise", "Fold to River Raise", "Dopo aver puntato il river, quanto spesso folda al rilancio."],
+  ["ri", "Delay River", "Delayed River CBet", "L'aggressore checka il turn e punta il river."],
+  ["ri", "Fold to Delay River", "Fold to Delayed River CBet", "Quanto spesso folda alla puntata ritardata del river."],
+  ["sd", "WnSD", "Won Without Showdown", "Quanti piatti vince senza arrivare allo showdown, perché gli altri foldano."],
+  ["sd", "WTSD after XR", "WTSD after Flop Check-Raise", "Quante volte arriva allo showdown dopo aver fatto check-raise al flop."],
+  ["sd", "W$SD after Raise", "W$SD after Postflop Raise", "Quanti showdown vince dopo aver rilanciato dopo il flop.", "Alta: i suoi rilanci sono quasi sempre valore."],
+);
+/* ---------- le varianti: la stessa statistica per posizione, per piatto, per size ---------- */
+(() => {
+  const V = (c, ab, nm, d) => SG_STATS.push([c, ab, nm, d, "", 1]), del = p => (p === "SB" ? "dello " : "del ") + p, dal = p => (p === "SB" ? "Dallo " : "Dal ") + p;
+  const P5 = ["UTG", "HJ", "CO", "BTN", "SB"], D5 = ["HJ", "CO", "BTN", "SB", "BB"];
+  P5.forEach(p => V("pre", "RFI · " + p, "RFI " + p, `Quanto spesso apre con un rilancio dal posto ${p}, quando prima hanno foldato tutti.`));
+  P5.forEach(p => V("pre", "Limp · " + p, "Open Limp " + p, `Quanto spesso entra limpando dal posto ${p}, quando prima hanno foldato tutti.`));
+  D5.forEach(p => V("pre", "Iso · " + p, "Iso Raise " + p, `L'iso raise fatto dal posto ${p}.`));
+  D5.forEach(p => V("pre", "Cold Call · " + p, "Cold Call " + p, `Quanto spesso paga un open dal posto ${p}.`));
+  D5.forEach(p => V("pre", "3-bet · " + p, "3Bet PF " + p, `La 3-bet fatta dal posto ${p}.`));
+  P5.forEach(p => V("pre", "3-bet vs " + p, "3Bet vs " + p + " Open", `Quanto spesso fa 3-bet contro un open ${del(p)}.`));
+  P5.forEach(p => V("pre", "Fold to 3-bet · " + p, "Fold to 3Bet " + p, `Dopo aver aperto dal posto ${p}, quanto spesso folda alla 3-bet.`));
+  P5.forEach(p => V("pre", "Call 3-bet · " + p, "Call 3Bet " + p, `Dopo aver aperto dal posto ${p}, quanto spesso paga la 3-bet.`));
+  P5.forEach(p => V("pre", "4-bet · " + p, "4Bet " + p, `Dopo aver aperto dal posto ${p}, quanto spesso rilancia la 3-bet.`));
+  [["IP", "in posizione"], ["OOP", "fuori posizione"]].forEach(([k, t]) => {
+    V("pre", "Fold to 3-bet · " + k, "Fold to 3Bet " + k, `Dopo aver aperto, il fold alla 3-bet quando giocherà il piatto ${t}.`);
+    V("pre", "4-bet · " + k, "4Bet " + k, `La 4-bet quando giocherà il piatto ${t}.`);
+    V("pre", "Fold to 4-bet · " + k, "Fold to 4Bet " + k, `Dopo aver fatto 3-bet, il fold alla 4-bet quando giocherà il piatto ${t}.`);
+  });
+  ["CO", "BTN", "SB", "BB"].forEach(p => V("pre", "Squeeze · " + p, "Squeeze " + p, `Lo squeeze fatto dal posto ${p}.`));
+  ["CO", "BTN", "SB"].forEach(p => V("bui", "Steal · " + p, "Attempt to Steal " + p, `Lo steal dal posto ${p}: apre quando prima hanno foldato tutti.`));
+  [["BB", "CO"], ["BB", "BTN"], ["BB", "SB"], ["SB", "CO"], ["SB", "BTN"]].forEach(([a, b]) => {
+    V("bui", `Fold to Steal · ${a} vs ${b}`, `${a} Fold vs ${b} Steal`, `${dal(a)}, quanto spesso folda contro lo steal ${del(b)}.`);
+    V("bui", `Call Steal · ${a} vs ${b}`, `${a} Call vs ${b} Steal`, `${dal(a)}, quanto spesso paga lo steal ${del(b)}.`);
+    V("bui", `3-bet vs Steal · ${a} vs ${b}`, `${a} 3Bet vs ${b} Steal`, `${dal(a)}, quanto spesso fa 3-bet contro lo steal ${del(b)}.`);
+  });
+  ["CO", "BTN", "SB"].forEach(p => V("bui", "Fold to Resteal · " + p, "Fold to Resteal " + p, `Dopo uno steal dal posto ${p}, quanto spesso folda alla 3-bet dei bui.`));
+  ["UTG", "HJ", "CO", "BTN", "SB", "BB"].forEach(p => V("ris", "bb/100 · " + p, "Win Rate " + p, `Il winrate delle mani giocate dal posto ${p}.`));
+  /* dopo il flop: c-bet e risposte, per street, tipo di piatto e posizione */
+  const ST = [["fl", "Flop", "al flop"], ["tu", "Turn", "al turn"], ["ri", "River", "al river"]];
+  const POT = [["SRP", "nei piatti con un solo rilancio preflop"], ["3BP", "nei piatti con 3-bet"], ["4BP", "nei piatti con 4-bet"]];
+  const SIDE = [["IP", "in posizione"], ["OOP", "fuori posizione"]];
+  const ACT = [["CBet", "CBet", "la c-bet"], ["Fold to CBet", "Fold to CBet", "il fold alla c-bet"], ["Call CBet", "Call CBet", "il call della c-bet"], ["Raise CBet", "Raise CBet", "il rilancio della c-bet"]];
+  ST.forEach(([c, sN, sT]) => ACT.forEach(([ab, en, it]) => POT.forEach(([pk, pt]) => SIDE.forEach(([ik, itx]) =>
+    V(c, `${ab} ${sN} · ${pk} · ${ik}`, `${sN} ${en} ${pk} ${ik}`, `${it[0].toUpperCase() + it.slice(1)} ${sT}, ${pt}, quando è ${itx}.`)))));
+  [["HU", "contro un solo avversario"], ["MW", "contro due o più avversari"]].forEach(([k, t]) => ACT.forEach(([ab, en, it]) =>
+    V("fl", `${ab} Flop · ${k}`, `Flop ${en} ${k}`, `${it[0].toUpperCase() + it.slice(1)} al flop ${t}.`)));
+  const SZ = [["≤ 1/3", "fino a un terzo del piatto"], ["1/3-1/2", "tra un terzo e metà piatto"], ["1/2-2/3", "tra metà e due terzi del piatto"], ["2/3-piatto", "tra due terzi e tutto il piatto"], ["Overbet", "più grande del piatto"]];
+  ST.forEach(([c, sN, sT]) => SZ.forEach(([k, t]) => {
+    V(c, `Fold to CBet ${sN} · ${k}`, `Fold to ${sN} CBet by Size ${k}`, `Il fold alla c-bet ${sT} quando la puntata è ${t}.`);
+    V(c, `CBet ${sN} · size ${k}`, `${sN} CBet Size ${k}`, `Quante delle sue c-bet ${sT} sono ${t}.`);
+  }));
+  ST.forEach(([c, sN, sT]) => POT.slice(0, 2).forEach(([pk, pt]) => {
+    V(c, `XR ${sN} · ${pk}`, `${sN} Check-Raise ${pk}`, `Il check-raise ${sT}, ${pt}.`);
+    V(c, `Fold to XR ${sN} · ${pk}`, `Fold to ${sN} Check-Raise ${pk}`, `Il fold al check-raise ${sT}, ${pt}.`);
+    V(c, `Donk ${sN} · ${pk}`, `${sN} Donk Bet ${pk}`, `La donk bet ${sT}, ${pt}.`);
+    V(c, `Fold to Donk ${sN} · ${pk}`, `Fold to ${sN} Donk ${pk}`, `Il fold alla donk bet ${sT}, ${pt}.`);
+    V(c, `Bet vs Miss ${sN} · ${pk}`, `${sN} Bet vs Missed CBet ${pk}`, `La puntata ${sT} quando l'aggressore rinuncia alla c-bet, ${pt}.`);
+    V(c, `Fold vs Miss ${sN} · ${pk}`, `Fold to ${sN} Bet vs Missed CBet ${pk}`, `Il fold ${sT} dopo aver rinunciato alla c-bet, ${pt}.`);
+  }));
+  ST.slice(1).forEach(([c, sN, sT]) => POT.slice(0, 2).forEach(([pk, pt]) => {
+    V(c, `Probe ${sN} · ${pk}`, `${sN} Probe ${pk}`, `La probe ${sT}, ${pt}.`);
+    V(c, `Fold to Probe ${sN} · ${pk}`, `Fold to ${sN} Probe ${pk}`, `Il fold alla probe ${sT}, ${pt}.`);
+    SIDE.forEach(([ik, itx]) => {
+      V(c, `Delay ${sN} · ${pk} · ${ik}`, `Delayed ${sN} CBet ${pk} ${ik}`, `La c-bet ritardata ${sT}, ${pt}, quando è ${itx}.`);
+      V(c, `Fold to Delay ${sN} · ${pk} · ${ik}`, `Fold to Delayed ${sN} CBet ${pk} ${ik}`, `Il fold alla c-bet ritardata ${sT}, ${pt}, quando è ${itx}.`);
+    });
+  }));
+  ST.forEach(([c, sN, sT]) => SIDE.forEach(([ik, itx]) => {
+    V(c, `${sN} Agg% · ${ik}`, `${sN} Aggression % ${ik}`, `In quanti ${sN.toLowerCase()} visti ${itx} punta o rilancia.`);
+    V(c, `Fold ${sN} Bet · ${ik}`, `Fold to ${sN} Bet ${ik}`, `Il fold a una puntata ${sT}, quando è ${itx}.`);
+  }));
+  ["UTG", "HJ", "CO", "BTN", "SB", "BB"].forEach(p => { V("sd", "WTSD · " + p, "WTSD " + p, `La WTSD delle mani giocate dal posto ${p}.`); V("sd", "W$SD · " + p, "W$SD " + p, `La W$SD delle mani giocate dal posto ${p}.`); });
+})();
+
+UI.statGl = () => `<div class="lx-sg" data-sg><button type="button" class="lx-sg-h" aria-expanded="false" data-sgt><span class="lx-sg-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span><span class="lx-sg-t"><b>Glossario delle statistiche</b><small>${SG_STATS.length} statistiche di HM3, PT4 e Hand2Note, con le varianti per posizione, piatto e size</small></span><span class="lx-sg-go" data-sgl>Apri</span></button><div class="lx-sg-b" data-sgb hidden></div></div>`;
 function sgBody() {
   const chips = [["all", "Tutte", "var(--ink2)"], ...SG_CAT].map(([k, n, c], i) => `<button type="button" class="lx-sg-c${i ? "" : " on"}" data-sgc="${k}" aria-pressed="${i ? "false" : "true"}" style="--c:${c}">${n}<i>${k === "all" ? SG_STATS.length : SG_STATS.filter(s => s[0] === k).length}</i></button>`).join("");
-  const groups = SG_CAT.map(([k, n, c]) => `<section class="lx-sg-g" data-sgg="${k}" style="--c:${c}"><h5>${n}</h5>${SG_STATS.filter(s => s[0] === k).map(([, ab, nm, d, r]) => `<div class="lx-sg-i" data-sgs="${esc((ab + " " + nm + " " + d + " " + (r || "")).toLowerCase())}"><div class="lx-sg-k"><b>${esc(ab)}</b><small>${esc(nm)}</small></div><p>${esc(d)}</p>${r ? `<p class="lx-sg-r"><span>Come leggerla</span>${esc(r)}</p>` : ""}</div>`).join("")}</section>`).join("");
-  return `<div class="lx-sg-tools"><label class="lx-sg-s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" placeholder="Cerca: VPIP, fold, river…" aria-label="Cerca una statistica" data-sgq></label><div class="lx-sg-cs" role="group" aria-label="Gruppi">${chips}</div></div><p class="lx-sg-n" data-sgn aria-live="polite">${SG_STATS.length} statistiche</p><div class="lx-sg-l">${groups}<p class="lx-sg-0" data-sg0 hidden>Nessuna statistica trovata. Prova con un'altra parola.</p></div><p class="lx-cap">I nomi cambiano un po' da un tracker all'altro, e ogni statistica esiste in molte varianti (per posizione, per size, per tipo di piatto): qui trovi le famiglie e cosa misurano. Le letture sono indicative e valgono solo con abbastanza mani.</p>`;
+  const groups = SG_CAT.map(([k, n, c]) => `<section class="lx-sg-g" data-sgg="${k}" style="--c:${c}"><h5>${n}</h5>${SG_STATS.filter(s => s[0] === k).map(([, ab, nm, d, r, v]) => `<div class="lx-sg-i${v ? " v" : ""}" data-sgs="${esc((ab + " " + nm + " " + d + " " + (r || "")).toLowerCase())}"><div class="lx-sg-k"><b>${esc(ab)}</b><small>${esc(nm)}</small></div><p>${esc(d)}</p>${r ? `<p class="lx-sg-r"><span>Come leggerla</span>${esc(r)}</p>` : ""}</div>`).join("")}</section>`).join("");
+  return `<div class="lx-sg-tools"><label class="lx-sg-s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" placeholder="Cerca: VPIP, fold, river…" aria-label="Cerca una statistica" data-sgq></label><div class="lx-sg-cs" role="group" aria-label="Gruppi">${chips}</div><label class="lx-sg-v"><input type="checkbox" data-sgv checked><span></span>Mostra anche le varianti (per posizione, tipo di piatto, size)</label></div><p class="lx-sg-n" data-sgn aria-live="polite">${SG_STATS.length} statistiche</p><div class="lx-sg-l">${groups}<p class="lx-sg-0" data-sg0 hidden>Nessuna statistica trovata. Prova con un'altra parola.</p></div><p class="lx-cap">I nomi cambiano un po' da un tracker all'altro, e ogni statistica esiste in molte varianti (per posizione, per size, per tipo di piatto): qui trovi le famiglie e cosa misurano. Le letture sono indicative e valgono solo con abbastanza mani.</p>`;
 }
 function sgFilter(box) {
-  const q = (box.querySelector("[data-sgq]").value || "").trim().toLowerCase(), cat = (box.querySelector(".lx-sg-c.on") || {}).dataset?.sgc || "all";
+  const q = (box.querySelector("[data-sgq]").value || "").trim().toLowerCase(), va = box.querySelector("[data-sgv]").checked, cat = (box.querySelector(".lx-sg-c.on") || {}).dataset?.sgc || "all";
   let n = 0;
   box.querySelectorAll(".lx-sg-g").forEach(g => { let m = 0; const okC = cat === "all" || g.dataset.sgg === cat;
-    g.querySelectorAll(".lx-sg-i").forEach(it => { const ok = okC && (!q || it.dataset.sgs.includes(q)); it.hidden = !ok; if (ok) m++; }); g.hidden = !m; n += m; });
+    g.querySelectorAll(".lx-sg-i").forEach(it => { const ok = okC && (va || !it.classList.contains("v")) && (!q || it.dataset.sgs.includes(q)); it.hidden = !ok; if (ok) m++; }); g.hidden = !m; n += m; });
   box.querySelector("[data-sgn]").textContent = n === 1 ? "1 statistica" : `${n} statistiche`;
   box.querySelector("[data-sg0]").hidden = n > 0;
 }
@@ -161,4 +268,5 @@ document.addEventListener("click", e => {
   const c = e.target.closest("[data-sgc]");
   if (c) { const box = c.closest("[data-sg]"); box.querySelectorAll("[data-sgc]").forEach(x => { x.classList.toggle("on", x === c); x.setAttribute("aria-pressed", x === c ? "true" : "false"); }); sgFilter(box); }
 });
+document.addEventListener("change", e => { if (e.target.matches && e.target.matches("[data-sgv]")) sgFilter(e.target.closest("[data-sg]")); });
 document.addEventListener("input", e => { if (e.target.matches && e.target.matches("[data-sgq]")) sgFilter(e.target.closest("[data-sg]")); });
