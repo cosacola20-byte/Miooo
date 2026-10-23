@@ -66,6 +66,7 @@ const TERMS = [
   [["maniac"], "Un giocatore che rilancia e punta di continuo, con mani di ogni tipo."],
   [["TAG"], "Tight-aggressive: gioca poche mani, ma quando entra rilancia e punta.", 1],
   [["LAG"], "Loose-aggressive: gioca molte mani e lo fa in modo aggressivo.", 1],
+  [["EQR"], "Equity realization: quanta della sua equity un giocatore riesce a incassare davvero. In posizione di solito è più alta, fuori posizione più bassa.", 1],
   [["RTA"], "Real-time assistance: programmi che ti dicono cosa fare durante la mano. Sono vietati in tutte le room.", 1],
   [["heads-up"], "Un piatto, o un tavolo, con solo due giocatori."],
   [["size", "sizing"], "Quanto è grande una puntata, di solito come parte del piatto: 1/3, 1/2, 2/3."],
