@@ -273,3 +273,62 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("change", e => { if (e.target.matches && e.target.matches("[data-sgv]")) sgFilter(e.target.closest("[data-sg]")); });
 document.addEventListener("input", e => { if (e.target.matches && e.target.matches("[data-sgq]")) sgFilter(e.target.closest("[data-sg]")); });
+
+/* ================= HUD DI PROVA CON POPUP (UI.hudPop) =================
+   Un HUD su tre righe sopra un avversario: toccandolo si apre il popup, con le schede per situazione.
+   Ogni statistica ha accanto le occasioni: sotto le 20 è segnata come poco affidabile. */
+const HP_HUD = [[["VPIP", 41, "hi"], ["PFR", 9, "lo"], ["Mani", 312, ""]], [["3B", 3, "lo"], ["F3B", 45, ""], ["ATS", 21, "lo"]], [["CB", 61, ""], ["FCB", 38, ""], ["WTSD", 34, "hi"]]];
+const HP_TABS = [
+  ["Preflop", [["VPIP", 41, 312], ["PFR", 9, 312], ["Open limp", 18, 140], ["RFI · UTG", 8, 12], ["RFI · BTN", 24, 21], ["Cold call", 22, 95], ["3-bet", 3, 104], ["Fold to 3-bet", 45, 11], ["4-bet", 2, 40]]],
+  ["Bui", [["Steal (ATS)", 21, 34], ["Fold to steal · BB", 52, 27], ["Fold to steal · SB", 71, 24], ["3-bet vs steal", 4, 51]]],
+  ["Flop", [["CBet", 61, 38], ["CBet · IP", 68, 22], ["CBet · OOP", 50, 16], ["Fold to CBet", 38, 52], ["Raise CBet", 6, 52], ["Donk", 9, 70]]],
+  ["Turn e river", [["CBet turn", 42, 19], ["Fold to turn CBet", 33, 24], ["Fold to river CBet", 22, 14], ["WTSD", 34, 98], ["W$SD", 47, 33], ["WWSF", 41, 98]]],
+];
+const hpTab = i => `<div class="lx-hp-rows">${HP_TABS[i][1].map(([n, v, k]) => `<div class="lx-hp-r${k < 20 ? " few" : ""}"><span>${n}</span><i style="--w:${v}%"></i><b>${v}%</b><small>(${k})</small></div>`).join("")}</div>`;
+UI.hudPop = () => `<div class="lx-hp" data-hp><div class="lx-hp-felt"><div class="lx-hp-seat"><button type="button" class="lx-hp-hud" data-hpo aria-expanded="false" aria-label="Apri il popup dell'avversario">${HP_HUD.map(r => `<span class="row">${r.map(([n, v, c]) => `<span class="${c}"><b>${v}</b><small>${n}</small></span>`).join("")}</span>`).join("")}</button><span class="lx-hp-av">Il vicino</span><span class="lx-hp-tap" aria-hidden="true">Tocca l'HUD</span></div></div>
+  <div class="lx-hp-pop" data-hpp hidden><div class="lx-hp-top"><b>Il vicino · 312 mani</b><button type="button" data-hpx aria-label="Chiudi il popup">✕</button></div><div class="lx-hp-tabs" role="tablist">${HP_TABS.map(([n], i) => `<button type="button" role="tab" class="${i ? "" : "on"}" aria-selected="${i ? "false" : "true"}" data-hpt="${i}">${n}</button>`).join("")}</div><div data-hpb></div><p class="lx-hp-note"><i></i>Tra parentesi le occasioni. In grigio le statistiche con meno di 20 occasioni: sono solo indizi.</p></div>
+  <p class="lx-hp-leg"><span class="hi">verde</span> molto alto <span class="lo">rosso</span> molto basso <span>bianco</span> nella media</p></div>`;
+document.addEventListener("click", e => {
+  if (!e.target.closest) return;
+  const o = e.target.closest("[data-hpo]"), x = e.target.closest("[data-hpx]"), t = e.target.closest("[data-hpt]");
+  if (o || x) { const box = (o || x).closest("[data-hp]"), p = box.querySelector("[data-hpp]"), open = o ? p.hidden : false; if (open && !box.querySelector("[data-hpb]").firstChild) box.querySelector("[data-hpb]").innerHTML = hpTab(0); p.hidden = !open; box.classList.toggle("on", open); box.querySelector("[data-hpo]").setAttribute("aria-expanded", open ? "true" : "false"); return; }
+  if (t) { const box = t.closest("[data-hp]"); box.querySelectorAll("[data-hpt]").forEach(b => { b.classList.toggle("on", b === t); b.setAttribute("aria-selected", b === t ? "true" : "false"); }); box.querySelector("[data-hpb]").innerHTML = hpTab(+t.dataset.hpt); }
+});
+
+/* ================= GRAFICO DEI RISULTATI DI UN TRACKER (UI.trkGraph) =================
+   40.000 mani di un giocatore vincente: linea verde (vinto), blu (showdown), rossa (senza showdown),
+   arancio (EV degli all-in). I numeri del testo vengono dagli stessi punti: verde +2.000bb (+5 bb/100),
+   blu +4.800bb, rossa −2.800bb, EV +1.400bb, downswing di 900bb tra le mani 14.000 e 22.000. */
+const TG = (() => {
+  let sd = 7; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647 - 0.5;
+  const lerp = (pts, x) => { for (let i = 1; i < pts.length; i++) if (x <= pts[i][0]) { const [a, b] = [pts[i - 1], pts[i]]; return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]); } return pts[pts.length - 1][1]; };
+  const NET = [[0, 0], [6000, 420], [14000, 1150], [22000, 250], [30000, 1150], [40000, 2000]], EV = [[0, 0], [14000, 560], [22000, 330], [40000, 1400]];
+  const X = [], net = [], ev = [], nsd = [], sdl = [];
+  for (let h = 0; h <= 40000; h += 500) { const end = [0, 14000, 22000, 40000].includes(h); X.push(h);
+    const n = lerp(NET, h) + (end ? 0 : rnd() * 90), e = lerp(EV, h) + (end ? 0 : rnd() * 30), r = -0.07 * h + (end ? 0 : rnd() * 70);
+    net.push(n); ev.push(e); nsd.push(r); sdl.push(n - r); }
+  return { X, net, ev, nsd, sd: sdl };
+})();
+const TG_L = [["net", "Vinto", "#22a86a"], ["sd", "Showdown", "#2f7de1"], ["nsd", "Senza showdown", "#e04848"], ["ev", "EV all-in", "#ef9a2a"]];
+const TG_TXT = {
+  net: "<b>La linea verde è quanto hai vinto davvero</b>: qui +2.000bb in 40.000 mani, cioè +5 bb/100. È la somma della linea blu e della linea rossa.",
+  sd: "<b>La linea blu sono le mani arrivate allo showdown</b>: quasi sempre sale, perché allo showdown arrivi spesso con mani forti. Qui +4.800bb, cioè +12 bb/100.",
+  nsd: "<b>La linea rossa sono le mani finite senza showdown</b>: piatti vinti con le puntate e piatti lasciati con un fold, compresi i bui che perdi quando foldi da SB e BB. Ai micro di solito scende un po': qui −2.800bb, −7 bb/100. Se scende molto ripida foldi troppo dopo aver messo soldi nel piatto; se sale vinci tanti piatti con l'aggressività.",
+  ev: "<b>La linea arancio è la vincita tolta la fortuna degli all-in</b>: per ogni all-in conta la tua equity invece del risultato. Qui la verde finisce 600bb sopra: con gli all-in sei stato fortunato. Il tuo livello vero è più vicino all'arancio, +3,5 bb/100.",
+  dw: "<b>Il downswing</b>: tra le mani 14.000 e 22.000 la linea verde perde 900bb, nove buy-in, anche se il giocatore è vincente. L'arancio nello stesso tratto scende poco: gran parte del calo è sfortuna agli all-in. Capita a tutti: guarda l'EV e il numero di mani prima di cambiare strategia.",
+};
+function tgSvg(sel) {
+  const W = 600, H = 300, L = 74, R = 30, T = 14, B = 30, y0 = -3200, y1 = 5200, xs = x => L + x / 40000 * (W - L - R), ys = y => T + (y1 - y) / (y1 - y0) * (H - T - B);
+  const grid = [-2000, 0, 2000, 4000].map(v => `<line x1="${L}" x2="${W - R}" y1="${ys(v)}" y2="${ys(v)}" class="${v ? "g" : "z"}"/><text x="${L - 6}" y="${ys(v) + 4}" class="yl">${v > 0 ? "+" : ""}${v.toLocaleString("it-IT")}</text>`).join("");
+  const xt = [0, 10000, 20000, 30000, 40000].map(v => `<text x="${xs(v)}" y="${H - 9}" class="xl${v === 40000 ? " e" : ""}">${v.toLocaleString("it-IT")}</text>`).join("");
+  const dw = `<rect x="${xs(14000)}" y="${T}" width="${xs(22000) - xs(14000)}" height="${H - T - B}" class="dw${sel === "dw" ? " on" : ""}"/>`;
+  const lines = TG_L.map(([k, , c]) => `<path d="${TG[k].map((v, i) => (i ? "L" : "M") + xs(TG.X[i]).toFixed(1) + " " + ys(v).toFixed(1)).join("")}" stroke="${c}" class="ln${sel === k || (sel === "dw" && (k === "net" || k === "ev")) ? " on" : ""}"/>`).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" class="lx-tg-svg" role="img" aria-label="Grafico dei risultati su 40.000 mani: vinto +2.000bb, showdown +4.800bb, senza showdown −2.800bb, EV all-in +1.400bb">${grid}${dw}${xt}<text x="${W - R}" y="${T + 10}" class="ax">bb vinti</text>${lines}</svg>`;
+}
+UI.trkGraph = () => `<div class="lx-tg" data-tg><div class="lx-tg-c">${tgSvg("net")}</div><p class="lx-tg-x">mani giocate</p><div class="lx-tg-b" role="group" aria-label="Cosa guardare">${[...TG_L, ["dw", "Downswing", "#7d8790"]].map(([k, n, c], i) => `<button type="button" class="${i ? "" : "on"}" aria-pressed="${i ? "false" : "true"}" data-tgk="${k}" style="--c:${c}"><i></i>${n}</button>`).join("")}</div><p class="lx-tg-t" data-tgt aria-live="polite">${TG_TXT.net}</p></div>`;
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-tgk]"); if (!b) return;
+  const box = b.closest("[data-tg]"), k = b.dataset.tgk;
+  box.querySelectorAll("[data-tgk]").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+  box.querySelector(".lx-tg-c").innerHTML = tgSvg(k); box.querySelector("[data-tgt]").innerHTML = TG_TXT[k];
+});

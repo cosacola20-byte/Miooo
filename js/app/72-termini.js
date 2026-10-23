@@ -104,7 +104,7 @@ function tipDef(w) {
   return Object.prototype.hasOwnProperty.call(TIP_CI, w.toLowerCase()) ? TIP_CI[w.toLowerCase()] : "";
 }
 /* dove non toccare il testo: grafica, pulsanti, carte, tavoli animati, termini già marcati */
-const TIP_SKIP = ".lx-sg,svg,style,script,button,select,option,textarea,label,a,.lx-gl,.lx-tip,.lx-c,.lx-ha,.lx-ha-sr,.p6,.ptbl,.pc,.cards,.lx-hud-box,code";
+const TIP_SKIP = ".lx-sg,.lx-hp,svg,style,script,button,select,option,textarea,label,a,.lx-gl,.lx-tip,.lx-c,.lx-ha,.lx-ha-sr,.p6,.ptbl,.pc,.cards,.lx-hud-box,code";
 const TIP_CACHE = {};
 function tipWrap(html) {
   const t = document.createElement("template"); t.innerHTML = html;
