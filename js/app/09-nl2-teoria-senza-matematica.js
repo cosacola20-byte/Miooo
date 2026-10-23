@@ -689,7 +689,24 @@ const UI = (() => {
     rfi: (pos = "ep") => `<div class="lx-rfi"><div class="lx-coin-row"><span>Posizione</span>${[["ep", "UTG"], ["mp", "HJ"], ["co", "CO"], ["btn", "BTN"], ["sb", "SB"]].map(([k, n]) => `<button type="button" class="${k === pos ? "on" : ""}" data-lxrfi="${k}" aria-pressed="${k === pos ? "true" : "false"}">${n}</button>`).join("")}</div><div data-rfio aria-live="polite">${LXW.rfiOut(pos)}</div></div>`,
     // scelta tra più risposte con spiegazione (come UI.tf, ma con N pulsanti): UI.pick([["situazione", indice giusto, "perché"], ...], { labels: ["Value", "Bluff", "Check"] })
     pick: (items, o = {}) => { const Lb = o.labels || ["A", "B", "C"], hint = o.hint || "Tocca una risposta per ogni situazione.";
-      return `<div class="lx-tf lx-pick" data-hint="${hint}">${items.map(([q, a, e]) => `<div class="lx-tf-i" data-a="${a}"><p>${q}</p><div class="lx-tf-b">${Lb.map((l, k) => `<button type="button" data-lxpk="${k}">${l}</button>`).join("")}</div><p class="lx-tf-e" hidden><b>${Lb[a]}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+      /* ogni risposta ha il suo colore e la sua icona: Value verde, Bluff arancio, Check blu */
+      const tone = l => ({ value: "v", bluff: "b", check: "c" })[String(l).toLowerCase()] || "n";
+      const IC = { v: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.2"/><circle cx="10" cy="10" r="3.4"/><path d="M10 2.8v2.6M10 14.6v2.6M2.8 10h2.6M14.6 10h2.6"/></svg>', b: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.5 2 4.5 11h5l-1 7 7-9h-5z"/></svg>', c: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8"/></svg>', n: "" };
+      return `<div class="lx-tf lx-pick" data-hint="${hint}"><div class="lx-pk-top"><span class="lx-pk-dots" aria-hidden="true">${items.map(() => "<i></i>").join("")}</span></div>${items.map(([q, a, e], n) => `<div class="lx-tf-i" data-a="${a}"><span class="lx-pk-n" aria-hidden="true">${n + 1}</span><p>${q}</p><div class="lx-tf-b">${Lb.map((l, k) => `<button type="button" data-lxpk="${k}" data-tone="${tone(l)}">${IC[tone(l)]}<span>${l}</span></button>`).join("")}</div><p class="lx-tf-e" hidden><b data-tone="${tone(Lb[a])}">${Lb[a]}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+    /* chi ha più mani di ogni tipo su un flop, a farfalla: BTN a sinistra, BB a destra.
+       UI.rangeVs({ board: "K♠7♦2♣", tex: "Alto e secco", a: [..5 valori], b: [..], la: "BTN", lb: "BB", sa, sb, verdict }) */
+    rangeVs: o => {
+      const SUc = { "♠": "s", "♥": "h", "♦": "d", "♣": "c" };
+      const cards = (o.board.match(/(10|[2-9TJQKA])([♠♥♦♣])/g) || []).map(c => { const s = c.slice(-1), r = c.slice(0, -1).replace("T", "10"); return `<span class="lx-c big ${SUc[s]}">${r}<i>${s}</i></span>`; }).join("");
+      const CAT = [["Doppia coppia, set, scala", "#7c4ddb"], ["Top pair o overpair", "#2f7de1"], ["Coppie più basse", "#1aa6a0"], ["Progetti", "#ef7a43"], ["Niente o asso alto", "#9aa3ab"]];
+      const mx = Math.max(...o.a, ...o.b, 1);
+      const rows = CAT.map(([n, col], i) => { const x = o.a[i] || 0, y = o.b[i] || 0; if (!x && !y) return "";
+        const w = v => (v / mx * 100).toFixed(1) + "%";
+        return `<div class="lx-rx-row" style="--c:${col}"><div class="l ${x > y ? "win" : ""}"><b>${x}%</b><i style="--w:${w(x)}"></i></div><span class="n">${n}</span><div class="r ${y > x ? "win" : ""}"><i style="--w:${w(y)}"></i><b>${y}%</b></div></div>`; }).join("");
+      return `<div class="lx-rx lx-anim" style="--dur:.9s"><div class="lx-rx-flop"><div class="lx-rx-board">${cards}</div>${o.tex ? `<span class="lx-rx-tex">${o.tex}</span>` : ""}</div>
+        <div class="lx-rx-head"><span class="l"><b>${o.la || "BTN"}</b><small>${o.sa || "ha aperto"}</small></span><span class="r"><b>${o.lb || "BB"}</b><small>${o.sb || "ha pagato"}</small></span></div>
+        <div class="lx-rx-rows">${rows}</div>${o.verdict ? `<p class="lx-rx-v">${o.verdict}</p>` : ""}</div>`;
+    },
     // le due domande prima di ogni puntata, come schema che compare un passo alla volta quando entra nello schermo: UI.twoq()
     twoq: () => `<div class="lx-2q lx-anim"><div class="lx-2q-r lx-fd" style="--d:.1s"><div class="q"><small>Domanda 1 · valore</small><b>Ci sono mani peggiori della mia che pagano?</b></div><span class="ar">Sì</span><div class="a g">Punta per valore</div></div><div class="lx-2q-no lx-fd" style="--d:.55s">No</div><div class="lx-2q-r lx-fd" style="--d:.9s"><div class="q"><small>Domanda 2 · bluff</small><b>Ci sono mani migliori della mia che foldano?</b></div><span class="ar">Sì</span><div class="a b">Bluff</div></div><div class="lx-2q-no lx-fd" style="--d:1.35s">No</div><div class="lx-2q-r lx-pp" style="--d:1.7s"><div class="a n">Check<span>nessun bersaglio: vai allo showdown o lascia il piatto</span></div></div></div>`,
     // check del tilt: UI.tilt([["Segnale", "descrizione"], ...])
@@ -845,6 +862,7 @@ const UI = (() => {
       const k = tf.dataset.lxtf != null ? "lxtf" : "lxpk", a = +it.dataset.a, ok = +tf.dataset[k] === a, had = it.contains(document.activeElement); it.classList.add(ok ? "ok" : "ko");
       it.querySelectorAll(`[data-${k}]`).forEach(b => { b.disabled = true; if (+b.dataset[k] === a) b.classList.add("right"); if (b === tf) b.classList.add("pick"); });
       const ex = it.querySelector(".lx-tf-e"); ex.hidden = false; if (had) { ex.tabIndex = -1; ex.focus({ preventScroll: true }); }
+      const dot = box.querySelectorAll(".lx-pk-dots i")[[...box.querySelectorAll(".lx-tf-i")].indexOf(it)]; if (dot) dot.className = ok ? "ok" : "ko";
       tfScore(box); return;
     }
     const tfr = e.target.closest("[data-lxtfr]");
@@ -852,6 +870,7 @@ const UI = (() => {
       const box = tfr.closest(".lx-tf"); if (!box) return; const had = tfr === document.activeElement;
       box.querySelectorAll(".lx-tf-i").forEach(it => { delete it.dataset.done; it.classList.remove("ok", "ko"); it.querySelector(".lx-tf-e").hidden = true; it.querySelectorAll("[data-lxtf],[data-lxpk]").forEach(b => { b.disabled = false; b.classList.remove("right", "pick"); }); });
       box.querySelector("[data-tfs]").textContent = box.dataset.hint || "Tocca Vero o Falso per ogni frase.";
+      box.querySelectorAll(".lx-pk-dots i").forEach(d => { d.className = ""; });
       if (had) { const f = box.querySelector("[data-lxtf],[data-lxpk]"); if (f) f.focus(); }
       return;
     }

@@ -211,3 +211,67 @@
 .lx-curio-sp i:nth-child(3n){background:#c58bf0;box-shadow:0 0 6px #8e44ad}
 @keyframes curioSp{0%{transform:rotate(var(--a)) translateY(0) scale(1);opacity:1}100%{transform:rotate(var(--a)) translateY(calc(-1 * var(--d))) scale(.3);opacity:0}}
 @media (prefers-reduced-motion:reduce){.lx-curio-b,.lx-curio-in,.lx-curio-ar{transition:none}.lx-curio-h::after,.lx-curio.on .lx-curio-ic{animation:none}}
+
+/* ===== «Value, bluff o check?» (UI.pick): schede numerate e pulsanti colorati ===== */
+.lx-pick{--tv:#22a86a;--tb:#ef7a43;--tc:#3b86e3;--tn:var(--ink2);gap:10px;background:transparent;border:0;padding:0}
+.lx-pk-top{display:flex;justify-content:center;margin-bottom:2px}
+.lx-pk-dots{display:flex;gap:6px}
+.lx-pk-dots i{width:10px;height:10px;border-radius:50%;background:var(--line);transition:background .3s,transform .3s}
+.lx-pk-dots i.ok{background:#22a86a;transform:scale(1.2)}.lx-pk-dots i.ko{background:#e04848;transform:scale(1.2)}
+.lx-pick .lx-tf-i{position:relative;display:block;padding:14px 14px 12px 50px;border-radius:16px;border:1.5px solid var(--line);background:var(--surface);box-shadow:0 2px 0 var(--line);transition:border-color .25s,background .25s}
+.lx-pk-n{position:absolute;left:12px;top:13px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-size:13px;font-weight:800;background:var(--surface2);color:var(--ink2);border:1.5px solid var(--line);transition:background .25s,color .25s,border-color .25s}
+.lx-pick .lx-tf-i>p:not(.lx-tf-e){margin:0 0 12px;font-size:15px;line-height:1.5}
+.lx-pick .lx-tf-b{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lx-pick .lx-tf-b button{--t:var(--tn);display:flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:6px 8px;border-radius:12px;border:2px solid color-mix(in srgb,var(--t) 55%,var(--line));border-bottom-width:4px;background:color-mix(in srgb,var(--t) 9%,var(--surface));color:var(--t);font-weight:800;font-size:14px;transition:transform .08s,background .2s,color .2s,border-color .2s}
+.lx-pick .lx-tf-b button[data-tone="v"]{--t:var(--tv)}.lx-pick .lx-tf-b button[data-tone="b"]{--t:var(--tb)}.lx-pick .lx-tf-b button[data-tone="c"]{--t:var(--tc)}
+.lx-pick .lx-tf-b button svg{width:17px;height:17px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lx-pick .lx-tf-b button[data-tone="b"] svg{fill:currentColor;stroke:none}
+.lx-pick .lx-tf-b button:hover:not(:disabled){transform:translateY(-1px);background:color-mix(in srgb,var(--t) 16%,var(--surface))}
+.lx-pick .lx-tf-b button:active:not(:disabled){transform:translateY(2px);border-bottom-width:2px}
+.lx-pick .lx-tf-b button:disabled{opacity:.4;cursor:default}
+/* dopo la risposta: la scelta si riempie del suo colore, la risposta giusta ha la spunta */
+.lx-pick .lx-tf-b button.pick{opacity:1;background:linear-gradient(180deg,var(--t),color-mix(in srgb,var(--t) 78%,#000));border-color:color-mix(in srgb,var(--t) 70%,#000);color:#fff}
+.lx-pick .lx-tf-b button.right{opacity:1;position:relative;border-color:var(--t);box-shadow:0 0 0 3px color-mix(in srgb,#22a86a 35%,transparent)}
+.lx-pick .lx-tf-b button.right::after{content:"✓";position:absolute;top:-9px;right:-7px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;background:#22a86a;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);animation:fxpill .35s cubic-bezier(.2,.9,.3,1.3)}
+.lx-pick .lx-tf-b button.pick:not(.right){animation:fxko .38s linear}
+.lx-pick .lx-tf-i.ok{border-color:color-mix(in srgb,#22a86a 60%,var(--line));background:color-mix(in srgb,#22a86a 5%,var(--surface))}
+.lx-pick .lx-tf-i.ko{border-color:color-mix(in srgb,#e04848 55%,var(--line));background:color-mix(in srgb,#e04848 4%,var(--surface))}
+.lx-pick .lx-tf-i.ok .lx-pk-n{background:#22a86a;border-color:#22a86a;color:#fff}.lx-pick .lx-tf-i.ko .lx-pk-n{background:#e04848;border-color:#e04848;color:#fff}
+.lx-pick .lx-tf-e{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:var(--surface2);font-size:14px;line-height:1.5;color:var(--ink);animation:fxdrawer .45s cubic-bezier(.32,.72,0,1) both}
+.lx-pick .lx-tf-e b[data-tone]{display:inline-block;margin-right:4px;padding:1px 9px;border-radius:99px;color:#fff;background:var(--tn)}
+.lx-pick .lx-tf-e b[data-tone="v"]{background:var(--tv)}.lx-pick .lx-tf-e b[data-tone="b"]{background:var(--tb)}.lx-pick .lx-tf-e b[data-tone="c"]{background:var(--tc)}
+.lx-pick .lx-tf-s{text-align:center}
+@media (max-width:420px){.lx-pick .lx-tf-i{padding:12px 12px 12px 44px}.lx-pk-n{left:10px;width:24px;height:24px}.lx-pick .lx-tf-b{gap:6px}.lx-pick .lx-tf-b button{font-size:13px;gap:4px;padding:6px 4px}.lx-pick .lx-tf-b button svg{width:15px;height:15px}}
+
+/* ===== chi ha più mani su un flop (UI.rangeVs): grafico a farfalla ===== */
+.lx-rx-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:12px 0 6px}
+.lx-rx{padding:14px 14px 12px;border-radius:18px;border:1.5px solid var(--line);background:var(--surface);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+.lx-rx-flop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 10px 12px;margin:-2px -2px 12px;border-radius:14px;background:radial-gradient(120% 120% at 50% 0%,var(--felt1,#1f8a55),var(--felt3,#0c4a2d))}
+.lx-rx-board{display:flex;gap:6px}
+.lx-rx-tex{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.3);padding:3px 10px;border-radius:99px}
+.lx-rx-head{display:grid;grid-template-columns:1fr 1fr;margin-bottom:6px}
+.lx-rx-head span{display:flex;flex-direction:column;line-height:1.15}
+.lx-rx-head .r{align-items:flex-end;text-align:right}
+.lx-rx-head b{font-family:var(--f-display);font-size:15px}
+.lx-rx-head small{font-size:11.5px;color:var(--ink2)}
+.lx-rx-head .l b{color:#b8860b}.lx-rx-head .r b{color:#2f7de1}
+.lx-rx-rows{display:grid;gap:7px}
+.lx-rx-row{display:grid;grid-template-columns:1fr 92px 1fr;align-items:center;gap:6px}
+.lx-rx-row .n{font-size:11.5px;font-weight:700;line-height:1.2;text-align:center;color:var(--ink2)}
+.lx-rx-row .l,.lx-rx-row .r{display:flex;align-items:center;gap:5px;min-width:0}
+.lx-rx-row .l{justify-content:flex-end}
+.lx-rx-row i{display:block;height:16px;width:var(--w);min-width:3px;background:color-mix(in srgb,var(--c) 55%,var(--surface));transition:width .2s}
+.lx-rx-row .l i{border-radius:8px 3px 3px 8px}.lx-rx-row .r i{border-radius:3px 8px 8px 3px}
+.lx-rx-row .win i{background:var(--c);box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 60%,transparent)}
+.lx-rx-row b{font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink2);min-width:30px}
+.lx-rx-row .l b{text-align:right}
+.lx-rx-row .win b{color:var(--ink);font-weight:900}
+.lx-rx-v{margin:12px 0 0;padding:9px 11px;border-radius:12px;background:var(--surface2);font-size:13.5px;line-height:1.45}
+/* le barre crescono dal centro quando il grafico entra nello schermo */
+.lx-rx.lx-anim:not(.in) .lx-rx-row i{transform:scaleX(0)}
+.lx-rx-row .l i{transform-origin:right}.lx-rx-row .r i{transform-origin:left}
+.lx-rx.lx-anim.in .lx-rx-row i{animation:rxgrow var(--dur,.9s) cubic-bezier(.32,.72,0,1) both}
+.lx-rx.lx-anim.in .lx-rx-row:nth-child(2) i{animation-delay:.08s}.lx-rx.lx-anim.in .lx-rx-row:nth-child(3) i{animation-delay:.16s}.lx-rx.lx-anim.in .lx-rx-row:nth-child(4) i{animation-delay:.24s}.lx-rx.lx-anim.in .lx-rx-row:nth-child(5) i{animation-delay:.32s}
+@keyframes rxgrow{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@media (max-width:420px){.lx-rx{padding:12px 10px 10px}.lx-rx-row{grid-template-columns:1fr 80px 1fr;gap:4px}.lx-rx-row .n{font-size:11px}.lx-rx-row b{font-size:12px;min-width:27px}}
+@media (prefers-reduced-motion:reduce){.lx-rx .lx-rx-row i{transform:none!important;animation:none!important}}
