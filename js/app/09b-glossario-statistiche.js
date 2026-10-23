@@ -275,24 +275,36 @@ document.addEventListener("change", e => { if (e.target.matches && e.target.matc
 document.addEventListener("input", e => { if (e.target.matches && e.target.matches("[data-sgq]")) sgFilter(e.target.closest("[data-sg]")); });
 
 /* ================= HUD DI PROVA CON POPUP (UI.hudPop) =================
-   Un HUD su tre righe sopra un avversario: toccandolo si apre il popup, con le schede per situazione.
-   Ogni statistica ha accanto le occasioni: sotto le 20 è segnata come poco affidabile. */
-const HP_HUD = [[["VPIP", 41, "hi"], ["PFR", 9, "lo"], ["Mani", 312, ""]], [["3B", 3, "lo"], ["F3B", 45, ""], ["ATS", 21, "lo"]], [["CB", 61, ""], ["FCB", 38, ""], ["WTSD", 34, "hi"]]];
-const HP_TABS = [
-  ["Preflop", [["VPIP", 41, 312], ["PFR", 9, 312], ["Open limp", 18, 140], ["RFI · UTG", 8, 12], ["RFI · BTN", 24, 21], ["Cold call", 22, 95], ["3-bet", 3, 104], ["Fold to 3-bet", 45, 11], ["4-bet", 2, 40]]],
-  ["Bui", [["Steal (ATS)", 21, 34], ["Fold to steal · BB", 52, 27], ["Fold to steal · SB", 71, 24], ["3-bet vs steal", 4, 51]]],
-  ["Flop", [["CBet", 61, 38], ["CBet · IP", 68, 22], ["CBet · OOP", 50, 16], ["Fold to CBet", 38, 52], ["Raise CBet", 6, 52], ["Donk", 9, 70]]],
-  ["Turn e river", [["CBet turn", 42, 19], ["Fold to turn CBet", 33, 24], ["Fold to river CBet", 22, 14], ["WTSD", 34, 98], ["W$SD", 47, 33], ["WWSF", 41, 98]]],
-];
-const hpTab = i => `<div class="lx-hp-rows">${HP_TABS[i][1].map(([n, v, k]) => `<div class="lx-hp-r${k < 20 ? " few" : ""}"><span>${n}</span><i style="--w:${v}%"></i><b>${v}%</b><small>(${k})</small></div>`).join("")}</div>`;
-UI.hudPop = () => `<div class="lx-hp" data-hp><div class="lx-hp-felt"><div class="lx-hp-seat"><button type="button" class="lx-hp-hud" data-hpo aria-expanded="false" aria-label="Apri il popup dell'avversario">${HP_HUD.map(r => `<span class="row">${r.map(([n, v, c]) => `<span class="${c}"><b>${v}</b><small>${n}</small></span>`).join("")}</span>`).join("")}</button><span class="lx-hp-av">Il vicino</span><span class="lx-hp-tap" aria-hidden="true">Tocca l'HUD</span></div></div>
-  <div class="lx-hp-pop" data-hpp hidden><div class="lx-hp-top"><b>Il vicino · 312 mani</b><button type="button" data-hpx aria-label="Chiudi il popup">✕</button></div><div class="lx-hp-tabs" role="tablist">${HP_TABS.map(([n], i) => `<button type="button" role="tab" class="${i ? "" : "on"}" aria-selected="${i ? "false" : "true"}" data-hpt="${i}">${n}</button>`).join("")}</div><div data-hpb></div><p class="lx-hp-note"><i></i>Tra parentesi le occasioni. In grigio le statistiche con meno di 20 occasioni: sono solo indizi.</p></div>
+   Un HUD su tre righe sopra un avversario. Ogni numero apre il suo popup: il dettaglio di quella statistica
+   (per posizione, in posizione o no, per street, per size). Ogni riga ha accanto le occasioni:
+   sotto le 20 è segnata come poco affidabile. Righe: [nome, valore, occasioni, barra 0-100 o null]. */
+const HP = {
+  vpip: ["VPIP", 41, 312, "hi", "Quanto gioca, posto per posto", [["UTG", 28, 52], ["HJ", 33, 52], ["CO", 39, 52], ["BTN", 48, 52], ["SB", 46, 52], ["BB", 52, 52], ["Entra con un open limp", 18, 140], ["Paga un open (cold call)", 22, 95]], "Gioca troppe mani da ogni posto: anche da UTG entra quasi 3 volte su 10. La differenza con il PFR dice che entra soprattutto limpando o pagando."],
+  pfr: ["PFR", 9, 312, "lo", "Quanto rilancia, posto per posto", [["UTG", 6, 52], ["HJ", 7, 52], ["CO", 9, 52], ["BTN", 14, 52], ["SB", 10, 52], ["BB", 8, 52], ["Open raise · UTG", 8, 12], ["Open raise · BTN", 24, 21]], "Rilancia poco ovunque: quando apre dai primi posti ha quasi sempre una mano forte. Con VPIP 41 e PFR 9 è il profilo del fish passivo."],
+  mani: ["Mani", 312, null, "", "Quante mani hai giocato con lui", [["Da UTG", "52", null], ["Da HJ", "52", null], ["Da CO", "52", null], ["Dal BTN", "52", null], ["Dallo SB", "52", null], ["Dal BB", "52", null], ["Sessioni insieme", "4", null]], "312 mani bastano per VPIP e PFR, non per le statistiche più rare: per quelle guarda sempre le occasioni nel loro popup."],
+  "3b": ["3-bet", 3, 104, "lo", "Quanto rilancia un open", [["Dal CO", 2, 15], ["Dal BTN", 3, 18], ["Dallo SB", 4, 22], ["Dal BB", 3, 37], ["Contro un open da UTG o HJ", 1, 31], ["Contro un open da CO o BTN", 4, 52], ["In posizione", 2, 38], ["Fuori posizione", 4, 66]], "3-betta pochissimo: ai micro una 3-bet così rara è quasi sempre QQ+ o AK. Contro la sua 3-bet folda le mani medie."],
+  f3b: ["Fold to 3-bet", 45, 11, "", "Cosa fa quando gli rilanciano l'open", [["Folda", 45, 11], ["Paga", 55, 11], ["Rilancia (4-bet)", 0, 11], ["Dopo un open da UTG o HJ", 50, 4], ["Dopo un open da CO o BTN", 43, 7], ["In posizione", 40, 5], ["Fuori posizione", 50, 6]], "Undici occasioni sono troppo poche: il 45% può essere 25% o 65%. Servono almeno 30 o 40 occasioni prima di 3-bettarlo in bluff."],
+  ats: ["Steal", 21, 34, "lo", "Quanto apre da CO, BTN e SB", [["Dal CO", 15, 13], ["Dal BTN", 26, 12], ["Dallo SB", 22, 9], ["Steal riuscito: foldano tutti", 35, 34], ["Folda alla 3-bet dei bui", 50, 4], ["Dallo SB, limp invece di rilanciare", 41, 22]], "Ruba poco per uno che gioca il 41% delle mani: dal BTN preferisce limpare o pagare. Quando apre da CO o BTN il suo range è più forte del solito."],
+  cb: ["C-bet", 61, 38, "", "Quanto punta dopo aver rilanciato preflop", [["Flop", 61, 38], ["Flop · in posizione", 68, 22], ["Flop · fuori posizione", 50, 16], ["Flop · contro due o più", 44, 9], ["Turn (secondo colpo)", 42, 19], ["River (terzo colpo)", 35, 8], ["Size media al flop: 55% del piatto", null, 38]], "Punta il flop spesso, il turn molto meno: se paghi il flop, al turn spesso rinuncia e il piatto può essere tuo."],
+  fcb: ["Fold to c-bet", 38, 52, "", "Cosa fa contro la c-bet", [["Folda al flop", 38, 52], ["Paga al flop", 56, 52], ["Rilancia al flop", 6, 52], ["Folda in posizione", 33, 21], ["Folda fuori posizione", 42, 31], ["Folda a una c-bet fino a 1/3", 30, 20], ["Folda a una c-bet da 2/3 o più", 52, 14], ["Folda al turn", 33, 24], ["Folda al river", 22, 14]], "Contro le c-bet piccole folda poco: il bluff piccolo rende poco, la value bet anche con mani medie sì. Folda di più solo contro le puntate grandi."],
+  wtsd: ["WTSD", 34, 98, "hi", "Quanto arriva allo showdown dopo il flop", [["Arriva allo showdown", 34, 98], ["Vince allo showdown (W$SD)", 47, 33], ["Vince il piatto quando vede il flop (WWSF)", 41, 98], ["Arriva allo showdown dopo aver pagato la c-bet", 52, 29], ["Vince dopo aver pagato il river", 40, 15]], "Arriva spesso allo showdown e vince meno della metà delle volte: paga con mani deboli. Contro di lui value bet sottili e pochi bluff."],
+};
+const HP_ROWS = [["vpip", "pfr", "mani"], ["3b", "f3b", "ats"], ["cb", "fcb", "wtsd"]], HP_AB = { vpip: "VPIP", pfr: "PFR", mani: "Mani", "3b": "3B", f3b: "F3B", ats: "ATS", cb: "CB", fcb: "FCB", wtsd: "WTSD" };
+const hpPop = k => { const [n, v, occ, , sub, rows, read] = HP[k];
+  return `<div class="lx-hp-top"><b>${n} · ${v}${occ ? "%" : ""}${occ ? ` <small>(${occ})</small>` : ""}</b><button type="button" data-hpx aria-label="Chiudi il popup">✕</button></div><p class="lx-hp-sub">${sub}</p>
+  <div class="lx-hp-rows">${rows.map(([l, x, o]) => { const num = typeof x === "number"; return `<div class="lx-hp-r${o != null && o < 20 ? " few" : ""}${num ? "" : " nb"}"><span>${l}</span>${num ? `<i style="--w:${x}%"></i><b>${x}%</b>` : `<i class="no"></i><b>${x == null ? "" : x}</b>`}<small>${o != null ? `(${o})` : ""}</small></div>`; }).join("")}</div>
+  <p class="lx-hp-read"><span>Come leggerlo</span>${read}</p><p class="lx-hp-note"><i></i>Tra parentesi le occasioni. In grigio quelle sotto le 20: sono solo indizi.</p>`; };
+UI.hudPop = () => `<div class="lx-hp" data-hp><div class="lx-hp-felt"><div class="lx-hp-seat"><div class="lx-hp-hud" role="group" aria-label="HUD dell'avversario: tocca un numero">${HP_ROWS.map(r => `<span class="row">${r.map(k => `<button type="button" class="${HP[k][3]}" data-hpk="${k}" aria-expanded="false"><b>${HP[k][1]}</b><small>${HP_AB[k]}</small></button>`).join("")}</span>`).join("")}</div><span class="lx-hp-av">Il vicino</span><span class="lx-hp-tap" aria-hidden="true">Tocca un numero</span></div></div>
+  <div class="lx-hp-pop" data-hpp hidden></div>
   <p class="lx-hp-leg"><span class="hi">verde</span> molto alto <span class="lo">rosso</span> molto basso <span>bianco</span> nella media</p></div>`;
 document.addEventListener("click", e => {
   if (!e.target.closest) return;
-  const o = e.target.closest("[data-hpo]"), x = e.target.closest("[data-hpx]"), t = e.target.closest("[data-hpt]");
-  if (o || x) { const box = (o || x).closest("[data-hp]"), p = box.querySelector("[data-hpp]"), open = o ? p.hidden : false; if (open && !box.querySelector("[data-hpb]").firstChild) box.querySelector("[data-hpb]").innerHTML = hpTab(0); p.hidden = !open; box.classList.toggle("on", open); box.querySelector("[data-hpo]").setAttribute("aria-expanded", open ? "true" : "false"); return; }
-  if (t) { const box = t.closest("[data-hp]"); box.querySelectorAll("[data-hpt]").forEach(b => { b.classList.toggle("on", b === t); b.setAttribute("aria-selected", b === t ? "true" : "false"); }); box.querySelector("[data-hpb]").innerHTML = hpTab(+t.dataset.hpt); }
+  const k = e.target.closest("[data-hpk]"), x = e.target.closest("[data-hpx]");
+  if (!k && !x) return;
+  const box = (k || x).closest("[data-hp]"), p = box.querySelector("[data-hpp]"), same = k && box.dataset.cur === k.dataset.hpk && !p.hidden, open = k && !same;
+  box.querySelectorAll("[data-hpk]").forEach(b => { const on = open && b === k; b.classList.toggle("sel", on); b.setAttribute("aria-expanded", on ? "true" : "false"); });
+  if (open) { p.innerHTML = hpPop(k.dataset.hpk); box.dataset.cur = k.dataset.hpk; }
+  p.hidden = !open; box.classList.toggle("on", !!open);
 });
 
 /* ================= GRAFICO DEI RISULTATI DI UN TRACKER (UI.trkGraph) =================
