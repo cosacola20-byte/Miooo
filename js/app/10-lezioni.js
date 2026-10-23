@@ -3278,8 +3278,8 @@ function tcQTable(q) {
   const bm = t.match(new RegExp("\\bboard(?:\\s+è|\\s+di|\\s*:)?\\s+((?:" + TCC + " ?){3,5})", "i"));
   if (bm) board = tcCode(bm[1]);
   else {
-    const fm = t.match(new RegExp("\\b(?:flop|su)\\s+((?:" + TCC + " ?){3})", "i"));
-    if (fm) { board = tcCode(fm[1]); const tm = t.match(new RegExp("\\bturn\\s+(" + TCC + ")", "i")); if (tm) { board += tcCode(tm[1]); const rm = t.match(new RegExp("\\briver\\s+(" + TCC + ")", "i")); if (rm) board += tcCode(rm[1]); } }
+    const fm = t.match(new RegExp("\\b(?:flop|su)\\s+((?:" + TCC + " ?){3,5})", "i"));
+    if (fm) { board = tcCode(fm[1]); if (board.length === 6) { const tm = t.match(new RegExp("\\bturn\\s+(" + TCC + ")", "i")); if (tm) { board += tcCode(tm[1]); const rm = t.match(new RegExp("\\briver\\s+(" + TCC + ")", "i")); if (rm) board += tcCode(rm[1]); } } }
   }
   if (board) lbl = board.length === 6 ? "Flop" : board.length === 8 ? "Turn" : "River";
   const hm = t.match(new RegExp("\\b(?:hai|con|mano(?:\\s+è)?|tieni)\\s+(" + TCC + " ?" + TCC + ")", "i"));
@@ -3299,6 +3299,9 @@ function tcQTable(q) {
     const POT = pm ? +num(pm[1]) : null, dead = (six.vils.includes("SB") || six.hero === "SB" ? 0 : 0.5) + (six.vils.includes("BB") || six.hero === "BB" ? 0 : 1);
     if (POT != null) { six.pot = POT; six.inv = Math.max(0, Math.round((POT - dead) / (six.vils.length + 1) * 10) / 10); }
     const B = vb || hb;
+    /* la mano dall'inizio, azione per azione, quando il testo basta per ricostruirla */
+    const plan = typeof thPlan === "function" ? thPlan(t, { ...six, board }) : null;
+    if (plan) return UI.hand(thHand(plan, hero ? hero.replace(/(.)(.)/g, (_, r, s) => (r === "T" ? "10" : r) + ({ s: "♠", h: "♥", d: "♦", c: "♣" })[s]) : "", board)) + (B ? pot : "");
     return sixPost(six, [{ lbl, cards: board }], hero || null) + (B ? pot : "");
   }
   return tableHtml([...(board ? [{ lbl, cards: board }] : []), ...(hero ? [{ hero: 1, lbl: "La tua mano", cards: hero }] : [])]) + pot;
@@ -3317,10 +3320,13 @@ function tcSeats(t) {
     new RegExp("\\b(?:[Ss]ei|[Aa]pri) (?:il |lo )?" + R + "\\b"),
     new RegExp("\\b(?:hai|con) " + C + " (?:al|dal|nel|dallo|allo|nello|in) " + R + "\\b", "i"),
   ];
-  for (const re of H) if ((m = t.match(re))) { hero = m[1].toUpperCase(); break; }
+  let k = -1;
+  for (const re of H) { k++; if ((m = t.match(re))) { hero = m[1].toUpperCase(); break; } }
   if (!hero) return null;
+  /* «SB contro BB: … lo SB punta», «… lo SB checka»: se la posizione nominata per prima agisce in terza persona, tu sei l'altra */
+  if (k === 0 && new RegExp("\\b(?:[Ii]l|[Ll]o) " + hero + "(?: \\w+){0,2} (?:punta|checka|c-betta|fa check|folda)\\b").test(t)) hero = m[2];
   /* fuori dalla mano: chi folda, e i bui quando «i bui foldano» */
-  const out = new Set(); let f; const fr = new RegExp("\\b" + R + "\\b,?\\s*(?:folda|foldano|ha foldato)", "g");
+  const out = new Set(); let f; const fr = new RegExp("\\b" + R + "\\b,?\\s*(?:folda|foldano|ha foldato)(?!\\s+(?:assi|re|donne|spesso|quasi|troppo|molto|alla|alle|al|a|il|le|gli|i|mani|tutto|sempre|più|meno|\\d))", "g");
   while ((f = fr.exec(t))) out.add(f[1]);
   if (/\bi bui foldano\b/i.test(t)) { out.add("SB"); out.add("BB"); }
   const vils = [], re = new RegExp("\\b" + R + "\\b", "g");

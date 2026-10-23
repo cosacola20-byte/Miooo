@@ -513,7 +513,9 @@ const UI = (() => {
       const POS = Object.fromEntries(ORD.map(p => [p, at(SEAT, p)])), CHP = Object.fromEntries(ORD.map(p => [p, at(CHPS, p)])), CEN = [50, 46];
       const lerp = (a, k) => [a[0] + (CEN[0] - a[0]) * k, a[1] + (CEN[1] - a[1]) * k];
       let css = "", k = 0;
-      const anim = (from, to, t1, t2 = C - 0.7, fade = 0.35) => { const c = "a" + (++k); css += `@keyframes ${id}-${c}{0%,${P(t1)}%{${from}}${P(t1 + fade)}%,${P(t2)}%{${to}}${P(Math.min(C, t2 + fade))}%,100%{${from}}}.${id} .${c}{animation:${id}-${c} ${C}s linear infinite}`; return c; };
+      /* o.once (domande del quiz): la mano si gioca una volta e resta ferma sull'ultimo momento */
+      const anim = (from, to, t1, t2 = C - 0.7, fade = 0.35) => { const c = "a" + (++k), keep = o.once && t2 >= C - 0.71;
+        css += `@keyframes ${id}-${c}{0%,${P(t1)}%{${from}}${keep ? `${P(t1 + fade)}%,100%{${to}}` : `${P(t1 + fade)}%,${P(t2)}%{${to}}${P(Math.min(C, t2 + fade))}%,100%{${from}}`}}.${id} .${c}{animation:${id}-${c} ${C}s linear ${o.once ? "1 both" : "infinite"}}`; return c; };
       const show = (t1, t2, fade) => anim("opacity:0;transform:translate(-50%,-50%) scale(.6)", "opacity:1;transform:translate(-50%,-50%) scale(1)", t1, t2, fade);
       // il fumetto dell'azione copre la targhetta «100bb» di chi agisce, come nei client; sui posti ai lati resta dentro il tavolo. Quello di Hero sta accanto, per non coprire «Hero»
       const bubAt = (pos, txt) => { const sl = slot(pos), [x, y] = POS[pos], hw = Math.max(52, 20 + txt.length * 5) / 2 + 3;
@@ -525,8 +527,8 @@ const UI = (() => {
       const cardsHtml = str => str.replace(/10/g, "T").match(/[2-9TJQKA][♠♥♦♣]/g).map(c => `<b class="lx-c ${({ "♠": "s", "♥": "h", "♦": "d", "♣": "c" })[c[1]]}">${c[0] === "T" ? "10" : c[0]}${c[1]}</b>`).join("");
       const seats = Object.entries(POS).map(([pos, [x, y]]) => {
         const hero = o.hero && o.hero.pos === pos, dim = fold[pos] != null ? anim("opacity:1", "opacity:.38", fold[pos]) : "";
-        const backs = hero ? "" : `<span class="lx-ha-bk ${anim("opacity:0;transform:translateY(-14px)", "opacity:1;transform:none", (o.deal || 1) + Object.keys(POS).indexOf(pos) * .12, fold[pos] != null ? fold[pos] : rev[pos] ? rev[pos][0] - .05 : C - 0.7)}"><i></i><i></i></span>` + (rev[pos] ? `<span class="lx-ha-hc ${anim("opacity:0;transform:translateY(-10px) rotateY(90deg)", "opacity:1;transform:none", rev[pos][0])}">${cardsHtml(rev[pos][2])}</span>` : "");
-        const hc = hero ? `<span class="lx-ha-hc ${anim("opacity:0;transform:translateY(-10px) rotateY(90deg)", "opacity:1;transform:none", o.hcards || 2)}">${o.hero.cards.replace(/10/g, "T").match(/[2-9TJQKA][♠♥♦♣]/g).map(c => `<b class="lx-c ${({ "♠": "s", "♥": "h", "♦": "d", "♣": "c" })[c[1]]}">${c[0] === "T" ? "10" : c[0]}${c[1]}</b>`).join("")}</span>` : "";
+        const backs = hero && o.hero.cards ? "" : `<span class="lx-ha-bk ${anim("opacity:0;transform:translateY(-14px)", "opacity:1;transform:none", (o.deal || 1) + Object.keys(POS).indexOf(pos) * .12, fold[pos] != null ? fold[pos] : rev[pos] ? rev[pos][0] - .05 : C - 0.7)}"><i></i><i></i></span>` + (rev[pos] ? `<span class="lx-ha-hc ${anim("opacity:0;transform:translateY(-10px) rotateY(90deg)", "opacity:1;transform:none", rev[pos][0])}">${cardsHtml(rev[pos][2])}</span>` : "");
+        const hc = hero && o.hero.cards ? `<span class="lx-ha-hc ${anim("opacity:0;transform:translateY(-10px) rotateY(90deg)", "opacity:1;transform:none", o.hcards || 2)}">${o.hero.cards.replace(/10/g, "T").match(/[2-9TJQKA][♠♥♦♣]/g).map(c => `<b class="lx-c ${({ "♠": "s", "♥": "h", "♦": "d", "♣": "c" })[c[1]]}">${c[0] === "T" ? "10" : c[0]}${c[1]}</b>`).join("")}</span>` : "";
         const sl = slot(pos), side = sl === 1 || sl === 2 ? " sl" : sl === 4 || sl === 5 ? " sr" : "";
         return `<div class="lx-ha-seat${hero ? " hero" : ""}${side} ${dim}" style="left:${x}%;top:${y}%">${hc}${backs}<span class="lx-ha-av">${pos}</span><span class="lx-ha-st">${hero ? "Hero · " : ""}100bb</span></div>`;
       }).join("");
@@ -544,7 +546,7 @@ const UI = (() => {
       const brd = o.board ? `<div class="lx-ha-board">${o.board.map(([t, str]) => `<span class="${anim("opacity:0;transform:perspective(500px) rotateY(80deg) translateY(-6px)", "opacity:1;transform:none", t, C - 0.7, 0.45)}">${cardsHtml(str)}</span>`).join("")}</div>` : "";
       const frz = o.end ? Math.min(C - 0.75, o.end.t + 0.4) : C - 1;
       const sum = [...(o.reveal || []).map(([, pos, c]) => `${pos} mostra ${c}`), o.end ? o.end.testo.replace(/<[^>]+>/g, "") : ""].filter(Boolean).join(". ");
-      return `<div class="lx-ha ${id}" style="--lx-ha-frz:-${frz.toFixed(2)}s"><style>${css}</style><div class="lx-ha-tbl${o.board ? " hasb" : ""}" aria-hidden="true"><div class="lx-ha-felt"></div>${seats}${db}${brd}${pots}${ev}${end}</div>${log ? `<ol class="lx-ha-log">${log}</ol>` : ""}${sum ? `<p class="lx-ha-sr">${sum}</p>` : ""}<p class="lx-cap">La mano si ripete da sola ogni ${C} secondi.</p></div>`;
+      return `<div class="lx-ha ${id}${o.quiz ? " q" : ""}" style="--lx-ha-frz:-${frz.toFixed(2)}s"><style>${css}</style><div class="lx-ha-tbl${o.board ? " hasb" : ""}" aria-hidden="true"><div class="lx-ha-felt"></div>${seats}${db}${brd}${pots}${ev}${end}</div>${log && !o.quiz ? `<ol class="lx-ha-log">${log}</ol>` : ""}${sum ? `<p class="lx-ha-sr">${sum}</p>` : ""}${o.quiz ? "" : `<p class="lx-cap">La mano si ripete da sola ogni ${C} secondi.</p>`}</div>`;
     },
     // chi hai dietro prima del flop: il tavolo 6-max scorre da UTG alla SB, il tuo posto in oro e chi parla dopo di te in rosso (solo CSS, come UI.hand). UI.behind()
     behind: () => {
