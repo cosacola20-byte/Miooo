@@ -11,13 +11,13 @@ const SG_STATS = [
   /* ---------- generali ---------- */
   ["gen", "Mani", "Hands", "Quante mani hai giocato al tavolo con quel giocatore. È il numero che dice quanto fidarti di tutti gli altri.", "Sotto le 100 mani VPIP e PFR sono indizi; le statistiche più rare ne chiedono centinaia o migliaia."],
   ["gen", "VPIP", "Voluntarily Put $ In Pot", "In quante mani su 100 mette soldi nel piatto di sua volontà preflop: call, limp e rilanci. Non contano i bui obbligati quando poi checka o folda.", "Quanto gioca. Molto alto (40 e oltre) è tipico di chi gioca troppe mani."],
-  ["gen", "PFR", "Preflop Raise", "In quante mani su 100 rilancia preflop: open, iso, 3-bet, 4-bet.", "Quanto rilancia. Se è molto più basso del VPIP, il giocatore chiama e limpa invece di rilanciare."],
+  ["gen", "PFR", "Preflop Raise", "In quante mani su 100 rilancia preflop: open, iso, 3-bet, 4-bet.", "Quanto rilancia. Se è molto più basso del VPIP, il giocatore fa call e limpa invece di rilanciare."],
   ["gen", "AF", "Aggression Factor", "Puntate e rilanci diviso i call, dopo il flop. È un rapporto, non una percentuale: AF 3 vuol dire tre puntate o rilanci per ogni call.", "Basso (sotto 1,5) è passivo, alto (sopra 3) aggressivo. Non conta i fold."],
   ["gen", "AFq", "Aggression Frequency", "Puntate e rilanci diviso tutte le azioni dopo il flop, fold compresi (check esclusi), in percentuale.", "Più completo dell'AF, perché tiene conto anche dei fold."],
   ["gen", "Agg%", "Postflop Aggression %", "In quante street viste dopo il flop punta o rilancia almeno una volta. Holdem Manager la mostra anche street per street.", "Simile all'AFq, ma conta le street invece delle singole azioni."],
   ["gen", "Saw Flop", "Saw Flop %", "In quante mani su 100 vede il flop.", "Va letta con il VPIP: chi vede molti flop gioca molti piatti dopo il flop, spesso fuori posizione."],
   ["gen", "Fold to Bet", "Fold to Bet (Total)", "Quanto spesso folda quando qualcuno punta, su tutte le street dopo il flop.", "Alto: le puntate funzionano. Basso: punta per valore e bluffa poco."],
-  ["gen", "Check-Call", "Check-Call", "Dopo aver fatto check, chiama la puntata che arriva.", "Tipico dei giocatori passivi: lasciano puntare e chiamano."],
+  ["gen", "Check-Call", "Check-Call", "Dopo aver fatto check, fa call alla puntata che arriva.", "Tipico dei giocatori passivi: lasciano puntare e fanno call."],
   ["gen", "Check-Fold", "Check-Fold", "Dopo aver fatto check, folda alla puntata che arriva.", "Alto: puntare dopo il suo check rende."],
 
   /* ---------- risultati ---------- */
@@ -33,37 +33,37 @@ const SG_STATS = [
 
   /* ---------- preflop ---------- */
   ["pre", "RFI", "Raise First In / Open Raise", "Quanto spesso apre con un rilancio quando prima di lui hanno foldato tutti. Di solito si guarda per posizione: UTG, HJ, CO, BTN, SB.", "Confrontala con le tabelle di open: dice quanto è largo il suo range."],
-  ["pre", "Limp", "Open Limp / Limp %", "Quanto spesso entra chiamando solo il big blind quando prima di lui hanno foldato tutti.", "Alto: giocatore debole, da isolare."],
-  ["pre", "Limp-Call", "Limp-Call", "Dopo aver limpato, chiama il rilancio di un altro giocatore."],
+  ["pre", "Limp", "Open Limp / Limp %", "Quanto spesso entra mettendo solo il big blind quando prima di lui hanno foldato tutti.", "Alto: giocatore debole, da isolare."],
+  ["pre", "Limp-Call", "Limp-Call", "Dopo aver limpato, fa call al rilancio di un altro giocatore."],
   ["pre", "Limp-Fold", "Limp-Fold", "Dopo aver limpato, folda al rilancio di un altro giocatore.", "Alto: l'iso raise vince spesso subito."],
   ["pre", "Limp-Raise", "Limp-Raise / Limp-Reraise", "Dopo aver limpato, rilancia quando un altro giocatore rilancia.", "Ai micro è quasi sempre una mano fortissima, come AA o KK."],
   ["pre", "Overlimp", "Overlimp / Limp Behind", "Limpa anche lui dopo che un altro ha già limpato."],
   ["pre", "Iso", "Raise Limpers / Iso Raise", "Rilancia dopo uno o più limper per giocare contro uno solo."],
   ["pre", "Fold to Iso", "Fold to Iso Raise", "Dopo aver limpato, folda all'iso raise. È un altro nome del limp-fold in alcuni tracker."],
-  ["pre", "CC", "Cold Call", "Chiama un rilancio come prima azione volontaria della mano, senza aver ancora messo soldi nel piatto di sua volontà.", "Alto: chiama molti open invece di 3-bettare, spesso fuori posizione."],
-  ["pre", "Call Open", "Call vs RFI / Flat", "Chiama un open, di solito mostrata per posizione: contro UTG, contro CO, contro BTN."],
+  ["pre", "CC", "Cold Call", "Fa call a un rilancio come prima azione volontaria della mano, senza aver ancora messo soldi nel piatto di sua volontà.", "Alto: fa call a molti open invece di 3-bettare, spesso fuori posizione."],
+  ["pre", "Call Open", "Call vs RFI / Flat", "Fa call a un open, di solito mostrata per posizione: contro UTG, contro CO, contro BTN."],
   ["pre", "3-bet", "3Bet PF", "Quanto spesso rilancia quando davanti a lui c'è un open: rilanci diviso le occasioni di 3-bet.", "Bassa (sotto 4%): quando 3-betta ha mani forti. Alta (oltre 10%): 3-betta anche per bluff."],
-  ["pre", "3-bet IP / OOP", "3Bet PF IP / OOP", "La 3-bet divisa tra in posizione (per esempio dal BTN contro il CO) e fuori posizione (dai bui).", "Molti giocatori 3-bettano di più dai bui e chiamano di più in posizione."],
+  ["pre", "3-bet IP / OOP", "3Bet PF IP / OOP", "La 3-bet divisa tra in posizione (per esempio dal BTN contro il CO) e fuori posizione (dai bui).", "Molti giocatori 3-bettano di più dai bui e fanno call di più in posizione."],
   ["pre", "Fold to 3-bet", "Fold to 3Bet PF", "Dopo aver aperto, quanto spesso folda alla 3-bet.", "Alto: le 3-bet in bluff contro di lui rendono."],
-  ["pre", "Call 3-bet", "Call 3Bet PF", "Dopo aver aperto, quanto spesso chiama la 3-bet."],
+  ["pre", "Call 3-bet", "Call 3Bet PF", "Dopo aver aperto, quanto spesso fa call alla 3-bet."],
   ["pre", "4-bet", "4Bet PF", "Quanto spesso rilancia una 3-bet.", "Ai micro, se è bassa, la 4-bet è quasi sempre AA, KK o AK."],
   ["pre", "Fold to 4-bet", "Fold to 4Bet PF", "Dopo aver fatto 3-bet, quanto spesso folda alla 4-bet."],
-  ["pre", "Call 4-bet", "Call 4Bet PF", "Dopo aver fatto 3-bet, quanto spesso chiama la 4-bet."],
+  ["pre", "Call 4-bet", "Call 4Bet PF", "Dopo aver fatto 3-bet, quanto spesso fa call alla 4-bet."],
   ["pre", "5-bet", "5Bet PF", "Quanto spesso rilancia una 4-bet, di solito all-in."],
   ["pre", "Fold to 5-bet", "Fold to 5Bet PF", "Dopo aver fatto 4-bet, quanto spesso folda alla 5-bet."],
   ["pre", "Cold 4-bet", "Cold 4Bet", "Fa 4-bet senza aver messo soldi prima: c'è stato un open, poi una 3-bet, e lui rilancia da dietro.", "Quasi sempre una mano fortissima ai micro."],
   ["pre", "Squeeze", "Squeeze", "Fa 3-bet dopo un open e almeno un call.", "Alta: usa i call degli altri per rubare il piatto."],
-  ["pre", "Fold to Squeeze", "Fold to Squeeze", "Dopo aver aperto o chiamato, quanto spesso folda allo squeeze."],
+  ["pre", "Fold to Squeeze", "Fold to Squeeze", "Dopo aver aperto o fatto call, quanto spesso folda allo squeeze."],
   ["pre", "PF All-in", "Preflop All-in / Open Shove", "Quanto spesso va all-in preflop, per primo o su un rilancio."],
 
   /* ---------- steal e bui ---------- */
   ["bui", "ATS", "Attempt to Steal / Steal", "Apre da CO, BTN o SB quando prima di lui hanno foldato tutti, per rubare i bui.", "Alta: apre largo in late position, puoi difendere e 3-bettare di più."],
   ["bui", "Steal riuscito", "Steal Success", "In quante occasioni il suo steal vince subito perché foldano tutti."],
   ["bui", "Fold to Steal", "Fold to Steal (SB / BB)", "Dai bui, quanto spesso folda contro uno steal.", "Alta: contro di lui apri più mani da CO e BTN."],
-  ["bui", "Call Steal", "Call vs Steal (SB / BB)", "Dai bui, quanto spesso chiama uno steal."],
+  ["bui", "Call Steal", "Call vs Steal (SB / BB)", "Dai bui, quanto spesso fa call a uno steal."],
   ["bui", "3-bet vs Steal", "3Bet vs Steal / Resteal", "Dai bui, quanto spesso fa 3-bet contro uno steal."],
   ["bui", "Fold to Resteal", "Fold to 3Bet after Steal", "Dopo uno steal, quanto spesso folda alla 3-bet dei bui.", "Alta: 3-bettare contro i suoi steal è molto profittevole."],
-  ["bui", "BB Defend", "BB Defend vs Steal", "Dal BB, quanto spesso difende (chiama o rilancia) contro uno steal: il contrario del fold to steal."],
+  ["bui", "BB Defend", "BB Defend vs Steal", "Dal BB, quanto spesso difende (fa call o rilancia) contro uno steal: il contrario del fold to steal."],
   ["bui", "SB vs BB", "Blind vs Blind", "Le statistiche quando restano solo i due bui: steal dello SB, limp dello SB, fold del BB allo SB, 3-bet del BB contro lo SB.", "Nel blind vs blind i range sono molto larghi: è una situazione a parte."],
   ["bui", "SB Limp", "SB Complete / SB Limp", "Dallo SB, quando prima hanno foldato tutti, completa il big blind invece di rilanciare o foldare."],
   ["bui", "Walk", "Walk", "Mani in cui il BB vince i bui perché tutti foldano prima di lui."],
@@ -74,7 +74,7 @@ const SG_STATS = [
   ["fl", "CBet 3BP", "Flop CBet in 3Bet Pot", "La c-bet al flop nei piatti con 3-bet preflop."],
   ["fl", "CBet MW", "Flop CBet Multiway", "La c-bet al flop contro due o più avversari."],
   ["fl", "Fold to CBet", "Fold to Flop CBet", "Quanto spesso folda alla c-bet del flop.", "Alta: la c-bet contro di lui vince spesso subito. Bassa: punta per valore, bluffa poco."],
-  ["fl", "Call CBet", "Call Flop CBet", "Quanto spesso chiama la c-bet del flop."],
+  ["fl", "Call CBet", "Call Flop CBet", "Quanto spesso fa call alla c-bet del flop."],
   ["fl", "Raise CBet", "Raise Flop CBet", "Quanto spesso rilancia la c-bet del flop. Fuori posizione è un check-raise.", "Bassa: il suo rilancio ai micro è quasi sempre una mano forte."],
   ["fl", "XR", "Flop Check-Raise", "Fa check e poi rilancia la puntata dell'avversario nella stessa street."],
   ["fl", "Fold to XR", "Fold to Flop Check-Raise", "Dopo aver puntato, quanto spesso folda al check-raise."],
@@ -91,40 +91,40 @@ const SG_STATS = [
   /* ---------- turn ---------- */
   ["tu", "CBet Turn", "Turn CBet / Double Barrel", "Dopo la c-bet al flop, quanto spesso punta di nuovo al turn.", "Molto più bassa della c-bet al flop: quando punta anche il turn ha più spesso una mano."],
   ["tu", "Fold to Turn CB", "Fold to Turn CBet", "Quanto spesso folda alla seconda puntata, al turn."],
-  ["tu", "Call Turn CB", "Call Turn CBet", "Quanto spesso chiama la seconda puntata."],
+  ["tu", "Call Turn CB", "Call Turn CBet", "Quanto spesso fa call alla seconda puntata."],
   ["tu", "Raise Turn CB", "Raise Turn CBet", "Quanto spesso rilancia la puntata del turn.", "Ai micro un raise al turn è quasi sempre una mano molto forte."],
   ["tu", "Fold to Turn Raise", "Fold to Turn Raise", "Dopo aver puntato il turn, quanto spesso folda al rilancio dell'avversario."],
   ["tu", "Delay", "Delayed Turn CBet", "L'aggressore preflop non punta il flop e punta il turn."],
   ["tu", "Fold to Delay", "Fold to Delayed Turn CBet", "Quanto spesso folda alla puntata ritardata del turn."],
   ["tu", "Probe", "Turn Probe", "Il flop è stato checkato da tutti (l'aggressore in posizione non ha fatto c-bet) e lui, fuori posizione, punta per primo il turn."],
   ["tu", "Fold to Probe", "Fold to Turn Probe", "Quanto spesso l'aggressore preflop folda alla probe del turn."],
-  ["tu", "Turn Donk", "Turn Donk Bet", "Dopo aver chiamato la puntata del flop, punta per primo il turn invece di fare check."],
+  ["tu", "Turn Donk", "Turn Donk Bet", "Dopo aver fatto call alla puntata del flop, punta per primo il turn invece di fare check."],
   ["tu", "Turn XR", "Turn Check-Raise", "Check-raise al turn."],
   ["tu", "Fold to Turn XR", "Fold to Turn Check-Raise", "Dopo aver puntato il turn, quanto spesso folda al check-raise."],
-  ["tu", "Float", "Turn Bet vs Missed CBet / Float", "Ha chiamato la c-bet al flop in posizione; al turn l'aggressore fa check e lui punta.", "Alta: chiama il flop per prendersi il piatto al turn quando l'altro rinuncia."],
+  ["tu", "Float", "Turn Bet vs Missed CBet / Float", "Ha fatto call alla c-bet al flop in posizione; al turn l'aggressore fa check e lui punta.", "Alta: fa call al flop per prendersi il piatto al turn quando l'altro rinuncia."],
   ["tu", "Turn AF", "Turn Aggression Factor", "L'aggression factor solo al turn."],
   ["tu", "Turn Agg%", "Turn Aggression %", "In quanti turn visti punta o rilancia."],
 
   /* ---------- river ---------- */
   ["ri", "CBet River", "River CBet / Triple Barrel", "Dopo aver puntato flop e turn, quanto spesso punta anche il river."],
-  ["ri", "Fold to River CB", "Fold to River CBet", "Quanto spesso folda alla terza puntata, al river.", "Ai micro di solito è bassa: chi arriva al river con una coppia chiama."],
-  ["ri", "Call River CB", "Call River CBet", "Quanto spesso chiama la terza puntata."],
+  ["ri", "Fold to River CB", "Fold to River CBet", "Quanto spesso folda alla terza puntata, al river.", "Ai micro di solito è bassa: chi arriva al river con una coppia fa call."],
+  ["ri", "Call River CB", "Call River CBet", "Quanto spesso fa call alla terza puntata."],
   ["ri", "Raise River CB", "Raise River CBet", "Quanto spesso rilancia la puntata del river.", "Ai micro un raise al river è quasi sempre una mano fortissima."],
   ["ri", "River Bet", "River Bet", "Quanto spesso punta il river quando può farlo per primo o quando l'avversario checka."],
   ["ri", "Fold River Bet", "Fold to River Bet", "Quanto spesso folda a una puntata al river, di qualsiasi tipo."],
   ["ri", "River Probe", "River Probe", "Il turn è stato checkato da tutti e lui, fuori posizione, punta per primo il river."],
-  ["ri", "River Donk", "River Donk Bet", "Dopo aver chiamato la puntata del turn, punta per primo il river."],
+  ["ri", "River Donk", "River Donk Bet", "Dopo aver fatto call alla puntata del turn, punta per primo il river."],
   ["ri", "River XR", "River Check-Raise", "Check-raise al river.", "Ai micro è quasi sempre valore."],
   ["ri", "River Bet vs Miss", "River Bet vs Missed CBet", "L'aggressore checka il river e lui punta."],
   ["ri", "River AF", "River Aggression Factor", "L'aggression factor solo al river."],
   ["ri", "River Agg%", "River Aggression %", "In quanti river visti punta o rilancia."],
 
   /* ---------- showdown ---------- */
-  ["sd", "WTSD", "Went To ShowDown", "Quante volte, dopo aver visto il flop, arriva allo showdown.", "Alta (oltre 30%): chiama fino in fondo, bluffa poco contro di lui. Bassa: folda spesso prima."],
+  ["sd", "WTSD", "Went To ShowDown", "Quante volte, dopo aver visto il flop, arriva allo showdown.", "Alta (oltre 30%): fa call fino in fondo, bluffa poco contro di lui. Bassa: folda spesso prima."],
   ["sd", "W$SD", "Won $ at ShowDown", "Quanti showdown vince.", "Con WTSD alta e W$SD bassa: arriva allo showdown con mani deboli."],
   ["sd", "WWSF", "Won When Saw Flop / W$WSF", "In quante mani vince il piatto quando vede il flop, con o senza showdown.", "Alta: si prende molti piatti con l'aggressività. Bassa: lascia spesso il piatto."],
-  ["sd", "W$SD River Call", "Won at SD after River Call", "Quanti showdown vince quando ci arriva chiamando una puntata al river. Il nome cambia da tracker a tracker.", "Bassa: chiama il river troppo largo. Alta: chiama solo con mani forti."],
-  ["sd", "WTSD after CB", "WTSD after Calling Flop CBet", "Quante volte arriva allo showdown dopo aver chiamato la c-bet al flop.", "Dice se chi chiama il flop poi molla al turn o va fino in fondo."],
+  ["sd", "W$SD River Call", "Won at SD after River Call", "Quanti showdown vince quando ci arriva facendo call a una puntata al river. Il nome cambia da tracker a tracker.", "Bassa: fa call al river troppo largo. Alta: fa call solo con mani forti."],
+  ["sd", "WTSD after CB", "WTSD after Calling Flop CBet", "Quante volte arriva allo showdown dopo aver fatto call alla c-bet al flop.", "Dice se chi fa call al flop poi molla al turn o va fino in fondo."],
 
   /* ---------- varianti e simboli ---------- */
   ["var", "( n )", "Opportunità / Sample", "Il numero piccolo accanto a una statistica: le volte in cui il giocatore ha avuto l'occasione di farla. 50% su 4 occasioni non dice quasi niente.", "Prima di usare una percentuale guarda sempre su quante occasioni è calcolata."],
@@ -141,7 +141,7 @@ const SG_STATS = [
 /* ---------- altre statistiche, una per una ---------- */
 SG_STATS.push(
   ["gen", "Fold Turn Bet", "Fold to Turn Bet", "Quanto spesso folda a una puntata al turn, c-bet o no."],
-  ["pre", "Call Squeeze", "Call Squeeze", "Dopo aver aperto o chiamato, quanto spesso chiama lo squeeze."],
+  ["pre", "Call Squeeze", "Call Squeeze", "Dopo aver aperto o fatto call, quanto spesso fa call allo squeeze."],
   ["pre", "4-bet vs Squeeze", "4Bet vs Squeeze", "Dopo aver aperto, quanto spesso rilancia lo squeeze."],
   ["pre", "Fold to Cold 4-bet", "Fold to Cold 4Bet", "Dopo aver fatto 3-bet, quanto spesso folda alla 4-bet di un terzo giocatore."],
   ["pre", "Iso vs 1", "Iso Raise vs 1 Limper", "L'iso raise quando c'è un solo limper."],
@@ -151,28 +151,28 @@ SG_STATS.push(
   ["bui", "BB Raise vs SB Limp", "BB Raise vs SB Complete", "Quando lo SB limpa, quanto spesso il BB rilancia."],
   ["bui", "BB Check vs SB Limp", "BB Check vs SB Complete", "Quando lo SB limpa, quanto spesso il BB fa check e vede il flop gratis."],
   ["bui", "SB Limp-Fold", "SB Limp-Fold vs BB Raise", "Lo SB limpa, il BB rilancia e lo SB folda."],
-  ["bui", "SB Limp-Call", "SB Limp-Call vs BB Raise", "Lo SB limpa, il BB rilancia e lo SB chiama."],
+  ["bui", "SB Limp-Call", "SB Limp-Call vs BB Raise", "Lo SB limpa, il BB rilancia e lo SB fa call."],
   ["bui", "SB Limp-Raise", "SB Limp-Raise vs BB Raise", "Lo SB limpa, il BB rilancia e lo SB rilancia ancora."],
   ["bui", "BB Fold vs SB Open", "BB Fold to SB Open", "Quanto spesso il BB folda all'open dello SB."],
   ["bui", "BB 3-bet vs SB", "BB 3Bet vs SB Open", "Quanto spesso il BB fa 3-bet contro l'open dello SB."],
   ["bui", "SB Fold to BB 3-bet", "SB Fold to BB 3Bet", "Dopo aver aperto, quanto spesso lo SB folda alla 3-bet del BB."],
   ["bui", "SB 4-bet vs BB", "SB 4Bet vs BB 3Bet", "Dopo aver aperto, quanto spesso lo SB rilancia la 3-bet del BB."],
-  ["fl", "Check-Call Flop", "Flop Check-Call", "Al flop fa check e chiama la puntata che arriva."],
+  ["fl", "Check-Call Flop", "Flop Check-Call", "Al flop fa check e fa call alla puntata che arriva."],
   ["fl", "Check-Fold Flop", "Flop Check-Fold", "Al flop fa check e folda alla puntata che arriva."],
-  ["fl", "Call XR", "Call Flop Check-Raise", "Dopo aver puntato, quanto spesso chiama il check-raise."],
+  ["fl", "Call XR", "Call Flop Check-Raise", "Dopo aver puntato, quanto spesso fa call al check-raise."],
   ["fl", "Flop 3-bet", "Flop 3Bet / Reraise", "Rilancia di nuovo al flop dopo che la sua puntata è stata rilanciata.", "Ai micro è quasi sempre una mano fortissima."],
   ["fl", "Fold to Flop 3-bet", "Fold to Flop 3Bet", "Dopo aver rilanciato al flop, quanto spesso folda al nuovo rilancio."],
   ["fl", "Check-back Flop", "Flop Check Behind", "L'aggressore preflop in posizione non fa c-bet e checka anche lui: il contrario della c-bet in posizione."],
-  ["fl", "Float Flop", "Float Flop", "Chiama la c-bet al flop in posizione, spesso con l'idea di prendersi il piatto più avanti."],
+  ["fl", "Float Flop", "Float Flop", "Fa call alla c-bet al flop in posizione, spesso con l'idea di prendersi il piatto più avanti."],
   ["fl", "Limped Pot Bet", "Bet Flop in Limped Pot", "Nei piatti senza rilanci preflop, quanto spesso punta il flop quando gli altri hanno fatto check."],
-  ["tu", "Check-Call Turn", "Turn Check-Call", "Al turn fa check e chiama la puntata che arriva."],
+  ["tu", "Check-Call Turn", "Turn Check-Call", "Al turn fa check e fa call alla puntata che arriva."],
   ["tu", "Check-Fold Turn", "Turn Check-Fold", "Al turn fa check e folda alla puntata che arriva."],
-  ["tu", "Call Turn XR", "Call Turn Check-Raise", "Dopo aver puntato il turn, quanto spesso chiama il check-raise."],
+  ["tu", "Call Turn XR", "Call Turn Check-Raise", "Dopo aver puntato il turn, quanto spesso fa call al check-raise."],
   ["tu", "Fold to Float", "Fold to Turn Float", "Dopo aver fatto c-bet al flop e check al turn, quanto spesso folda alla puntata dell'avversario."],
   ["tu", "Fold Turn Raise", "Fold to Turn Raise (after Call)", "Dopo aver puntato il turn, quanto spesso folda quando l'avversario rilancia in posizione."],
-  ["ri", "Check-Call River", "River Check-Call", "Al river fa check e chiama la puntata che arriva.", "Alto: chiama il river con le mani medie, punta per valore contro di lui."],
+  ["ri", "Check-Call River", "River Check-Call", "Al river fa check e fa call alla puntata che arriva.", "Alto: fa call al river con le mani medie, punta per valore contro di lui."],
   ["ri", "Check-Fold River", "River Check-Fold", "Al river fa check e folda alla puntata che arriva.", "Alto: al river i bluff contro di lui funzionano."],
-  ["ri", "Call River Bet", "Call River Bet", "Quanto spesso chiama una puntata al river, di qualsiasi tipo."],
+  ["ri", "Call River Bet", "Call River Bet", "Quanto spesso fa call a una puntata al river, di qualsiasi tipo."],
   ["ri", "Raise River Bet", "Raise River Bet", "Quanto spesso rilancia una puntata al river."],
   ["ri", "Fold River Raise", "Fold to River Raise", "Dopo aver puntato il river, quanto spesso folda al rilancio."],
   ["ri", "Delay River", "Delayed River CBet", "L'aggressore checka il turn e punta il river."],
@@ -188,11 +188,11 @@ SG_STATS.push(
   P5.forEach(p => V("pre", "RFI · " + p, "RFI " + p, `Quanto spesso apre con un rilancio dal posto ${p}, quando prima hanno foldato tutti.`));
   P5.forEach(p => V("pre", "Limp · " + p, "Open Limp " + p, `Quanto spesso entra limpando dal posto ${p}, quando prima hanno foldato tutti.`));
   D5.forEach(p => V("pre", "Iso · " + p, "Iso Raise " + p, `L'iso raise fatto dal posto ${p}.`));
-  D5.forEach(p => V("pre", "Cold Call · " + p, "Cold Call " + p, `Quanto spesso chiama un open dal posto ${p}.`));
+  D5.forEach(p => V("pre", "Cold Call · " + p, "Cold Call " + p, `Quanto spesso fa call a un open dal posto ${p}.`));
   D5.forEach(p => V("pre", "3-bet · " + p, "3Bet PF " + p, `La 3-bet fatta dal posto ${p}.`));
   P5.forEach(p => V("pre", "3-bet vs " + p, "3Bet vs " + p + " Open", `Quanto spesso fa 3-bet contro un open ${del(p)}.`));
   P5.forEach(p => V("pre", "Fold to 3-bet · " + p, "Fold to 3Bet " + p, `Dopo aver aperto dal posto ${p}, quanto spesso folda alla 3-bet.`));
-  P5.forEach(p => V("pre", "Call 3-bet · " + p, "Call 3Bet " + p, `Dopo aver aperto dal posto ${p}, quanto spesso chiama la 3-bet.`));
+  P5.forEach(p => V("pre", "Call 3-bet · " + p, "Call 3Bet " + p, `Dopo aver aperto dal posto ${p}, quanto spesso fa call alla 3-bet.`));
   P5.forEach(p => V("pre", "4-bet · " + p, "4Bet " + p, `Dopo aver aperto dal posto ${p}, quanto spesso rilancia la 3-bet.`));
   [["IP", "in posizione"], ["OOP", "fuori posizione"]].forEach(([k, t]) => {
     V("pre", "Fold to 3-bet · " + k, "Fold to 3Bet " + k, `Dopo aver aperto, il fold alla 3-bet quando giocherà il piatto ${t}.`);
@@ -203,7 +203,7 @@ SG_STATS.push(
   ["CO", "BTN", "SB"].forEach(p => V("bui", "Steal · " + p, "Attempt to Steal " + p, `Lo steal dal posto ${p}: apre quando prima hanno foldato tutti.`));
   [["BB", "CO"], ["BB", "BTN"], ["BB", "SB"], ["SB", "CO"], ["SB", "BTN"]].forEach(([a, b]) => {
     V("bui", `Fold to Steal · ${a} vs ${b}`, `${a} Fold vs ${b} Steal`, `${dal(a)}, quanto spesso folda contro lo steal ${del(b)}.`);
-    V("bui", `Call Steal · ${a} vs ${b}`, `${a} Call vs ${b} Steal`, `${dal(a)}, quanto spesso chiama lo steal ${del(b)}.`);
+    V("bui", `Call Steal · ${a} vs ${b}`, `${a} Call vs ${b} Steal`, `${dal(a)}, quanto spesso fa call allo steal ${del(b)}.`);
     V("bui", `3-bet vs Steal · ${a} vs ${b}`, `${a} 3Bet vs ${b} Steal`, `${dal(a)}, quanto spesso fa 3-bet contro lo steal ${del(b)}.`);
   });
   ["CO", "BTN", "SB"].forEach(p => V("bui", "Fold to Resteal · " + p, "Fold to Resteal " + p, `Dopo uno steal dal posto ${p}, quanto spesso folda alla 3-bet dei bui.`));
@@ -279,15 +279,15 @@ document.addEventListener("input", e => { if (e.target.matches && e.target.match
    (per posizione, in posizione o no, per street, per size). Ogni riga ha accanto le occasioni:
    sotto le 20 è segnata come poco affidabile. Righe: [nome, valore, occasioni, barra 0-100 o null]. */
 const HP = {
-  vpip: ["VPIP", 41, 312, "hi", "Quanto gioca, posto per posto", [["UTG", 28, 52], ["HJ", 33, 52], ["CO", 39, 52], ["BTN", 48, 52], ["SB", 46, 52], ["BB", 52, 52], ["Entra con un open limp", 18, 140], ["Chiama un open (cold call)", 22, 95]], "Gioca troppe mani da ogni posto: anche da UTG entra quasi 3 volte su 10. La differenza con il PFR dice che entra soprattutto limpando o chiamando."],
+  vpip: ["VPIP", 41, 312, "hi", "Quanto gioca, posto per posto", [["UTG", 28, 52], ["HJ", 33, 52], ["CO", 39, 52], ["BTN", 48, 52], ["SB", 46, 52], ["BB", 52, 52], ["Entra con un open limp", 18, 140], ["Cold call (call di un open)", 22, 95]], "Gioca troppe mani da ogni posto: anche da UTG entra quasi 3 volte su 10. La differenza con il PFR dice che entra soprattutto limpando o facendo call."],
   pfr: ["PFR", 9, 312, "lo", "Quanto rilancia, posto per posto", [["UTG", 6, 52], ["HJ", 7, 52], ["CO", 9, 52], ["BTN", 14, 52], ["SB", 10, 52], ["BB", 8, 52], ["Open raise · UTG", 8, 12], ["Open raise · BTN", 24, 21]], "Rilancia poco ovunque: quando apre dai primi posti ha quasi sempre una mano forte. Con VPIP 41 e PFR 9 è il profilo del fish passivo."],
   mani: ["Mani", 312, null, "", "Quante mani hai giocato con lui", [["Da UTG", "52", null], ["Da HJ", "52", null], ["Da CO", "52", null], ["Dal BTN", "52", null], ["Dallo SB", "52", null], ["Dal BB", "52", null], ["Sessioni insieme", "4", null]], "312 mani bastano per VPIP e PFR, non per le statistiche più rare: per quelle guarda sempre le occasioni nel loro popup."],
   "3b": ["3-bet", 3, 104, "lo", "Quanto rilancia un open", [["Dal CO", 2, 15], ["Dal BTN", 3, 18], ["Dallo SB", 4, 22], ["Dal BB", 3, 37], ["Contro un open da UTG o HJ", 1, 31], ["Contro un open da CO o BTN", 4, 52], ["In posizione", 2, 38], ["Fuori posizione", 4, 66]], "3-betta pochissimo: ai micro una 3-bet così rara è quasi sempre QQ+ o AK. Contro la sua 3-bet folda le mani medie."],
-  f3b: ["Fold to 3-bet", 45, 11, "", "Cosa fa quando gli rilanciano l'open", [["Folda", 45, 11], ["Chiama", 55, 11], ["Rilancia (4-bet)", 0, 11], ["Dopo un open da UTG o HJ", 50, 4], ["Dopo un open da CO o BTN", 43, 7], ["In posizione", 40, 5], ["Fuori posizione", 50, 6]], "Undici occasioni sono troppo poche: il 45% può essere 25% o 65%. Servono almeno 30 o 40 occasioni prima di 3-bettarlo in bluff."],
-  ats: ["Steal", 21, 34, "lo", "Quanto apre da CO, BTN e SB", [["Dal CO", 15, 13], ["Dal BTN", 26, 12], ["Dallo SB", 22, 9], ["Steal riuscito: foldano tutti", 35, 34], ["Folda alla 3-bet dei bui", 50, 4], ["Dallo SB, limp invece di rilanciare", 41, 22]], "Ruba poco per uno che gioca il 41% delle mani: dal BTN preferisce limpare o chiamare. Quando apre da CO o BTN il suo range è più forte del solito."],
-  cb: ["C-bet", 61, 38, "", "Quanto punta dopo aver rilanciato preflop", [["Flop", 61, 38], ["Flop · in posizione", 68, 22], ["Flop · fuori posizione", 50, 16], ["Flop · contro due o più", 44, 9], ["Turn (secondo colpo)", 42, 19], ["River (terzo colpo)", 35, 8], ["Size media al flop: 55% del piatto", null, 38]], "Punta il flop spesso, il turn molto meno: se chiami il flop, al turn spesso rinuncia e il piatto può essere tuo."],
-  fcb: ["Fold to c-bet", 38, 52, "", "Cosa fa contro la c-bet", [["Folda al flop", 38, 52], ["Chiama al flop", 56, 52], ["Rilancia al flop", 6, 52], ["Folda in posizione", 33, 21], ["Folda fuori posizione", 42, 31], ["Folda a una c-bet fino a 1/3", 30, 20], ["Folda a una c-bet da 2/3 o più", 52, 14], ["Folda al turn", 33, 24], ["Folda al river", 22, 14]], "Contro le c-bet piccole folda poco: il bluff piccolo rende poco, la value bet anche con mani medie sì. Folda di più solo contro le puntate grandi."],
-  wtsd: ["WTSD", 34, 98, "hi", "Quanto arriva allo showdown dopo il flop", [["Arriva allo showdown", 34, 98], ["Vince allo showdown (W$SD)", 47, 33], ["Vince il piatto quando vede il flop (WWSF)", 41, 98], ["Arriva allo showdown dopo aver chiamato la c-bet", 52, 29], ["Vince dopo aver chiamato il river", 40, 15]], "Arriva spesso allo showdown e vince meno della metà delle volte: chiama con mani deboli. Contro di lui value bet sottili e pochi bluff."],
+  f3b: ["Fold to 3-bet", 45, 11, "", "Cosa fa quando gli rilanciano l'open", [["Fold", 45, 11], ["Call", 55, 11], ["4-bet", 0, 11], ["Dopo un open da UTG o HJ", 50, 4], ["Dopo un open da CO o BTN", 43, 7], ["In posizione", 40, 5], ["Fuori posizione", 50, 6]], "Undici occasioni sono troppo poche: il 45% può essere 25% o 65%. Servono almeno 30 o 40 occasioni prima di 3-bettarlo in bluff."],
+  ats: ["Steal", 21, 34, "lo", "Quanto apre da CO, BTN e SB", [["Dal CO", 15, 13], ["Dal BTN", 26, 12], ["Dallo SB", 22, 9], ["Steal riuscito: foldano tutti", 35, 34], ["Folda alla 3-bet dei bui", 50, 4], ["Dallo SB, limp invece di rilanciare", 41, 22]], "Ruba poco per uno che gioca il 41% delle mani: dal BTN preferisce limpare o fare call. Quando apre da CO o BTN il suo range è più forte del solito."],
+  cb: ["C-bet", 61, 38, "", "Quanto punta dopo aver rilanciato preflop", [["Flop", 61, 38], ["Flop · in posizione", 68, 22], ["Flop · fuori posizione", 50, 16], ["Flop · contro due o più", 44, 9], ["Turn (secondo colpo)", 42, 19], ["River (terzo colpo)", 35, 8], ["Size media al flop: 55% del piatto", null, 38]], "Punta il flop spesso, il turn molto meno: se fai call al flop, al turn spesso rinuncia e il piatto può essere tuo."],
+  fcb: ["Fold to c-bet", 38, 52, "", "Cosa fa contro la c-bet", [["Fold al flop", 38, 52], ["Call al flop", 56, 52], ["Raise al flop", 6, 52], ["Folda in posizione", 33, 21], ["Folda fuori posizione", 42, 31], ["Folda a una c-bet fino a 1/3", 30, 20], ["Folda a una c-bet da 2/3 o più", 52, 14], ["Folda al turn", 33, 24], ["Folda al river", 22, 14]], "Contro le c-bet piccole folda poco: il bluff piccolo rende poco, la value bet anche con mani medie sì. Folda di più solo contro le puntate grandi."],
+  wtsd: ["WTSD", 34, 98, "hi", "Quanto arriva allo showdown dopo il flop", [["Arriva allo showdown", 34, 98], ["Vince allo showdown (W$SD)", 47, 33], ["Vince il piatto quando vede il flop (WWSF)", 41, 98], ["Arriva allo showdown dopo aver fatto call alla c-bet", 52, 29], ["Vince dopo aver fatto call al river", 40, 15]], "Arriva spesso allo showdown e vince meno della metà delle volte: fa call con mani deboli. Contro di lui value bet sottili e pochi bluff."],
 };
 const HP_ROWS = [["vpip", "pfr", "mani"], ["3b", "f3b", "ats"], ["cb", "fcb", "wtsd"]], HP_AB = { vpip: "VPIP", pfr: "PFR", mani: "Mani", "3b": "3B", f3b: "F3B", ats: "ATS", cb: "CB", fcb: "FCB", wtsd: "WTSD" };
 const hpPop = k => { const [n, v, occ, , sub, rows, read] = HP[k];
