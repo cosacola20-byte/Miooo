@@ -320,3 +320,7 @@
 .lx-sg-v input:checked+span{background:linear-gradient(135deg,#2f7de1,#8f5ad8)}.lx-sg-v input:checked+span::after{transform:translateX(17px)}
 .lx-sg-v input:focus-visible+span{outline:2px solid #2f7de1;outline-offset:2px}
 .lx-sg-i.v{padding-top:8px;padding-bottom:8px}.lx-sg-i.v .lx-sg-k b{font-size:14px}.lx-sg-i.v::before{opacity:.5}
+.lx-sg.on .lx-sg-h{position:sticky;top:var(--sg-top,0px);z-index:5;box-shadow:0 6px 14px -8px rgba(0,0,0,.35)}
+.lx-sg-end{display:block;width:100%;margin:14px 0 4px;padding:11px;border-radius:12px;border:0;background:linear-gradient(135deg,#2f7de1,#8f5ad8);color:#fff;font:inherit;font-weight:800;font-size:14.5px;cursor:pointer}
+.lx-sg-end::before{content:"↑ "}
+.lx-sg.on .lx-sg-h{padding:10px 12px;gap:10px}.lx-sg.on .lx-sg-ic{width:34px;height:34px;border-radius:10px}.lx-sg.on .lx-sg-ic svg{width:19px;height:19px}.lx-sg.on .lx-sg-t small{display:none}.lx-sg.on .lx-sg-t b{font-size:15px;line-height:1.25}

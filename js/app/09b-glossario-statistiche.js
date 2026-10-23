@@ -249,7 +249,7 @@ UI.statGl = () => `<div class="lx-sg" data-sg><button type="button" class="lx-sg
 function sgBody() {
   const chips = [["all", "Tutte", "var(--ink2)"], ...SG_CAT].map(([k, n, c], i) => `<button type="button" class="lx-sg-c${i ? "" : " on"}" data-sgc="${k}" aria-pressed="${i ? "false" : "true"}" style="--c:${c}">${n}<i>${k === "all" ? SG_STATS.length : SG_STATS.filter(s => s[0] === k).length}</i></button>`).join("");
   const groups = SG_CAT.map(([k, n, c]) => `<section class="lx-sg-g" data-sgg="${k}" style="--c:${c}"><h5>${n}</h5>${SG_STATS.filter(s => s[0] === k).map(([, ab, nm, d, r, v]) => `<div class="lx-sg-i${v ? " v" : ""}" data-sgs="${esc((ab + " " + nm + " " + d + " " + (r || "")).toLowerCase())}"><div class="lx-sg-k"><b>${esc(ab)}</b><small>${esc(nm)}</small></div><p>${esc(d)}</p>${r ? `<p class="lx-sg-r"><span>Come leggerla</span>${esc(r)}</p>` : ""}</div>`).join("")}</section>`).join("");
-  return `<div class="lx-sg-tools"><label class="lx-sg-s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" placeholder="Cerca: VPIP, fold, river…" aria-label="Cerca una statistica" data-sgq></label><div class="lx-sg-cs" role="group" aria-label="Gruppi">${chips}</div><label class="lx-sg-v"><input type="checkbox" data-sgv checked><span></span>Mostra anche le varianti (per posizione, tipo di piatto, size)</label></div><p class="lx-sg-n" data-sgn aria-live="polite">${SG_STATS.length} statistiche</p><div class="lx-sg-l">${groups}<p class="lx-sg-0" data-sg0 hidden>Nessuna statistica trovata. Prova con un'altra parola.</p></div><p class="lx-cap">I nomi cambiano un po' da un tracker all'altro, e ogni statistica esiste in molte varianti (per posizione, per size, per tipo di piatto): qui trovi le famiglie e cosa misurano. Le letture sono indicative e valgono solo con abbastanza mani.</p>`;
+  return `<div class="lx-sg-tools"><label class="lx-sg-s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input type="search" placeholder="Cerca: VPIP, fold, river…" aria-label="Cerca una statistica" data-sgq></label><div class="lx-sg-cs" role="group" aria-label="Gruppi">${chips}</div><label class="lx-sg-v"><input type="checkbox" data-sgv checked><span></span>Mostra anche le varianti (per posizione, tipo di piatto, size)</label></div><p class="lx-sg-n" data-sgn aria-live="polite">${SG_STATS.length} statistiche</p><div class="lx-sg-l">${groups}<p class="lx-sg-0" data-sg0 hidden>Nessuna statistica trovata. Prova con un'altra parola.</p></div><button type="button" class="lx-sg-end" data-sgx>Chiudi il glossario</button><p class="lx-cap">I nomi cambiano un po' da un tracker all'altro, e ogni statistica esiste in molte varianti (per posizione, per size, per tipo di piatto): qui trovi le famiglie e cosa misurano. Le letture sono indicative e valgono solo con abbastanza mani.</p>`;
 }
 function sgFilter(box) {
   const q = (box.querySelector("[data-sgq]").value || "").trim().toLowerCase(), va = box.querySelector("[data-sgv]").checked, cat = (box.querySelector(".lx-sg-c.on") || {}).dataset?.sgc || "all";
@@ -261,10 +261,13 @@ function sgFilter(box) {
 }
 document.addEventListener("click", e => {
   if (!e.target.closest) return;
-  const t = e.target.closest("[data-sgt]");
+  const x = e.target.closest("[data-sgx]");
+  const t = x ? x.closest("[data-sg]").querySelector("[data-sgt]") : e.target.closest("[data-sgt]");
   if (t) { const box = t.closest("[data-sg]"), b = box.querySelector("[data-sgb]"), open = b.hidden;
     if (open && !b.firstChild) b.innerHTML = sgBody();
-    b.hidden = !open; box.classList.toggle("on", open); t.setAttribute("aria-expanded", open ? "true" : "false"); t.querySelector("[data-sgl]").textContent = open ? "Chiudi" : "Apri"; return; }
+    b.hidden = !open; box.classList.toggle("on", open); t.setAttribute("aria-expanded", open ? "true" : "false"); t.querySelector("[data-sgl]").textContent = open ? "Chiudi" : "Apri";
+    if (!open && box.getBoundingClientRect().top < 0) box.scrollIntoView({ block: "start", behavior: typeof calmMotion === "function" && calmMotion() ? "auto" : "smooth" });
+    return; }
   const c = e.target.closest("[data-sgc]");
   if (c) { const box = c.closest("[data-sg]"); box.querySelectorAll("[data-sgc]").forEach(x => { x.classList.toggle("on", x === c); x.setAttribute("aria-pressed", x === c ? "true" : "false"); }); sgFilter(box); }
 });
