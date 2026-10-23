@@ -53,7 +53,7 @@ function sixTable(o) {
     const side = k === 1 || k === 2 || k === 3 ? "r" : "l";
     const tag = fold ? `<em class="p6-tag k-fold ${side}">Fold</em>` : S0.tag ? `<em class="p6-tag act ${kindOf(S0.tag)} ${side}">${S0.tag}</em>` : "";
     const av = me ? (typeof gMascot === "function" ? gMascot("think", 54) : "") : (typeof gwAv === "function" ? gwAv(p, true) : "");
-    return `${bet}${btn}<div class="p6-seat ${me ? "me" : ""} ${fold ? "fold" : ""} ${S0.st === "wait" ? "wait" : ""} s${k}" style="left:${x}%;top:${y}%">${cards}<div class="p6-av">${av}</div><div class="p6-plate"><b>${me ? "Tu · " + p : p}</b><span>${fmtBB(S0.stk != null ? S0.stk : Math.max(0, (o.stack || 100) - (S0.bet || 0)))}</span></div>${tag}</div>`;
+    return `${bet}${btn}<div class="p6-seat ${me ? "me" : ""} ${fold ? "fold" : ""} ${S0.st === "wait" ? "wait" : ""} s${k}" style="left:${x}%;top:${y}%">${cards}<div class="p6-av">${av}</div><div class="p6-plate"><b>${me ? "Tu · " + ((o.names && o.names[p]) || p) : (o.names && o.names[p]) || p}</b><span>${fmtBB(S0.stk != null ? S0.stk : Math.max(0, (o.stack || 100) - (S0.bet || 0)))}</span></div>${tag}</div>`;
   };
   /* board: le carte uscite e caselle vuote per quelle che mancano, sempre 5 */
   const board = (o.board || []).filter(b => b.cards), bc = board.map(b => b.cards).join(""), nb = Math.min(5, (bc.match(/../g) || []).length);
@@ -87,9 +87,9 @@ function pf6State(sp) {
 /* postflop 6-max: restano in due, gli altri hanno foldato preflop */
 function sixPost(six, board, heroCards) {
   const seats = {}, left = 100 - (six.inv || 0); P6.forEach(p => { seats[p] = { st: "fold", bet: 0, stk: p === "SB" ? 99.5 : p === "BB" ? 99 : 100 }; });
-  seats[six.hero] = { st: "hero", bet: 0, stk: left }; if (six.vil) seats[six.vil] = { st: "in", bet: 0, stk: left };
+  seats[six.hero] = { st: "hero", bet: 0, stk: left }; [].concat(six.vil || [], six.vils || []).forEach(v => { if (seats[v]) seats[v] = { st: "in", bet: 0, stk: left }; });
   Object.entries(six.bets || {}).forEach(([p, x]) => { if (seats[p]) { seats[p].bet = x; seats[p].stk = Math.max(0, seats[p].stk - x); seats[p].tag = six.tags && six.tags[p] || "Bet"; } });
-  return sixTable({ hero: six.hero, seats, board, heroCards, pot: six.pot, stack: six.stack || 100 - (six.inv || 0) });
+  return sixTable({ hero: six.hero, seats, board, heroCards, pot: six.pot, stack: six.stack || 100 - (six.inv || 0), names: six.names });
 }
 function pf6Table(sp, heroCards) { const st = pf6State(sp); return st ? sixTable({ ...st, heroCards }) : null; }
 const CAT = [

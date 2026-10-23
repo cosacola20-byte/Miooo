@@ -3293,7 +3293,41 @@ function tcQTable(q) {
   }
   if (!board && !hero) return pot;
   if (!board && !pm) return "";
+  /* dopo il flop, se il testo dice chi sei e chi è in mano, il tavolo è a 6 posti con tutti i giocatori rimasti */
+  const six = board ? tcSeats(t) : null;
+  if (six) {
+    const POT = pm ? +num(pm[1]) : null, dead = (six.vils.includes("SB") || six.hero === "SB" ? 0 : 0.5) + (six.vils.includes("BB") || six.hero === "BB" ? 0 : 1);
+    if (POT != null) { six.pot = POT; six.inv = Math.max(0, Math.round((POT - dead) / (six.vils.length + 1) * 10) / 10); }
+    const B = vb || hb;
+    return sixPost(six, [{ lbl, cards: board }], hero || null) + (B ? pot : "");
+  }
   return tableHtml([...(board ? [{ lbl, cards: board }] : []), ...(hero ? [{ hero: 1, lbl: "La tua mano", cards: hero }] : [])]) + pot;
+}
+/* chi sei e chi è ancora in mano, dal testo: «Hai aperto dal CO e hanno pagato BTN, SB e BB», «BB contro BTN», «sei al BTN … il BB checka».
+   Le posizioni seguite da «folda» non sono in mano. Restituisce null se non trova te e almeno un avversario. */
+const TC_P = { UTG: "EP", HJ: "MP", CO: "CO", BTN: "BTN", SB: "SB", BB: "BB" };
+function tcSeats(t) {
+  const R = "(UTG|HJ|CO|BTN|SB|BB)", C = TCC + " ?" + TCC;
+  if (/\buna volta\b[\s\S]*\buna volta\b|\bin entrambi i casi\b/i.test(t)) return null;
+  let hero = null, m;
+  const H = [
+    new RegExp("^\\s*" + R + " contro (?:il |lo |l'|un |una )?" + R + "\\b"),
+    new RegExp("^\\s*" + R + ",\\s"),
+    new RegExp("\\b(?:sei|hai aperto|apri|hai pagato|paghi|giochi|difendi|hai rilanciato|rilanci|hai isolato|isoli|hai fatto 3-bet|fai 3-bet)\\s+(?:a \\d+(?:,\\d+)?bb\\s+)?(?:dal|dallo|al|allo|da|nel|nello|in)\\s+" + R + "\\b", "i"),
+    new RegExp("\\b(?:[Ss]ei|[Aa]pri) (?:il |lo )?" + R + "\\b"),
+    new RegExp("\\b(?:hai|con) " + C + " (?:al|dal|nel|dallo|allo|nello|in) " + R + "\\b", "i"),
+  ];
+  for (const re of H) if ((m = t.match(re))) { hero = m[1].toUpperCase(); break; }
+  if (!hero) return null;
+  /* fuori dalla mano: chi folda, e i bui quando «i bui foldano» */
+  const out = new Set(); let f; const fr = new RegExp("\\b" + R + "\\b,?\\s*(?:folda|foldano|ha foldato)", "g");
+  while ((f = fr.exec(t))) out.add(f[1]);
+  if (/\bi bui foldano\b/i.test(t)) { out.add("SB"); out.add("BB"); }
+  const vils = [], re = new RegExp("\\b" + R + "\\b", "g");
+  while ((m = re.exec(t))) { const p = m[1]; if (p !== hero && !out.has(p) && !vils.includes(p)) vils.push(p); }
+  if (!vils.length) return null;
+  const order = ["UTG", "HJ", "CO", "BTN", "SB", "BB"];
+  return { hero: TC_P[hero], vils: vils.sort((a, b) => order.indexOf(a) - order.indexOf(b)).map(p => TC_P[p]), names: { EP: "UTG", MP: "HJ" } };
 }
 /* numeri importanti nel testo della domanda (bb, %, €) in evidenza */
 const tcNums = h => String(h).split(/(<[^>]+>)/).map(x => x[0] === "<" ? x : x.replace(/(\d+(?:[.,]\d+)?(?:\s?(?:bb|BI)\b|%|\s?€))/g, '<b class="qn">$1</b>')).join("");
