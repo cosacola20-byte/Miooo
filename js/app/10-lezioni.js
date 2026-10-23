@@ -559,6 +559,9 @@ LES("tracker", "nl2", "Tracker e HUD", `
 <p>L'<b>HUD</b> (heads-up display) è il riquadro di numeri che il tracker mette sopra ogni avversario. I primi da guardare sono quelli che conosci da «Chi paga e chi folda»: il <b>VPIP</b>, quante mani gioca, e il <b>PFR</b>, quante ne rilancia preflop. Accanto c'è sempre il numero di mani: è quello che ti dice quanto fidarti.</p>
 ${UI.hud()}
 <div class="lx-box gold"><span class="lx-tag">Quante mani servono</span><p>VPIP e PFR diventano affidabili dopo circa <b>100 mani</b> con quel giocatore. Statistiche più rare, come il 3-bet o quelle dopo il flop, ne chiedono centinaia. Prima sono solo indizi: usali per scegliere chi osservare, non per decisioni costose.</p></div>
+<h4>Tutte le statistiche, una per una</h4>
+<p>Oltre a VPIP e PFR i tracker ne mostrano decine, per ogni street. Non servono tutte subito, ma prima o poi le vedrai nell'HUD o nei popup: aprile qui, cercale per nome o filtrale per street.</p>
+${UI.statGl()}
 
 <div class="lx-sec"><b>5</b><h4>Cosa è permesso</h4></div>
 <div class="lx-sem"><div><i class="go">DI SOLITO SÌ</i>tracker e HUD, nelle room che li ammettono: usano solo mani a cui hai partecipato.</div><div><i class="mid">SPESSO NO</i>il data mining: mani di tavoli dove non hai giocato, comprate o scaricate.</div><div><i class="st">MAI</i>l'RTA, cioè un programma che ti dice cosa fare durante la mano.</div></div>
