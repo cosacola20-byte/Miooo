@@ -275,3 +275,4 @@
 @keyframes rxgrow{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
 @media (max-width:420px){.lx-rx{padding:12px 10px 10px}.lx-rx-row{grid-template-columns:1fr 80px 1fr;gap:4px}.lx-rx-row .n{font-size:11px}.lx-rx-row b{font-size:12px;min-width:27px}}
 @media (prefers-reduced-motion:reduce){.lx-rx .lx-rx-row i{transform:none!important;animation:none!important}}
+.lx-pick .lx-tf-e b[data-tone="vb"]{background:linear-gradient(90deg,var(--tv),var(--tb))}

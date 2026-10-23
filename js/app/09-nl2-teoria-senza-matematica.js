@@ -692,7 +692,8 @@ const UI = (() => {
       /* ogni risposta ha il suo colore e la sua icona: Value verde, Bluff arancio, Check blu */
       const tone = l => ({ value: "v", bluff: "b", check: "c" })[String(l).toLowerCase()] || "n";
       const IC = { v: '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.2"/><circle cx="10" cy="10" r="3.4"/><path d="M10 2.8v2.6M10 14.6v2.6M2.8 10h2.6M14.6 10h2.6"/></svg>', b: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.5 2 4.5 11h5l-1 7 7-9h-5z"/></svg>', c: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8"/></svg>', n: "" };
-      return `<div class="lx-tf lx-pick" data-hint="${hint}"><div class="lx-pk-top"><span class="lx-pk-dots" aria-hidden="true">${items.map(() => "<i></i>").join("")}</span></div>${items.map(([q, a, e], n) => `<div class="lx-tf-i" data-a="${a}"><span class="lx-pk-n" aria-hidden="true">${n + 1}</span><p>${q}</p><div class="lx-tf-b">${Lb.map((l, k) => `<button type="button" data-lxpk="${k}" data-tone="${tone(l)}">${IC[tone(l)]}<span>${l}</span></button>`).join("")}</div><p class="lx-tf-e" hidden><b data-tone="${tone(Lb[a])}">${Lb[a]}.</b> ${e}</p></div>`).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
+      return `<div class="lx-tf lx-pick" data-hint="${hint}"><div class="lx-pk-top"><span class="lx-pk-dots" aria-hidden="true">${items.map(() => "<i></i>").join("")}</span></div>${items.map(([q, a, e], n) => { const A = [].concat(a), lab = A.map((x, i) => i ? Lb[x].toLowerCase() : Lb[x]).join(" e "), tn = A.length > 1 ? A.map(x => tone(Lb[x])).join("") : tone(Lb[A[0]]);
+        return `<div class="lx-tf-i" data-a="${A.join(",")}"><span class="lx-pk-n" aria-hidden="true">${n + 1}</span><p>${q}</p><div class="lx-tf-b">${Lb.map((l, k) => `<button type="button" data-lxpk="${k}" data-tone="${tone(l)}">${IC[tone(l)]}<span>${l}</span></button>`).join("")}</div><p class="lx-tf-e" hidden><b data-tone="${tn}">${lab}.</b> ${e}</p></div>`; }).join("")}<p class="lx-tf-s" data-tfs>${hint}</p></div>`; },
     /* chi ha più mani di ogni tipo su un flop, a farfalla: BTN a sinistra, BB a destra.
        UI.rangeVs({ board: "K♠7♦2♣", tex: "Alto e secco", a: [..5 valori], b: [..], la: "BTN", lb: "BB", sa, sb, verdict }) */
     rangeVs: o => {
@@ -859,8 +860,9 @@ const UI = (() => {
     const tf = e.target.closest("[data-lxtf],[data-lxpk]");
     if (tf) {
       const it = tf.closest(".lx-tf-i"), box = tf.closest(".lx-tf"); if (!it || !box || it.dataset.done) return; it.dataset.done = "1";
-      const k = tf.dataset.lxtf != null ? "lxtf" : "lxpk", a = +it.dataset.a, ok = +tf.dataset[k] === a, had = it.contains(document.activeElement); it.classList.add(ok ? "ok" : "ko");
-      it.querySelectorAll(`[data-${k}]`).forEach(b => { b.disabled = true; if (+b.dataset[k] === a) b.classList.add("right"); if (b === tf) b.classList.add("pick"); });
+      /* la risposta giusta può essere più di una (UI.pick con [0, 1]): data-a="0,1" */
+      const k = tf.dataset.lxtf != null ? "lxtf" : "lxpk", A = String(it.dataset.a).split(",").map(Number), ok = A.includes(+tf.dataset[k]), had = it.contains(document.activeElement); it.classList.add(ok ? "ok" : "ko");
+      it.querySelectorAll(`[data-${k}]`).forEach(b => { b.disabled = true; if (A.includes(+b.dataset[k])) b.classList.add("right"); if (b === tf) b.classList.add("pick"); });
       const ex = it.querySelector(".lx-tf-e"); ex.hidden = false; if (had) { ex.tabIndex = -1; ex.focus({ preventScroll: true }); }
       const dot = box.querySelectorAll(".lx-pk-dots i")[[...box.querySelectorAll(".lx-tf-i")].indexOf(it)]; if (dot) dot.className = ok ? "ok" : "ko";
       tfScore(box); return;
