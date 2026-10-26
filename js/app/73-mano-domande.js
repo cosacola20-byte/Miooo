@@ -72,7 +72,7 @@ function thPlan(t, seats) {
     if (/1\/3/.test(w)) return thR1(base / 3);
     return null; };
   const isXRC = w => /\b(?:fa|fai) check-raise\b[^.]*?\b(?:paga|paghi|call|chiama|chiami)\b/i.test(w);
-  const isBC = w => new RegExp(BETW + "[^?]*?\\b(?:(?<!il )call|pagata|paga(?! con gli)|pagato|chiama|chiamato|(?<!se )paghi)\\b", "i").test(w) || /ha pagato la tua c-bet|check-call al/i.test(w);
+  const isBC = w => new RegExp(BETW + "[^?]*?\\b(?:(?<!il )call|pagata|paga(?! con gli)|pagato|chiama|chiamato|(?<!se )paghi)\\b", "i").test(w) || /ha pagato la tua c-bet|fatto call alla tua c-bet|fa call alla tua c-bet|check-call al/i.test(w);
   const isCC = w => /check-check|\bcheckat[oa]\b(?! col)|check dietro|checka dietro|check, check dietro|checkato dietro/i.test(w);
   const st = { put: {} };
   const SP = (p, k, lbl, amt) => { if (amt != null) { pot += amt - (st.put[p] || 0); st.put[p] = amt; } acts.push([p, k, lbl, amt != null ? thF(amt) : ""]); };
