@@ -344,3 +344,28 @@ document.addEventListener("click", e => {
   box.querySelectorAll("[data-tgk]").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
   box.querySelector(".lx-tg-c").innerHTML = tgSvg(k); box.querySelector("[data-tgt]").innerHTML = TG_TXT[k];
 });
+
+/* ================= GLI SCOPI DI UNA PUNTATA (UI.betWhy) =================
+   Otto scopi, ognuno legato alle due domande della lezione: Domanda 1 (valore), Domanda 2 (fold), tutte e due, o altro.
+   Si sceglie uno scopo e sotto compaiono obiettivo, quando, esempio con le carte e cosa conta a NL2. */
+const BW = [
+  ["value", "Value bet", "Domanda 1", "v", "Ricevere call da mani peggiori della tua.", "Batti buona parte delle mani con cui l'avversario fa call. Al river serve vincere più di metà delle volte in cui ricevi call.", ["7♠7♦", "K♣7♥2♦", "Set su un board secco: fanno call i re e le coppie."], "È la puntata che fa guadagnare di più, soprattutto contro chi fa call troppo spesso."],
+  ["bluff", "Bluff", "Domanda 2", "b", "Far foldare mani migliori della tua.", "Allo showdown perderesti quasi sempre, ma l'avversario può foldare le sue mani migliori.", ["J♠10♦", "K♠Q♠7♥4♦2♣", "Scala mancata al river: con J alto non vinci allo showdown."], "Funziona solo se l'avversario folda abbastanza spesso: più è grande la puntata, più spesso deve foldare. Contro chi fa sempre call, niente bluff."],
+  ["semi", "Semi-bluff", "Domanda 2 + piano B", "s", "Far foldare subito, con buone carte per vincere dopo.", "Hai un progetto, colore o scala, e l'avversario può foldare.", ["A♥5♥", "Q♥7♥3♣", "Progetto colore al flop: se fa call, il colore entra circa una volta su tre."], "Lo hai visto nella sezione 4: somma i due modi di vincere."],
+  ["prot", "Protezione", "Tutte e due", "y", "Prendere valore e non regalare carte che possono superarti.", "Adesso sei avanti, ma tante carte al turn e al river ti mettono in difficoltà.", ["9♠9♣", "8♥2♦2♣", "Coppia sopra il board: ogni carta alta al turn o al river ti fa paura, e dopo ricevi call di rado."], "Se l'avversario folda una mano che ti batterebbe 1 volta su 5, passi dal vincere l'80% del piatto al 100%."],
+  ["neg", "Negazione dell'equity", "Domanda 2, in piccolo", "t", "Non lasciare carte gratis alle mani che non hanno colpito.", "Hai una mano media, non sai se sei avanti, e tante mani dell'avversario migliorano facilmente.", ["4♠4♣", "10♥2♦2♣", "Una puntata piccola fa foldare K-Q, K-J, Q-J e mani come 8-7 o 7-6: con due carte gratis ti supererebbero spesso."], "A differenza della protezione non sai di essere avanti: punti piccolo per togliere carte gratis."],
+  ["block", "Blocking bet", "Fuori posizione", "c", "Decidere tu quanto si mette nel piatto.", "Sei fuori posizione e temi una puntata grande dell'avversario, a cui non vorresti fare call.", ["2♠2♣", "J♦10♣9♠8♥2♥", "Tris di 2 su un board da scala: con 1/3 del piatto prendi valore dalle doppie coppie, che dopo un tuo check non punterebbero per paura della scala."], "Livello più alto: a NL2 i giocatori passivi raramente ti costringono a usarla."],
+  ["merge", "Merging", "Tutte e due", "o", "Con la stessa puntata far foldare mani migliori e ricevere call da mani peggiori.", "Hai una mano media, in mezzo al range dell'avversario.", ["K♠K♣", "A♥J♣3♦", "Un asso debole può foldare, Q-J può fare call: la puntata serve a tutte e due le cose."], "Livello più alto: serve conoscere bene i range dell'avversario."],
+  ["bal", "Bilanciamento", "Teoria (GTO)", "n", "Rendere le tue puntate difficili da leggere.", "Nella strategia d'equilibrio ogni size contiene mani forti e bluff nella giusta proporzione, così l'avversario non sa cosa fare.", null, "A NL2 conta poco: gli avversari non studiano le tue puntate. Conta di più sfruttare i loro errori, come in «Chi paga e chi folda»."],
+];
+const bwOut = k => { const [, n, tag, tn, goal, when, ex, nl2] = BW.find(b => b[0] === k);
+  return `<div class="lx-bw-h"><b>${n}</b><span class="lx-bw-tag" data-t="${tn}">${tag}</span></div>
+    <div class="lx-bw-r"><small>Obiettivo</small><p>${goal}</p></div><div class="lx-bw-r"><small>Quando</small><p>${when}</p></div>
+    ${ex ? `<div class="lx-bw-r"><small>Esempio</small><p><span class="lx-bw-cards">${UI.c(ex[0])}<i>su</i>${UI.c(ex[1])}</span>${ex[2]}</p></div>` : ""}
+    <div class="lx-bw-r nl"><small>A NL2</small><p>${nl2}</p></div>`; };
+UI.betWhy = () => `<div class="lx-bw" data-bw><div class="lx-bw-b" role="group" aria-label="Scopo della puntata">${BW.map(([k, n, , tn], i) => `<button type="button" class="${i ? "" : "on"}" data-bwk="${k}" data-t="${tn}" aria-pressed="${i ? "false" : "true"}">${n}</button>`).join("")}</div><div class="lx-bw-o" data-bwo aria-live="polite">${bwOut("value")}</div></div>`;
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-bwk]"); if (!b) return;
+  const box = b.closest("[data-bw]"); box.querySelectorAll("[data-bwk]").forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+  const o = box.querySelector("[data-bwo]"); o.innerHTML = bwOut(b.dataset.bwk); o.classList.remove("in"); void o.offsetWidth; o.classList.add("in");
+});

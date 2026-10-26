@@ -386,3 +386,20 @@
 .lx-hp-read{margin:0;padding:8px 12px;background:#1d2c35;border-top:1px solid rgba(255,255,255,.08);font-size:13px;line-height:1.45;color:#e8eef1}
 .lx-hp-read span{display:block;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6fb4ff;margin-bottom:2px}
 .lx-hp-pop{background:#1d2c35}.lx-hp-pop p.lx-hp-sub,.lx-hp-pop p.lx-hp-read,.lx-hp-pop p.lx-hp-note{margin:0}
+/* ===== gli scopi di una puntata (UI.betWhy) ===== */
+.lx-bw{--v:#22a86a;--b:#ef7a43;--s:#8f5ad8;--y:#d4a24c;--t:#1aa6a0;--c:#3b86e3;--o:#c2185b;--n:#7d8790;margin:12px 0 16px;padding:14px;border-radius:18px;border:1px solid var(--line);background:var(--surface);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+.lx-bw-b{display:flex;flex-wrap:wrap;gap:6px}
+.lx-bw-b button{--k:var(--n);padding:7px 11px;border-radius:99px;border:1.5px solid color-mix(in srgb,var(--k) 50%,var(--line));background:color-mix(in srgb,var(--k) 8%,var(--surface));color:var(--ink);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer;transition:background .2s,color .2s}
+.lx-bw [data-t="v"]{--k:var(--v)}.lx-bw [data-t="b"]{--k:var(--b)}.lx-bw [data-t="s"]{--k:var(--s)}.lx-bw [data-t="y"]{--k:var(--y)}.lx-bw [data-t="t"]{--k:var(--t)}.lx-bw [data-t="c"]{--k:var(--c)}.lx-bw [data-t="o"]{--k:var(--o)}.lx-bw [data-t="n"]{--k:var(--n)}
+.lx-bw-b button.on{background:var(--k);border-color:var(--k);color:#fff}
+.lx-bw-o{margin-top:12px;padding:12px;border-radius:14px;background:var(--surface2)}
+.lx-bw-o.in{animation:fxdrawer .4s cubic-bezier(.32,.72,0,1) both}
+.lx-bw-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+.lx-bw-h b{font-family:var(--f-display);font-size:18px}
+.lx-bw-tag{--k:var(--n);font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:2px 9px;border-radius:99px;background:var(--k);color:#fff}
+.lx-bw-r{display:grid;grid-template-columns:92px 1fr;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
+.lx-bw-r small{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);padding-top:2px}
+.lx-bw-r p{margin:0;font-size:14px;line-height:1.5}
+.lx-bw-r.nl small{color:#1b7f3a}
+.lx-bw-cards{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:4px}.lx-bw-cards i{font-style:normal;font-size:12px;color:var(--ink2)}
+@media (max-width:420px){.lx-bw{padding:10px}.lx-bw-r{grid-template-columns:1fr;gap:2px}}
