@@ -735,9 +735,9 @@ function coDPEnhance(inp) {
 function fpEnhance(inp) {
   inp.dataset.fp = "1"; if (inp.hidden || /display:\s*none/.test(inp.getAttribute("style") || "")) return;
   const many = inp.multiple, w = document.createElement("div"); w.className = "fpick";
-  w.innerHTML = `<button type="button" class="btn ghost fpick-b"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>${many ? "Scegli i file" : "Scegli il file"}</button><span class="fpick-n muted"></span>`;
+  w.innerHTML = `<button type="button" class="btn ghost fpick-b"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>${inp.webkitdirectory ? "Scegli una cartella" : many ? "Scegli i file" : "Scegli il file"}</button><span class="fpick-n muted"></span>`;
   inp.classList.add("co-ddsrc"); inp.tabIndex = -1; inp.insertAdjacentElement("afterend", w);
-  const n = w.querySelector(".fpick-n"), paint = () => { const f = inp.files ? [...inp.files] : []; n.textContent = !f.length ? (many ? "Nessun file scelto" : "Nessun file scelto") : f.length === 1 ? f[0].name : f.length + " file scelti"; };
+  const n = w.querySelector(".fpick-n"), paint = () => { const f = inp.files ? [...inp.files] : []; n.textContent = !f.length ? (inp.webkitdirectory ? "Nessuna cartella scelta" : "Nessun file scelto") : f.length === 1 ? f[0].name : f.length + " file scelti"; };
   w.querySelector("button").onclick = () => inp.click(); inp.addEventListener("change", paint); paint();
   w.addEventListener("dragover", e => { e.preventDefault(); w.classList.add("drag"); }); w.addEventListener("dragleave", () => w.classList.remove("drag"));
   w.addEventListener("drop", e => { e.preventDefault(); w.classList.remove("drag"); if (e.dataTransfer && e.dataTransfer.files.length) { try { inp.files = e.dataTransfer.files; inp.dispatchEvent(new Event("change", { bubbles: true })); } catch (er) {} } });

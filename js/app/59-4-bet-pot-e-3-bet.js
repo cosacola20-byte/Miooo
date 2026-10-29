@@ -128,24 +128,27 @@ DRILLS.bvb3 = {
 
 /* ---- I miei dati: import mani + pool ---- */
 function renderData() {
+  if (!DATA_SUB) DATA_SUB = "trk";
+  if (DATA_SUB !== "imp") { $("#view").innerHTML = trkSubBar() + (DATA_SUB === "leak" ? trkRenderLeaks() : trkRenderTracker()); trkBindSub(); return; }
   const n = HANDS.hands.length, nd = HANDS.hands.reduce((a, h) => a + (h.dec || []).length, 0);
   const f = POOL?.f || {};
   const mdf = s => Math.round(s / (1 + s) * 100);
   let h = `<div class="two"><section class="panel"><div class="eyebrow">Le tue mani</div><h3 style="margin:4px 0 8px">Importa hand history</h3>
-  <p style="margin:0 0 8px;font-size:15px;color:var(--ink2)">Carica i file .txt delle hand history di <b>GGPoker</b> o <b>PokerStars</b> (in inglese; puoi selezionarne molti insieme) oppure incolla il testo delle mani esportate da HM3. Ogni tua decisione dal flop in poi diventa un esercizio.</p>
-  <input type="file" id="hhFile" accept=".txt,text/plain" multiple aria-label="File delle hand history (.txt)" style="margin:6px 0 10px">
+  <p style="margin:0 0 8px;font-size:15px;color:var(--ink2)">Carica i file .txt delle hand history di <b>GGPoker</b> o <b>PokerStars</b> (in inglese), anche tanti insieme o una cartella intera, oppure incolla il testo delle mani esportate da HM3. Diventano il tuo <b>tracker</b>, con statistiche e cerca leak, e ogni tua decisione dal flop in poi diventa un esercizio.</p>
+  <div class="trk-files"><input type="file" id="hhFile" accept=".txt,text/plain" multiple aria-label="File delle hand history (.txt)"><input type="file" id="hhDir" webkitdirectory multiple aria-label="Cartella delle hand history"></div>
   <textarea id="hhText" placeholder="PokerStars Hand #...: Hold'em No Limit ($0.10/$0.25 USD) ..."></textarea>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn primary" id="hhImport">Importa</button>${n ? `<button class="btn" data-free="hands">Allena sulle tue mani</button>` : ""}</div>
   <p id="hhMsg" style="font-size:14px;margin:10px 0 0">${n ? `<b>${n}</b> mani salvate, <b>${nd}</b> decisioni da rivedere.` : "Nessuna mano importata."}</p>
   ${n ? `${(() => { const vs = HANDS.hands.slice(-10).map(x => hVote(x)).filter(Boolean); return vs.length ? `<p class="hv-avg">Voto medio delle ultime mani: <b class="${hVoteTier(Math.round(vs.reduce((a, b) => a + b.v, 0) / vs.length))}">${fmt(vs.reduce((a, b) => a + b.v, 0) / vs.length, 1)}/10</b> <span class="muted">(${vs.length} mani con decisioni postflop)</span></p>` : ""; })()}<div class="list-hands">${HANDS.hands.map((x, i) => [x, i]).slice(-10).reverse().map(([x, i]) => `<div class="lh"><span>${icHand(x.hero)} · ${esc(x.pos)} · ${esc(x.stakes)}</span><span class="lh-r"><span class="mono muted">${(x.dec || []).length} decisioni</span>${hVoteBadge(hVote(x), i)}</span></div>`).join("")}</div><p style="margin-top:10px"><button class="btn ghost" id="hhClear" style="padding:5px 10px;font-size:13px">Cancella le mani</button> <span id="hhClearC"></span></p>` : ""}
-  <p class="note">Nel client PokerStars la lingua delle hand history si imposta nelle opzioni di storico mani. Le mani restano salvate con questa pagina e servono solo al tuo allenamento.</p></section>
+  ${trkImpBox()}
+  <p class="note">Nel client PokerStars la lingua delle hand history si imposta nelle opzioni di storico mani. Le mani restano su questo dispositivo e servono solo al tuo allenamento: il tracker non si sincronizza con gli altri dispositivi.</p></section>
   <section class="panel"><div class="eyebrow">Il tuo pool</div><h3 style="margin:4px 0 8px">Taratura NL25</h3>
   <p style="margin:0 0 10px;font-size:15px;color:var(--ink2)">Dal report di popolazione del tuo tracker, inserisci quanto spesso il pool folda al river contro ogni size. Con almeno 3 valori nel Laboratorio size compare il profilo <b>Il tuo pool NL25</b>.</p>
   <div class="formgrid">${[[0.33, "1/3 pot"], [0.5, "1/2 pot"], [0.75, "3/4 pot"], [1, "Pot"], [1.5, "Overbet"]].map(([s, l]) => `<label for="pf-${String(s).replace(".", "_")}">${l}<input type="number" id="pf-${String(s).replace(".", "_")}" min="0" max="100" step="1" value="${f[s] ?? ""}" placeholder="${mdf(s)}"><small>fold % · teoria ${mdf(s)}%</small></label>`).join("")}</div>
   <div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn primary" id="poolSave">Salva il pool</button><span id="poolMsg" class="muted" style="font-size:14px">${poolReady() ? "Profilo pool attivo." : "Profilo pool non ancora attivo."}</span></div>
   <p class="note">Il placeholder mostra quanto folderebbe un avversario teorico (break-even del bluff). Se il tuo pool folda di più, i bluff grandi rendono; se folda di meno, punta più value e meno bluff.</p>
   <div class="rule" style="margin-top:10px"><b>Riferimento</b> (REG NL50, BB contro il terzo barrel): folda il 31% contro 30% pot, il 55% contro 70% e il 69% contro 150%. <button class="btn" id="poolCourse" style="margin-left:6px;padding:4px 10px;font-size:13px">Usa questi valori</button></div></section></div>` + bkPanel() + (tlSite() ? "" : `<section class="panel" style="margin-top:14px"><div class="eyebrow">Modalità test</div><h3 style="margin:4px 0 6px">${tlTest() ? "🔓 Tutto sbloccato" : "Sblocca tutto per provare"}</h3><p style="margin:0 0 10px;color:var(--ink2);font-size:14.5px">${tlTest() ? "Livelli, lezioni extra, NL1000 e drill liberi sono aperti. I progressi restano quelli veri." : "Inserisci il codice per aprire tutti i livelli, le lezioni extra e i drill senza superare gli esami."}</p><div style="display:flex;gap:8px;flex-wrap:wrap">${tlTest() ? `<button class="btn ghost" id="tlTestOff">Disattiva la modalità test</button>` : `<input id="tlTestCode" type="password" placeholder="Codice" autocomplete="off" style="font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:160px"><button class="btn" id="tlTestOn">Sblocca</button>`}</div><p id="tlTestMsg" class="muted" style="margin:8px 0 0;font-size:13.5px"></p></section>`);
-  $("#view").innerHTML = h;
+  $("#view").innerHTML = trkSubBar() + h;
   bkBind();
   if ($("#tlTestOn")) { const go = () => { if ($("#tlTestCode").value.trim().toLowerCase() === ORCA_TEST_CODE) { lsSet("orca_test", 1); DRILL_LVL = null; renderData(); gToast("🔓 Modalità test attiva: tutto sbloccato."); } else $("#tlTestMsg").textContent = "Codice non valido."; }; $("#tlTestOn").onclick = go; $("#tlTestCode").onkeydown = e => { if (e.key === "Enter") go(); }; }
   if ($("#tlTestOff")) $("#tlTestOff").onclick = () => { lsSet("orca_test", 0); renderData(); gToast("Modalità test disattivata."); };
@@ -162,16 +165,19 @@ function renderData() {
 }
 async function importHands() {
   let text = $("#hhText").value || "";
-  const files = $("#hhFile").files;
-  for (const f of files || []) { try { text += "\n\n" + await f.text(); } catch (e) {} }
+  const files = [...($("#hhFile").files || []), ...(($("#hhDir") || {}).files || [])].filter(f => /\.txt$/i.test(f.name) || f.type === "text/plain");
+  for (const f of files) { try { text += "\n\n" + await f.text(); } catch (e) {} }
   const parsed = parseHH(text);
+  $("#hhMsg").textContent = "Leggo le mani…";
+  const tr = await trkAdd(text, (i, t) => { const m = $("#hhMsg"); if (m && t > 800) m.textContent = `Leggo le mani… ${i.toLocaleString("it-IT")} di ${t.toLocaleString("it-IT")}`; });
+  if (!parsed.length && tr.got) { $("#hhMsg").innerHTML = `Nel tracker: <b>${tr.fresh.toLocaleString("it-IT")}</b> mani nuove (${(tr.got - tr.fresh).toLocaleString("it-IT")} già presenti), <b>${TRK.hands.length.toLocaleString("it-IT")}</b> in tutto. ${tr.ok ? "" : "Attenzione: questo browser non ha salvato l'archivio, alla prossima apertura andrà reimportato."} <button class="btn" data-dsub="trk">Apri il tracker</button>`; return; }
   if (!parsed.length) { $("#hhMsg").innerHTML = `Nessuna mano riconosciuta. Servono hand history in inglese di GGPoker ("Poker Hand #…") o PokerStars ("PokerStars Hand #…"), con la riga "Dealt to" delle tue carte.`; return; }
   const ids = new Set(HANDS.hands.map(h => h.id));
   const fresh = parsed.filter(h => !ids.has(h.id));
   HANDS.hands = [...HANDS.hands, ...fresh].slice(-300);
   persistHands();
   renderData();
-  $("#hhMsg").innerHTML = `Importate <b>${fresh.length}</b> mani nuove (${parsed.length - fresh.length} già presenti). Decisioni postflop totali: <b>${HANDS.hands.reduce((a, h) => a + h.dec.length, 0)}</b>. <span id="errProg"></span> Gli errori li trovi nella scheda <b>Errori</b>.`;
+  $("#hhMsg").innerHTML = `Nel tracker: <b>${tr.fresh.toLocaleString("it-IT")}</b> mani nuove, <b>${TRK.hands.length.toLocaleString("it-IT")}</b> in tutto. <button class="btn" data-dsub="trk" style="padding:4px 10px;font-size:13px">Apri il tracker</button><br>Per il ripasso degli errori: importate <b>${fresh.length}</b> mani nuove (${parsed.length - fresh.length} già presenti). Decisioni postflop totali: <b>${HANDS.hands.reduce((a, h) => a + h.dec.length, 0)}</b>. <span id="errProg"></span> Gli errori li trovi nella scheda <b>Errori</b>.`;
   analyzeAllAsync(() => { const el = $("#errProg"); if (el) { const n = hErrList().length; const vs = fresh.map(x => hVote(x)).filter(Boolean); el.innerHTML = `Analisi completata: ${n} errori o imprecisioni.${vs.length ? ` Voto medio delle mani importate: <b>${fmt(vs.reduce((a, b) => a + b.v, 0) / vs.length, 1)}/10</b>.` : ""}`; } });
 }
 function parseHH(text) {
