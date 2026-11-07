@@ -111,6 +111,7 @@ function trkFlags(ev, hero, pos, ord, folded, atFlop) {
   }
   const pfa = last;
   if (pfa === hero) x.a = 1;
+  if (pfa === hero && nr >= 2) x.b3 = 1;
   if (!atFlop || !atFlop.includes(hero)) return x;
   x.sf = 1; x.m = atFlop.length;
   if (Math.max(...atFlop.map(w => ord[w])) === ord[hero]) x.ip = 1;
@@ -126,7 +127,7 @@ function trkFlags(ev, hero, pos, ord, folded, atFlop) {
       if (w === hero) {
         if (a === "b" || a === "r") A++; else if (a === "c") C++; else if (a === "f") F++;
         if (hFirst) { hFirst = false; if (canC && bets === 0) x[kc] = a === "b" ? "b" : "x"; if (canF && bets === 1 && fb === pfa) x[kf] = act3(a); }
-        else { if (canF && x[kf] === undefined && bets === 1 && fb === pfa) x[kf] = act3(a); if (s === 1 && hChk && bets === 1 && x.xr === undefined && fb !== hero) x.xr = act3(a); }
+        else { if (canF && x[kf] === undefined && bets === 1 && fb === pfa) x[kf] = act3(a); if (s === 1 && hChk && bets === 1 && x.xr === undefined && fb !== hero) x.xr = act3(a); if (s === 1 && x.cf === "b" && bets >= 2 && x.cx === undefined) x.cx = act3(a); }
         if (a === "x") hChk = true;
       }
       if (a === "b") { bets = 1; fb = w; } else if (a === "r") bets++;
@@ -176,6 +177,8 @@ function trkStats(H) {
     ff: cnt(x => x.m === 2 ? x.ff : null, o => o === "f"),
     rf: cnt(x => x.m === 2 ? x.ff : null, o => o === "r"),
     xr: cnt(x => x.xr, o => o === "r"),
+    cx: cnt(x => x.cx, o => o === "r"),
+    cx3: cnt(x => x.b3 && !x.ip ? x.cx : null, o => o === "r"),
     ct: cnt(x => x.m === 2 ? x.ct : null, o => o === "b"),
     ft: cnt(x => x.m === 2 ? x.ft : null, o => o === "f"),
     cr: cnt(x => x.m === 2 ? x.cr : null, o => o === "b"),
@@ -193,7 +196,7 @@ function trkStats(H) {
 }
 const TRK_ST = [
   ["Preflop", [["vpip", "VPIP", "Mani in cui metti soldi volontariamente preflop"], ["pfr", "PFR", "Mani in cui rilanci preflop"], ["rfi", "Open (RFI)", "Quando tutti hanno foldato fino a te, quante volte apri"], ["steal", "Steal", "Open da CO, BTN e SB quando tutti hanno foldato"], ["tb", "3-bet", "Contro un open, quante volte rilanci"], ["cc", "Cold call", "Contro un open, quante volte fai call fuori dal BB"], ["f3", "Fold al 3-bet", "Dopo il tuo open, quante volte foldi al 3-bet"], ["fb4", "4-bet", "Dopo il tuo open, quante volte rispondi al 3-bet con un 4-bet"], ["bbst", "Fold BB allo steal", "Dal BB, contro un open di CO, BTN o SB"], ["limp", "Limp", "Mani in cui entri con un call senza rilancio, su tutte le mani"]]],
-  ["Postflop", [["cf", "C-bet flop", "Testa a testa, da aggressore preflop"], ["cfip", "C-bet flop in posizione", ""], ["cfop", "C-bet flop fuori posizione", ""], ["cfm", "C-bet flop multiway", "Con tre o più giocatori"], ["ct", "C-bet turn", "Dopo la c-bet al flop"], ["cr", "C-bet river", "Dopo le c-bet al flop e al turn"], ["ff", "Fold alla c-bet flop", "Testa a testa"], ["rf", "Raise alla c-bet flop", "Testa a testa"], ["ft", "Fold alla c-bet turn", "Dopo aver fatto call al flop"], ["fr", "Fold al river", "Dopo aver fatto call al flop e al turn"], ["xr", "Check-raise flop", "Hai fatto check e qualcuno ha puntato"]]],
+  ["Postflop", [["cf", "C-bet flop", "Testa a testa, da aggressore preflop"], ["cfip", "C-bet flop in posizione", ""], ["cfop", "C-bet flop fuori posizione", ""], ["cfm", "C-bet flop multiway", "Con tre o più giocatori"], ["ct", "C-bet turn", "Dopo la c-bet al flop"], ["cr", "C-bet river", "Dopo le c-bet al flop e al turn"], ["ff", "Fold alla c-bet flop", "Testa a testa"], ["rf", "Raise alla c-bet flop", "Testa a testa"], ["ft", "Fold alla c-bet turn", "Dopo aver fatto call al flop"], ["fr", "Fold al river", "Dopo aver fatto call al flop e al turn"], ["xr", "Check-raise flop", "Hai fatto check e qualcuno ha puntato"], ["cx", "Rilancio sul raise alla c-bet", "Hai fatto c-bet al flop e ti hanno rilanciato"], ["cx3", "Flop 3-bet nei 3-bet pot", "Lo stesso, fuori posizione nei piatti che hai 3-bettato"]]],
   ["Showdown e aggressività", [["wtsd", "WTSD", "Vai allo showdown, sulle mani in cui vedi il flop"], ["wsd", "W$SD", "Vinci allo showdown"], ["wwsf", "WWSF", "Vinci soldi quando vedi il flop"], ["afq", "AFq", "Puntate e rilanci sul totale delle azioni postflop"], ["af", "AF", "Puntate e rilanci diviso i call, postflop"]]],
 ];
 
@@ -221,6 +224,7 @@ const TRK_BANDS = [
   { k: "ct", t: "Secondo barrel al turn", lo: 38, hi: 65, les: "n25barrel", hiTxt: "Continui troppo spesso: al turn chi ha fatto call al flop ha già una mano e folda meno.", loTxt: "Ti fermi troppo dopo la c-bet: le carte di turn che ti aiutano e i progetti vanno puntati.", hiDo: "Al turn continua con valore, progetti e carte che cambiano il board a tuo favore.", loDo: "Scegli 2-3 tipi di turn su cui continuare sempre: carte alte, progetti, mani migliorate." },
   { k: "ff", t: "Fold alla c-bet al flop", lo: 35, hi: 55, les: "n10def", hiTxt: "Foldi troppo: chi fa c-bet con tutto il range guadagna contro di te anche senza mano.", loTxt: "Difendi troppo: arrivi al turn con mani che poi non sanno cosa fare.", hiDo: "Contro le c-bet piccole difendi coppie, progetti e carte alte con backdoor.", loDo: "Folda le mani senza coppia e senza progetto, soprattutto contro le puntate grandi." },
   { k: "rf", t: "Raise alla c-bet al flop", lo: 6, hi: 16, les: "n50xr", hiTxt: "Rilanci molto: va bene contro chi folda, ma i rilanci troppo larghi bruciano soldi contro chi fa call.", loTxt: "Rilanci quasi mai: i tuoi call sono facili da leggere e le mani forti vengono pagate poco.", hiDo: "Rilancia per valore e con i progetti migliori, non con le mani medie.", loDo: "Aggiungi il check-raise con set, doppie e progetti forti." },
+  { k: "cx3", t: "Flop 3-bet nei 3-bet pot", lo: 10, hi: 28, les: "n1k3bp", hiTxt: "Rilanci moltissimo: contro chi rilancia la c-bet solo con valore i tuoi bluff trovano sempre un call.", loTxt: "Al raise della tua c-bet rispondi quasi solo con call o fold: chi rilancia largo vede turn e river gratis, e il tuo rilancio, quando arriva, è sempre valore.", hiDo: "Rilancia come bluff solo le mani che fanno call male e hanno equity, e solo contro chi rilancia largo.", loDo: "Aggiungi ai set e alle top pair forti i bluff con gutshot, progetti e blocker del suo valore." },
   { k: "ft", t: "Fold al secondo barrel", lo: 35, hi: 55, les: "n10def", hiTxt: "Foldi troppo al turn dopo aver fatto call al flop: i call al flop diventano soldi persi.", loTxt: "Fai call troppo al turn: contro le seconde puntate dei passivi le mani medie sono dietro.", hiDo: "Al flop fai call solo con mani che possono continuare al turn.", loDo: "Al turn folda le mani medie contro chi punta di rado." },
   { k: "fr", t: "Fold al river dopo due call", lo: 30, hi: 55, les: "n50river", hiTxt: "Arrivi al river e foldi troppo spesso: le prime due call erano troppo larghe.", loTxt: "Al river fai call troppo spesso: contro le puntate grandi dei passivi il call perde.", hiDo: "Rivedi i call al flop e al turn: ogni call deve avere un piano per il river.", loDo: "Al river chiediti quali bluff può avere: se sono pochi, folda." },
   { k: "wtsd", t: "Vai allo showdown (WTSD)", lo: 24, hi: 32, les: "n50river", hiTxt: "Vai allo showdown troppo spesso: probabilmente fai call al river con mani che battono solo i bluff.", loTxt: "Arrivi poco allo showdown: lasci troppi piatti quando l'avversario continua a puntare.", hiDo: "Al river folda di più contro chi bluffa poco.", loDo: "Difendi di più al flop e al turn le mani con showdown value." },
