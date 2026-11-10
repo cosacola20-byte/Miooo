@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="css/12-effetti-risposte.css">
 <link rel="stylesheet" href="css/13-tavolo.css">
 <link rel="stylesheet" href="css/14-novita.css">
+<link rel="stylesheet" href="css/15-grafica.css">
 </head>
 <body>
 <div class="wrap">
@@ -33,17 +34,17 @@
     <div class="stats" id="stats"></div>
   </header>
   <nav class="tabs" role="tablist" id="tabs">
-    <button role="tab" data-tab="program" aria-selected="true">Programma</button>
-    <button role="tab" data-tab="free" aria-selected="false">Drill liberi</button>
-    <button role="tab" data-tab="mind" aria-selected="false">Mindset</button>
-    <button role="tab" data-tab="data" aria-selected="false">I miei dati</button>
-    <button role="tab" data-tab="err" aria-selected="false">Errori</button>
-    <button role="tab" data-tab="opp" aria-selected="false">Avversari</button>
-    <button role="tab" data-tab="solver" aria-selected="false">Solver</button>
-    <button role="tab" data-tab="equity" aria-selected="false">Sonar</button>
-    <button role="tab" data-tab="coach" aria-selected="false">Coaching</button>
-    <button role="tab" data-tab="progress" aria-selected="false">Progressi</button>
-    <button role="tab" data-tab="ref" aria-selected="false">Promemoria</button>
+    <button role="tab" data-tab="program" aria-selected="true"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 19.5h4.2v-4.3h4.2v-4.3h4.2V6.6h4.4"/><path d="M17.6 4l2.9 2.6-2.9 2.6"/></svg><span>Programma</span></button>
+    <button role="tab" data-tab="free" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5v11M3.5 9v6M17.5 6.5v11M20.5 9v6M6.5 12h11"/></svg><span>Drill liberi</span></button>
+    <button role="tab" data-tab="mind" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.2A3.2 3.2 0 0 0 6.2 6.9a3.3 3.3 0 0 0-2 5.5 3.3 3.3 0 0 0 2.3 5.3A3.2 3.2 0 0 0 12 18.3z"/><path d="M12 5.2a3.2 3.2 0 0 1 5.8 1.7 3.3 3.3 0 0 1 2 5.5 3.3 3.3 0 0 1-2.3 5.3A3.2 3.2 0 0 1 12 18.3"/><path d="M12 5.2v13.1M8.3 10.3c1 .1 1.9.7 2.3 1.6M15.7 13.7c-1-.1-1.9-.7-2.3-1.6"/></svg><span>Mindset</span></button>
+    <button role="tab" data-tab="data" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5v15h16"/><path d="M7.5 15l3.6-4.6 3.1 2.8L19 7"/></svg><span>I miei dati</span></button>
+    <button role="tab" data-tab="err" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.8v5h5"/><path d="M4.6 14.2a7.6 7.6 0 1 0 1.5-7.3L4 9.8"/><path d="M12 9v3.4l2.3 1.5"/></svg><span>Errori</span></button>
+    <button role="tab" data-tab="opp" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 19.5a6.2 6.2 0 0 1 12.4 0"/><path d="M15.8 4.9a3.4 3.4 0 0 1 0 6.2M17.9 14.3a6.2 6.2 0 0 1 3.3 5.2"/></svg><span>Avversari</span></button>
+    <button role="tab" data-tab="solver" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/></svg><span>Solver</span></button>
+    <button role="tab" data-tab="equity" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="4"/><path d="M12 12l5.8-5.8"/><circle cx="12" cy="12" r=".6" fill="currentColor"/></svg><span>Sonar</span></button>
+    <button role="tab" data-tab="coach" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.2L12 4.8l9.5 4.4L12 13.6z"/><path d="M6.6 11.3v4.6c0 1.3 2.4 2.6 5.4 2.6s5.4-1.3 5.4-2.6v-4.6M21.5 9.2v5"/></svg><span>Coaching</span></button>
+    <button role="tab" data-tab="progress" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 4.5h9v4.2a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6H4.7v1.2A3 3 0 0 0 7.7 10.2M16.5 6h2.8v1.2a3 3 0 0 1-3 3M12 13.2v3.3M8.5 19.5h7M9.7 16.5h4.6"/></svg><span>Progressi</span></button>
+    <button role="tab" data-tab="ref" aria-selected="false"><svg class="tic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.8h11v16.4L12 16.6l-5.5 3.6z"/><path d="M9.5 8h5M9.5 11.2h5"/></svg><span>Promemoria</span></button>
   </nav>
   <main id="view"></main>
   <p class="savestate" id="savestate"></p>

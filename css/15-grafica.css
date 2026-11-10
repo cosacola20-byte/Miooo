@@ -1,0 +1,91 @@
+/* ===== GRAFICA: intestazione, barra delle schede, superfici, pulsanti, schede dei drill =====
+   Ultimo foglio caricato: rifinisce l'aspetto comune a tutta l'app senza cambiare la struttura. */
+
+/* sfondo: una luce verde in alto al posto del grigio piatto */
+html{background:var(--bg)}
+body{background:radial-gradient(1100px 420px at 50% -140px,color-mix(in srgb,var(--acc) 13%,transparent),transparent 70%),var(--bg);background-repeat:no-repeat}
+
+/* ---------- intestazione ---------- */
+.top{position:relative;padding-block:16px 12px;gap:12px 16px}
+.brand{min-width:0}
+.brand h1{font-size:21px;letter-spacing:-.3px}
+.brand p{font-size:12.5px;line-height:1.35}
+.logo{box-shadow:0 4px 12px rgba(10,60,44,.22),inset 0 0 0 3px var(--felt2),inset 0 0 0 5px color-mix(in srgb,var(--gold) 70%,transparent)}
+.gpill{border-width:1.5px;border-bottom-width:3.5px;border-radius:13px;box-shadow:0 2px 8px rgba(16,32,27,.05)}
+@media (max-width:640px){
+  .top{padding-block:12px 10px}
+  .brand{padding-right:50px}
+  .brand p{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  .logo{width:38px;height:38px}
+  .brand h1{font-size:19px}
+  .stats{flex-wrap:nowrap;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:3px}
+  .stats::-webkit-scrollbar{display:none}
+  .stats .gpill{flex:1 0 auto;justify-content:center}
+  /* l'ingranaggio sale accanto al nome, così i contatori stanno su una riga */
+  .stats .gpill.ghost{position:absolute;top:11px;right:0;flex:0 0 auto;width:40px;height:40px;padding:0;background:var(--surface)}
+}
+
+/* ---------- barra delle schede: icona sopra, nome sotto ---------- */
+nav.tabs{gap:2px;padding:5px;margin-bottom:18px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--surface) 88%,transparent);box-shadow:0 1px 2px rgba(16,32,27,.04),0 8px 24px rgba(16,32,27,.06)}
+nav.tabs button{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto;min-width:70px;padding:8px 8px 7px;border:0;border-radius:13px;font-size:12px;font-weight:700;line-height:1.15;color:var(--ink2);transition:background .18s,color .18s}
+nav.tabs .tic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+nav.tabs button:hover{background:color-mix(in srgb,var(--ink) 5%,transparent);color:var(--ink)}
+nav.tabs button[aria-selected="true"]{background:var(--acc-soft);color:var(--acc);border-bottom-color:transparent}
+nav.tabs button[aria-selected="true"] span{color:var(--ink)}
+nav.tabs button[aria-selected="true"] .tic{transform:translateY(-1px) scale(1.06);stroke-width:2.1}
+nav.tabs button[aria-selected="true"]::before{content:"";position:absolute;left:50%;bottom:2px;width:18px;height:3px;margin-left:-9px;border-radius:3px;background:var(--acc)}
+nav.tabs button.tlock::after{position:absolute;top:3px;right:6px;margin:0;font-size:10px}
+body.theme-silent nav.tabs button[aria-selected="true"]{background:rgba(255,255,255,.1);color:#e6e6e6}
+body.theme-silent nav.tabs button[aria-selected="true"]::before{background:#e6e6e6}
+@media (min-width:900px){nav.tabs{gap:2px;justify-content:stretch}nav.tabs button{flex:1 1 0;min-width:0;padding:9px 4px 8px;font-size:12.5px}}
+@media (prefers-reduced-motion:reduce){nav.tabs button,nav.tabs .tic{transition:none}}
+
+/* ---------- superfici e pulsanti ---------- */
+.panel{border-radius:18px;box-shadow:0 1px 2px rgba(16,32,27,.04),0 8px 22px rgba(16,32,27,.05)}
+.btn{border-radius:12px;border-width:1.5px;transition:transform .08s,border-color .15s,background .15s,box-shadow .15s}
+.btn:not([disabled]):hover{box-shadow:0 3px 10px rgba(16,32,27,.08)}
+.btn:not([disabled]):active{transform:translateY(1px);box-shadow:none}
+.btn.primary{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 88%,#fff),var(--acc));box-shadow:0 2px 0 color-mix(in srgb,var(--acc) 70%,#000),0 6px 14px color-mix(in srgb,var(--acc) 26%,transparent)}
+.btn.primary:not([disabled]):hover{box-shadow:0 2px 0 color-mix(in srgb,var(--acc) 70%,#000),0 8px 18px color-mix(in srgb,var(--acc) 34%,transparent)}
+.btn.primary:not([disabled]):active{box-shadow:0 0 0 color-mix(in srgb,var(--acc) 70%,#000)}
+.btn.ghost{box-shadow:none}
+.eyebrow{letter-spacing:1.3px}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+
+/* sotto-menu di Mindset: stesso aspetto degli altri (una riga che scorre) */
+.mstabs{display:flex;flex-wrap:nowrap;gap:4px;padding:4px;margin:0 0 14px;border-radius:14px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) 6%,transparent);overflow-x:auto;scrollbar-width:none}
+.mstabs::-webkit-scrollbar{display:none}
+.mstabs .btn{flex:1 0 auto;justify-content:center;padding:9px 14px;border:0;border-radius:10px;background:none;color:var(--ink2);font-size:14.5px;font-weight:800;white-space:nowrap;box-shadow:none}
+.mstabs .btn:hover{color:var(--ink);box-shadow:none}
+.mstabs .btn.primary{background:var(--surface);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+
+/* ---------- Drill liberi ---------- */
+.lbd-top{border-radius:18px;padding:14px 16px;box-shadow:0 8px 22px rgba(16,32,27,.05)}
+.drill-grid{gap:12px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.drill-grid .dgroup{display:flex;align-items:center;gap:12px;margin:16px 0 0;color:var(--ink2)}
+.drill-grid .dgroup::after{content:"";flex:1;height:1px;background:var(--line)}
+.dcard{--dc:var(--acc);position:relative;border-radius:18px;padding:16px;gap:10px;border-color:var(--line);box-shadow:0 1px 2px rgba(16,32,27,.04),0 6px 18px rgba(16,32,27,.05);transition:transform .15s,box-shadow .2s,border-color .2s}
+.dcard:not(.locked):hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--dc) 45%,var(--line));box-shadow:0 2px 4px rgba(16,32,27,.05),0 14px 30px rgba(16,32,27,.1)}
+.dc-h{display:flex;align-items:center;gap:12px;min-width:0}
+.dc-h>div{min-width:0}
+.dc-ic{flex:0 0 auto;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;color:var(--dc);background:color-mix(in srgb,var(--dc) 13%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--dc) 22%,transparent)}
+.dc-ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.dcard h3{font-size:16.5px;line-height:1.2}
+.dc-tag{display:inline-block;margin-top:3px;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--dc)}
+.dcard>p{font-size:14px;line-height:1.5}
+.dcard .meter{height:7px;border-radius:99px;background:color-mix(in srgb,var(--ink) 9%,transparent)}
+.dcard .meter i{border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--dc) 70%,#fff),var(--dc))}
+.dcard .row .btn:not(.ghost):not([disabled]){background:var(--dc);border-color:var(--dc);color:#fff;box-shadow:0 2px 0 color-mix(in srgb,var(--dc) 68%,#000)}
+.dcard .row .btn:not(.ghost):not([disabled]):hover{filter:brightness(1.06)}
+.dcard .row .btn:not(.ghost):not([disabled]):active{box-shadow:none}
+.dcard.locked{opacity:1}.dcard.locked>*:not(.row){opacity:.55}.dcard.locked h3::before{content:none}
+.dcard.locked .dc-ic{color:var(--muted);background:var(--surface2);box-shadow:inset 0 0 0 1px var(--line)}
+.dcard.dc-rev{border-color:color-mix(in srgb,var(--gold) 55%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 7%,var(--surface)),var(--surface) 70%)}
+@media (prefers-reduced-motion:reduce){.dcard{transition:none}.dcard:not(.locked):hover{transform:none}}
+
+/* tema scuro: ombre più profonde, luce in alto più tenue */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:radial-gradient(1100px 420px at 50% -140px,color-mix(in srgb,var(--acc) 16%,transparent),transparent 70%),var(--bg);background-repeat:no-repeat}
+  :root:not([data-theme="light"]) .dcard .row .btn:not(.ghost):not([disabled]){color:#06110d}}
+:root[data-theme="dark"] body{background:radial-gradient(1100px 420px at 50% -140px,color-mix(in srgb,var(--acc) 16%,transparent),transparent 70%),var(--bg);background-repeat:no-repeat}
+:root[data-theme="dark"] .dcard .row .btn:not(.ghost):not([disabled]){color:#06110d}
+@media (max-width:360px){.stats{gap:5px}.stats .gpill{padding:5px 7px;gap:4px}.stats .gpill b{font-size:14.5px}nav.tabs button{min-width:64px;padding-inline:6px}}
