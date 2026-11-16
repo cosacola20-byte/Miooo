@@ -22,9 +22,11 @@
 .car-play:hover,.car-daily:hover{transform:translateY(-1px)}
 .car-hero-r{position:relative;flex:none;padding-right:6px}
 /* fiche */
-.pchip{--sz:60px;position:relative;display:inline-grid;place-items:center;width:var(--sz);height:var(--sz);border-radius:50%;flex:none;background:repeating-conic-gradient(var(--c) 0 22.5deg,#f7f3ea 22.5deg 30deg,var(--c) 30deg 45deg);box-shadow:0 3px 0 rgba(0,0,0,.35),0 6px 14px rgba(0,0,0,.35),inset 0 0 0 2px rgba(0,0,0,.18)}
-.pchip i{position:absolute;inset:14%;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),transparent 55%),var(--c);box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),inset 0 0 0 calc(var(--sz)*.05) var(--c),inset 0 0 0 calc(var(--sz)*.065) rgba(255,255,255,.35)}
-.pchip b{position:relative;color:var(--ink);font-weight:800;font-size:calc(var(--sz)*.28);line-height:1;letter-spacing:-.03em;margin-top:-6%}
+/* fiche da casinò: sei inserti sul bordo (--c2), spessore sotto, disco centrale con la corona di puntini */
+.pchip{--sz:60px;--c2:#f6f1e4;--cd:color-mix(in srgb,var(--c) 58%,#000);position:relative;display:inline-grid;place-items:center;width:var(--sz);height:var(--sz);border-radius:50%;flex:none;background:radial-gradient(circle at 31% 23%,rgba(255,255,255,.4),transparent 46%),radial-gradient(circle,transparent 58%,rgba(0,0,0,.24) 100%),repeating-conic-gradient(from -10deg,var(--c2) 0 20deg,var(--cd) 20deg 21.6deg,var(--c) 21.6deg 58.4deg,var(--cd) 58.4deg 60deg);box-shadow:0 calc(var(--sz)*.055) 0 var(--cd),0 calc(var(--sz)*.11) calc(var(--sz)*.24) rgba(0,0,0,.42),inset 0 0 0 calc(var(--sz)*.022) rgba(0,0,0,.2),inset 0 calc(var(--sz)*.03) calc(var(--sz)*.04) rgba(255,255,255,.3)}
+.pchip i{position:absolute;inset:15.5%;border-radius:50%;background:radial-gradient(circle at 34% 27%,rgba(255,255,255,.34),transparent 60%),var(--c);box-shadow:0 0 0 calc(var(--sz)*.02) var(--cd),0 0 0 calc(var(--sz)*.034) color-mix(in srgb,var(--c2) 55%,var(--c)),inset 0 calc(var(--sz)*-.03) calc(var(--sz)*.06) rgba(0,0,0,.22)}
+.pchip i::before{content:"";position:absolute;inset:6.5%;border-radius:50%;border:calc(var(--sz)*.024) dotted color-mix(in srgb,var(--c2) 70%,transparent)}
+.pchip b{position:relative;color:var(--ink);font-family:var(--f-display);font-weight:800;font-size:calc(var(--sz)*.28);line-height:1;letter-spacing:-.03em;margin-top:-6%;text-shadow:0 calc(var(--sz)*.012) calc(var(--sz)*.012) rgba(0,0,0,.22)}
 .pchip em{position:absolute;bottom:25%;color:var(--ink);font-style:normal;font-size:calc(var(--sz)*.12);font-weight:700;letter-spacing:.12em;opacity:.8}
 .pchip.big{animation:carspin 9s ease-in-out infinite}
 @keyframes carspin{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
@@ -35,9 +37,10 @@
 .car-step{font:inherit;cursor:pointer;flex:none;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 8px 6px;border-radius:14px;border:1px solid transparent;background:transparent;color:var(--kt);transition:background .15s}
 .car-step:hover{background:rgba(255,255,255,.04)}
 .car-step.sel{background:rgba(227,182,80,.1);border-color:rgba(227,182,80,.55)}
-.car-step.far .pchip{filter:grayscale(.85) brightness(.6)}
+/* i livelli lontani restano del loro colore, solo un po' spenti: la scala dei colori si deve leggere tutta */
+.car-step.far .pchip{filter:saturate(.8) brightness(.82)}
 .car-step.far .car-step-l{color:var(--km)}
-.car-step.cur .pchip{box-shadow:0 0 0 3px var(--k1),0 0 0 5px var(--gold),0 6px 16px rgba(227,182,80,.4)}
+.car-step.cur .pchip{box-shadow:0 calc(var(--sz)*.055) 0 var(--cd),0 0 0 3px var(--k1),0 0 0 5px var(--gold),0 6px 18px rgba(227,182,80,.45)}
 .car-step-l{font-weight:800;font-size:13px}
 .car-step-s{font-size:11px;color:var(--km)}
 .car-step.passed .car-step-s{color:#52d68a}.car-step.cur .car-step-s{color:var(--gold2)}

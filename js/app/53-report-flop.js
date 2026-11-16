@@ -100,7 +100,7 @@ function gwRepGenerate(f) {
 const solverOk = () => pre25Ok();
 function renderSolverLock() {
   const L = LEVELS.find(x => x.id === "nl25"), ci = curLevelIdx();
-  $("#view").innerHTML = `<section class="panel sv-lock"><span class="pchip big" style="--c:${L.col};--ink:${L.ink};--sz:96px"><i></i><b style="font-size:calc(var(--sz)*.24)">25</b><em>NL</em></span>
+  $("#view").innerHTML = `<section class="panel sv-lock"><span class="pchip big" style="--c:${L.col};--ink:${L.ink}${L.c2 ? ";--c2:" + L.c2 : ""};--sz:96px"><i></i><b style="font-size:calc(var(--sz)*.24)">25</b><em>NL</em></span>
     <span class="sv-lock-eye">🔒 Si sblocca a NL25</span><h2>Il Solver arriva quando sei pronto</h2>
     <p>Lo Study calcola strategie di equilibrio flop, turn e river, il nodelock contro gli avversari, i report dei flop e i problemi del giorno. Rende di più quando le basi sono solide: per questo si apre quando arrivi a <b>NL25</b>.</p>
     <ul class="sv-lock-l"><li>Risolvi uno spot e guarda la strategia mano per mano</li><li>Blocca l'avversario sulle sue frequenze reali (nodelock)</li><li>Report dei flop e problemi del giorno già impostati</li></ul>

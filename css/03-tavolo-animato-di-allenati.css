@@ -166,7 +166,7 @@
 
 /* livelli bloccati */
 .car-card.locked{opacity:.5;filter:grayscale(.7)}
-.car-step.locked .pchip{filter:grayscale(.8) brightness(.8)}
+.car-step.locked .pchip{filter:saturate(.72) brightness(.78)}
 .car-step.locked::after{content:"🔒";position:absolute;top:4px;right:6px;font-size:13px}
 .car-step.lk-plan::after{content:"⭐"}
 .car-step{position:relative}
@@ -186,13 +186,14 @@
 .dlock{cursor:pointer}
 
 /* fiche dorata NL1000 */
-.pchip.gold{background:repeating-conic-gradient(#b8860b 0 22.5deg,#fff6d5 22.5deg 30deg,#b8860b 30deg 45deg);box-shadow:0 3px 0 rgba(90,60,0,.45),0 6px 16px rgba(217,165,32,.45),inset 0 0 0 2px rgba(120,80,0,.35)}
-.pchip.gold i{background:radial-gradient(circle at 32% 28%,#fff8dc 0,rgba(255,248,220,0) 42%),conic-gradient(from 200deg,#f7d774,#c9961f,#ffe9a0,#b8860b,#f3cf62,#c9961f,#f7d774);box-shadow:inset 0 0 0 2px rgba(255,244,200,.8),inset 0 0 0 calc(var(--sz)*.05) #d9a520,inset 0 0 0 calc(var(--sz)*.065) rgba(255,240,190,.6)}
+.pchip.gold{--c2:#fff6d5;--cd:#8a6408;background:radial-gradient(circle at 31% 23%,rgba(255,255,255,.5),transparent 46%),radial-gradient(circle,transparent 58%,rgba(90,60,0,.3) 100%),repeating-conic-gradient(from -10deg,#fff6d5 0 20deg,#8a6408 20deg 21.6deg,#c9961f 21.6deg 58.4deg,#8a6408 58.4deg 60deg);box-shadow:0 calc(var(--sz)*.055) 0 #8a6408,0 calc(var(--sz)*.11) calc(var(--sz)*.26) rgba(217,165,32,.5),inset 0 0 0 calc(var(--sz)*.022) rgba(120,80,0,.35),inset 0 calc(var(--sz)*.03) calc(var(--sz)*.04) rgba(255,255,255,.45)}
+.pchip.gold i{background:radial-gradient(circle at 32% 28%,#fff8dc 0,rgba(255,248,220,0) 42%),conic-gradient(from 200deg,#f7d774,#c9961f,#ffe9a0,#b8860b,#f3cf62,#c9961f,#f7d774);box-shadow:0 0 0 calc(var(--sz)*.02) #8a6408,0 0 0 calc(var(--sz)*.034) #f3d98a,inset 0 calc(var(--sz)*-.03) calc(var(--sz)*.06) rgba(90,60,0,.25)}
+.pchip.gold i::before{border-color:rgba(255,246,213,.85)}
 .pchip.gold b,.pchip.gold em{color:#3b2500;text-shadow:0 1px 0 rgba(255,240,190,.7)}
 .pchip.gold::after{content:"";position:absolute;inset:0;border-radius:50%;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.55) 48%,transparent 60%);background-size:250% 100%;animation:goldshine 3.2s ease-in-out infinite;pointer-events:none}
 @keyframes goldshine{0%{background-position:130% 0}60%,100%{background-position:-60% 0}}
 @media (prefers-reduced-motion:reduce){.pchip.gold::after{animation:none}}
-.car-step.locked .pchip.gold,.car-step.far .pchip.gold{filter:saturate(.9) brightness(.95)}
+.car-step.locked .pchip.gold,.car-step.far .pchip.gold{filter:saturate(.85) brightness(.86)}
 
 /* menu Strumenti del solver */
 .gwtabsrow{display:flex;align-items:flex-end;gap:6px;border-bottom:1px solid var(--gl);margin-bottom:8px}

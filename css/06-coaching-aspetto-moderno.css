@@ -591,7 +591,8 @@ label:has(>.co-ddb),.of:has(>.co-ddb){min-width:0;max-width:100%}
 .toast{display:block;line-height:1.45}
 .toast>svg,.toast>.gic{display:inline-block;vertical-align:-4px;margin-right:6px;width:18px;height:18px}
 /* livello segreto LIVE */
-.pchip.secret{background:radial-gradient(circle at 50% 40%,#c2263f,#6e0f1f)}
+/* la fiche del livello segreto: stessa forma delle altre, bordeaux con inserti d'oro e un alone */
+.pchip.secret{--c2:#e9c46a;box-shadow:0 calc(var(--sz)*.055) 0 var(--cd),0 0 calc(var(--sz)*.3) rgba(226,60,90,.55),inset 0 0 0 calc(var(--sz)*.022) rgba(0,0,0,.25),inset 0 calc(var(--sz)*.03) calc(var(--sz)*.04) rgba(255,255,255,.25)}
 .pchip.secret b{letter-spacing:.06em}
 .car-step.secret{position:relative}
 .car-step.secret .car-step-l{color:#ff8fa0;letter-spacing:.08em}
