@@ -2,7 +2,25 @@
    Ogni lezione: id, livello, titolo, scheda (HTML) e domande. Nelle domande la prima opzione è quella giusta
    (l'ordine viene mescolato a ogni tentativo). Le domande con gen() cambiano numeri e carte ogni volta. */
 const LESSONS = {};
-const LES = (id, lv, t, card, qs) => { LESSONS[id] = { id, lv, t, card, qs }; };
+/* Le schede nel formato compatto (apertura con lx-lead + lx-eye, titoletti h4) prendono la stessa grafica
+   delle lezioni nuove: intestazione con la prima frase in grande e sezioni numerate. */
+const lesLayout = card => {
+  if (/class="lx-hero"/.test(card)) return card;
+  const m = /^\s*<p class="lx-lead"><span class="lx-eye">([\s\S]*?)<\/span>([\s\S]*?)<\/p>/.exec(card);
+  if (!m) return card;
+  const txt = m[2].trim(), cut = /^([\s\S]*?[.!?])(?:\s+|<\/b>\s*)(?=[A-ZÀ-Ý«<"])/.exec(txt);
+  let head = txt, rest = "";
+  if (cut && cut[1].length >= 25 && txt.length - cut[0].length >= 25) { head = cut[1]; rest = txt.slice(cut[0].length).trim(); if (/<b>[^<]*$/.test(head)) { head += "</b>"; rest = rest.replace(/^<\/b>\s*/, ""); } }
+  if (head.replace(/<[^>]+>/g, "").length > 130) {
+    /* frase unica e lunga: in grande la parte prima dei due punti, il resto sotto */
+    const c = /^([^:]{30,140}?):\s+([\s\S]+)$/.exec(head);
+    if (c && (c[1].match(/<b>/g) || []).length === (c[1].match(/<\/b>/g) || []).length) { rest = (c[2].charAt(0).toUpperCase() + c[2].slice(1) + (rest ? " " + rest : "")); head = c[1] + "."; }
+  }
+  let out = card.slice(m.index + m[0].length), n = 0;
+  out = out.replace(/<h4>([\s\S]*?)<\/h4>(\s*)(?!<ol class="lx-steps")/g, (all, h, sp) => `<div class="lx-sec"><b>${++n}</b><h4>${h}</h4></div>${sp}`);
+  return `\n<div class="lx-hero lx-hero-auto"><span class="lx-eye">${m[1]}</span><h3>${head}</h3>${rest ? `<p class="lx-lead">${rest}</p>` : ""}</div>` + out;
+};
+const LES = (id, lv, t, card, qs) => { LESSONS[id] = { id, lv, t, card: lesLayout(card), qs }; };
 
 
 /* ---------------- NL2 ---------------- */

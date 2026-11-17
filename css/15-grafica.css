@@ -108,3 +108,8 @@ body.theme-silent nav.tabs button[aria-selected="true"]::before{background:#e6e6
 @keyframes chip3dfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--sz)*-.035))}}
 @media (max-width:560px){.car-hero-r .chip3d{--sz:110px!important}}
 @media (prefers-reduced-motion:reduce){.chip3d,.chip3d.idle .chip3d-in{animation:none}}
+
+/* Tabelle delle lezioni: i titoli delle colonne vanno a capo per parole, mai lettera per lettera */
+.lesbody .lx-tab thead th{overflow-wrap:normal;word-break:normal}
+.lesbody .lx-tab thead th{line-height:1.25;white-space:normal}
+@media (max-width:420px){.lesbody .lx-tab th,.lesbody .lx-tab td{padding:7px 6px}}
