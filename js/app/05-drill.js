@@ -97,7 +97,7 @@ const DRAWS = [
 const quick = (o, flop) => flop ? o * 4 - Math.max(0, o - 8) : o * 2;
 DRILLS.outs = {
   name: "Outs e prezzo dei draw", short: "Outs", time: 25,
-  desc: "Quante volte chiudi il tuo progetto, e se la puntata avversaria te lo fa pagare troppo.",
+  desc: "Quante volte chiudi il tuo progetto, e se la puntata avversaria ti chiede troppo per il call.",
   rule: "Gli <b>outs</b> sono le carte che completano il tuo progetto. Con una carta da vedere (turn → river): outs × 2. Con due carte (flop → river): outs × 4, togliendo (outs − 8) quando hai più di 8 outs. Chiudere il progetto non vuol dire sempre vincere, e a volte vinci anche senza chiudere.",
   sample() { return Math.random() < 0.45 ? { m: "eq", di: rint(0, DRAWS.length - 1), flop: Math.random() < 0.5 } : { m: "pay", di: rint(0, DRAWS.length - 1), P: pick([10, 16, 20, 24, 30, 40]), f: pick([0.33, 0.5, 0.66, 0.75, 1]) }; },
   build(p) {
@@ -119,8 +119,8 @@ DRILLS.outs = {
     return {
       title: "Il call conviene?",
       body: `<div class="potviz"><div class="pv k-pot"><span>Piatto</span><b>${bb(p.P)}</b></div><div class="plus">+</div><div class="pv bet k-bet"><span>Puntata avversario</span><b>${bb(B)}</b></div></div><p class="qtitle">Sei al turn con ${d.n} (${d.o} outs, chiudi circa ${Math.round(eqTurn)} volte su 100). Senza contare quello che potresti vincere dopo, <b>il call è profittevole</b>?</p>`,
-      layout: "cols2", opts: [{ label: "Sì, chiudo abbastanza spesso", v: true }, { label: "No, mi fa pagare troppo", v: false }], timed: false,
-      check(v) { return { score: v === ok ? 100 : 0, correct: ok, expl: `<ol class="steps"><li>Outs: ${d.c}. Chiudi ${d.o} volte su 46 carte = <b>${fmt(eqTurn, 1)}%</b>.</li><li>Per chiamare ti serve: ${B} / (${p.P} + ${2 * B}) = <b>${fmt(need, 1)}%</b>.</li></ol><p>${ok ? "La puntata è troppo piccola: il progetto paga il prezzo giusto." : "La puntata fa pagare il progetto più di quanto vale. È la size giusta quando sei tu a puntare contro i progetti."}</p>` }; },
+      layout: "cols2", opts: [{ label: "Sì, chiudo abbastanza spesso", v: true }, { label: "No, il call costa troppo", v: false }], timed: false,
+      check(v) { return { score: v === ok ? 100 : 0, correct: ok, expl: `<ol class="steps"><li>Outs: ${d.c}. Chiudi ${d.o} volte su 46 carte = <b>${fmt(eqTurn, 1)}%</b>.</li><li>Per chiamare ti serve: ${B} / (${p.P} + ${2 * B}) = <b>${fmt(need, 1)}%</b>.</li></ol><p>${ok ? "La puntata è troppo piccola: il progetto ha il prezzo giusto per il call." : "La puntata chiede al progetto più di quanto vale. È la size giusta quando sei tu a puntare contro i progetti."}</p>` }; },
     };
   },
 };
@@ -194,7 +194,7 @@ function qvParse(txt) {
   const t = String(txt).replace(/<[^>]+>/g, " ").replace(/\s+/g, " "), R = { pos: [], hero: null, pot: null, st: null, tiles: [] };
   const PR = "(EP|UTG|MP|HJ|LJ|CO|BTN|SB|BB)", norm = p => QV_AL[p] || p;
   (t.match(new RegExp("\\b" + PR + "\\b", "g")) || []).forEach(p => { p = norm(p); if (!R.pos.includes(p)) R.pos.push(p); });
-  const hm = new RegExp("\\bsei (?:nel |in |di |da |il |al |lo |la )?" + PR + "\\b", "i").exec(t) || new RegExp("\\b" + PR + " \\(tu\\)").exec(t) || new RegExp("\\(tu,? " + PR + "\\b").exec(t) || new RegExp("\\btu,? (?:sei )?(?:in |nel |di )?" + PR + "\\b").exec(t) || new RegExp("\\b(?:apri|hai aperto|rilanci|3-betti|difendi|paghi|giochi|limpi|completi) (?:da|dal|dallo|dalla|in|nel) " + PR + "\\b", "i").exec(t) || new RegExp("\\bdal(?:lo|la|l')? ?" + PR + " (?:fai|apri|rilanci|paghi|3-betti|4-betti|limpi|completi|difendi)\\b", "i").exec(t) || new RegExp("\\bsei (?:il|lo|la|l') ?[^.,;()]{0,24}\\(" + PR + "\\)", "i").exec(t) || new RegExp("\\b(?:paghi|difendi|chiami) (?:dal|dallo|dalla|in|nel) " + PR + "\\b", "i").exec(t);
+  const hm = new RegExp("\\bsei (?:nel |in |di |da |il |al |lo |la )?" + PR + "\\b", "i").exec(t) || new RegExp("\\b" + PR + " \\(tu\\)").exec(t) || new RegExp("\\(tu,? " + PR + "\\b").exec(t) || new RegExp("\\btu,? (?:sei )?(?:in |nel |di )?" + PR + "\\b").exec(t) || new RegExp("\\b(?:apri|hai aperto|rilanci|3-betti|difendi|paghi|fai call|giochi|limpi|completi) (?:da|dal|dallo|dalla|in|nel) " + PR + "\\b", "i").exec(t) || new RegExp("\\bdal(?:lo|la|l')? ?" + PR + " (?:fai|apri|rilanci|paghi|3-betti|4-betti|limpi|completi|difendi)\\b", "i").exec(t) || new RegExp("\\bsei (?:il|lo|la|l') ?[^.,;()]{0,24}\\(" + PR + "\\)", "i").exec(t) || new RegExp("\\b(?:paghi|fai call|difendi|chiami) (?:dal|dallo|dalla|in|nel) " + PR + "\\b", "i").exec(t);
   if (hm) R.hero = norm(hm[1].toUpperCase());
   if (/\b4-bet(?:ti|tato)? pot\b|piatto (?:di )?4-bet|\b4bp\b/i.test(t)) R.pot = "Piatto 4-bet"; else if (/\b3-bet pot\b|piatto (?:di |con )?3-bet|\b3bp\b/i.test(t)) R.pot = "Piatto 3-bet"; else if (/\bsqueeze\b/i.test(t) && R.pos.length) R.pot = "Squeeze"; else if (/\blimp(?:er|ano|a|i)?\b/i.test(t) && R.pos.length) R.pot = "Con limp"; else if (/\bSRP\b/.test(t) || (/apre.{0,40}chiam/i.test(t) && !/3-bet|4-bet|rilancia/i.test(t))) R.pot = "Piatto singolo";
   const sm = [...t.replace(/\b(?:dopo il|prima del|fino al|vedere il|vede il) (?:flop|turn|river)\b/gi, " ").matchAll(/\b(preflop|flop|turn|river)\b/gi)].map(m => m[1].toLowerCase()), lead = /^\s*(preflop|flop|turn|river)\b/i.exec(t);
@@ -303,7 +303,7 @@ function qvApply(root, q) {
 DRILLS.target = {
   name: "Dì il bersaglio", short: "Bersaglio", time: 35,
   desc: "Value, bluff o check: e quali mani del suo range colpisci.",
-  rule: "Ogni puntata ha un bersaglio: <b>pagano mani peggiori</b> (value) oppure <b>foldano mani migliori</b> (bluff). Se non c'è nessuno dei due, check.",
+  rule: "Ogni puntata ha un bersaglio: <b>fanno call mani peggiori</b> (value) oppure <b>foldano mani migliori</b> (bluff). Se non c'è nessuno dei due, check.",
   sample(ctx) {
     if (Math.random() < 0.45) { ctx.spotBag = ctx.spotBag && ctx.spotBag.length ? ctx.spotBag : shuffle(SPOTS.map((_, k) => k)); return { m: "hand", i: ctx.spotBag.pop() }; }
     return { m: "gen", id: pick(BANK).id, pk: pick(profilesAvail()) };
@@ -334,7 +334,7 @@ DRILLS.target = {
       title: "River · punti o no?",
       body: body + `<p class="qtitle" style="margin-top:12px">Che ruolo ha la tua mano qui?</p>`,
       mount() { if (rs.rp) try { tgReplayRun(document.getElementById("view"), rs, this); } catch (e) { this.hold = false; } },
-      layout: "cols3", opts: [{ label: "<b>Value</b> · punto perché mi pagano mani peggiori", v: "value" }, { label: "<b>Bluff</b> · punto perché foldano mani migliori", v: "bluff" }, { label: "<b>Check</b> · nessun bersaglio, vado a showdown o mollo", v: "check" }],
+      layout: "cols3", opts: [{ label: "<b>Value</b> · punto perché mi fanno call mani peggiori", v: "value" }, { label: "<b>Bluff</b> · punto perché foldano mani migliori", v: "bluff" }, { label: "<b>Check</b> · nessun bersaglio, vado a showdown o mollo", v: "check" }],
       timed: false,
       check(v) { const gap = best.bbv - evOf(v); const score = v === act || gap <= tol ? 100 : gap <= tol2 ? 60 : 0; return { score, correct: act, expl: `${v !== act && score === 100 ? `<p class="muted">Differenza minima (${fmt(gap, 1)}bb): anche la tua scelta è corretta.</p>` : ""}<p><b>${act === "value" ? "Value" : act === "bluff" ? "Bluff" : "Check"}</b>${best.s ? ` (size migliore ${sizeName(best.s)})` : ""}. ${whyText(sp, best, evs)}</p>${html}<p class="muted" style="margin-top:6px">Valori in bb rispetto al check.</p>` }; },
     };
@@ -357,7 +357,7 @@ DRILLS.size = {
         const { evs, best, html } = evTable(sp, p.pk);
         const me = evs.find(e => e.s === v);
         let score = me === best ? 100 : (best.bbv > 0.3 && me.bbv >= best.bbv * 0.85) || (best.bbv <= 0.3 && Math.abs(me.bbv - best.bbv) < 0.3) ? 60 : 0;
-        return { score, correct: best.s, expl: `<p><b>Migliore: ${sizeName(best.s)}.</b> ${whyText(sp, best, evs)}</p>${html}<p class="muted" style="margin-top:8px">bb in più rispetto al check. Range del ${VIL[sp.cfg]} calcolato su range reali; il profilo decide quali mani pagano ogni size.</p>` };
+        return { score, correct: best.s, expl: `<p><b>Migliore: ${sizeName(best.s)}.</b> ${whyText(sp, best, evs)}</p>${html}<p class="muted" style="margin-top:8px">bb in più rispetto al check. Range del ${VIL[sp.cfg]} calcolato su range reali; il profilo decide quali mani fanno call a ogni size.</p>` };
       },
     };
   },
@@ -436,7 +436,7 @@ function blkLine(s) {
 DRILLS.blocker = {
   name: "Scegli il bluff (blocker)", short: "Blocker", time: 50,
   desc: "Tra tre mani, trova quella che lascia più fold nel suo range.",
-  rule: "Le tue carte tolgono combinazioni al suo range. Per bluffare scegli la mano che <b>toglie mani che pagano</b> e <b>lascia quelle che foldano</b>.",
+  rule: "Le tue carte tolgono combinazioni al suo range. Per bluffare scegli la mano che <b>toglie mani che fanno call</b> e <b>lascia quelle che foldano</b>.",
   sample(ctx) { ctx.blkBag = ctx.blkBag && ctx.blkBag.length ? ctx.blkBag : shuffle(ALLBLK.map((_, k) => k)); return { id: ALLBLK[ctx.blkBag.pop()].id }; },
   build(p) {
     const s = ALLBLK.find(x => x.id === p.id);
@@ -444,14 +444,14 @@ DRILLS.blocker = {
     const short = str => str.split(",").slice(0, 10).join(", ") + (str.split(",").length > 10 ? "…" : "");
     return {
       title: "River · con quale mano bluffi?",
-      body: `<p class="ctx">${esc(s.story)} Vuoi bluffare con una puntata grande: ${s.id[0] === "g" ? "lui paga con qualsiasi coppia o meglio e folda il resto" : "lui paga con le mani in verde e folda quelle in rosso"}. Le tre mani qui sotto non hanno coppia né progetto chiuso.</p>` + (s.line ? blkLine(s) : tableHtml([{ lbl: "Board", cards: s.board }])) +
-        `<p style="font-size:14px;margin:0 0 4px"><span class="pill good">PAGA</span> ${esc(short(s.callsDesc))}</p><p style="font-size:14px;margin:0 0 12px"><span class="pill bad">FOLDA</span> ${esc(short(s.foldsDesc))}</p>`,
+      body: `<p class="ctx">${esc(s.story)} Vuoi bluffare con una puntata grande: ${s.id[0] === "g" ? "lui fa call con qualsiasi coppia o meglio e folda il resto" : "lui fa call con le mani in verde e folda quelle in rosso"}. Le tre mani qui sotto non hanno coppia né progetto chiuso.</p>` + (s.line ? blkLine(s) : tableHtml([{ lbl: "Board", cards: s.board }])) +
+        `<p style="font-size:14px;margin:0 0 4px"><span class="pill good">CALL</span> ${esc(short(s.callsDesc))}</p><p style="font-size:14px;margin:0 0 12px"><span class="pill bad">FOLDA</span> ${esc(short(s.foldsDesc))}</p>`,
       layout: "cols3", opts: shuffle(s.cands).map(c => ({ label: `<span style="display:flex;gap:4px">${cardsHtml(c.hand, true)}</span>`, v: c.hand })), timed: false,
       check(v) {
         const me = s.cands.find(c => c.hand === v);
         const score = me === best ? 100 : best.foldPct - me.foldPct <= 1.5 ? 60 : 0;
         const rows = s.cands.slice().sort((a, b) => b.foldPct - a.foldPct).map(c => `<tr><td>${icHand(c.hand)}</td><td class="mono">${fmt(c.calls)}</td><td class="mono">${fmt(c.folds)}</td><td class="mono"><b>${fmt(c.foldPct, 1)}%</b></td></tr>`).join("");
-        return { score, correct: best.hand, expl: `<p>Prima di contare le tue carte: ${fmt(s.calls0)} combinazioni pagano, ${fmt(s.folds0)} foldano (fold ${fmt(s.foldPct0, 1)}%).</p><div class="tablewrap"><table class="hist"><thead><tr><th>Mano</th><th>Pagano</th><th>Foldano</th><th>Fold</th></tr></thead><tbody>${rows}</tbody></table></div><p style="margin-top:8px">${icHand(best.hand)} lascia più fold: toglie ${fmt(s.calls0 - best.calls)} combinazioni che pagano e ${fmt(s.folds0 - best.folds)} che foldano.${me !== best ? ` ${icHand(me.hand)} ne toglie ${fmt(s.calls0 - me.calls)} che pagano e ${fmt(s.folds0 - me.folds)} che foldano.` : ""}</p>` };
+        return { score, correct: best.hand, expl: `<p>Prima di contare le tue carte: ${fmt(s.calls0)} combinazioni fanno call, ${fmt(s.folds0)} foldano (fold ${fmt(s.foldPct0, 1)}%).</p><div class="tablewrap"><table class="hist"><thead><tr><th>Mano</th><th>Fanno call</th><th>Foldano</th><th>Fold</th></tr></thead><tbody>${rows}</tbody></table></div><p style="margin-top:8px">${icHand(best.hand)} lascia più fold: toglie ${fmt(s.calls0 - best.calls)} combinazioni che fanno call e ${fmt(s.folds0 - best.folds)} che foldano.${me !== best ? ` ${icHand(me.hand)} ne toglie ${fmt(s.calls0 - me.calls)} che fanno call e ${fmt(s.folds0 - me.folds)} che foldano.` : ""}</p>` };
       },
     };
   },

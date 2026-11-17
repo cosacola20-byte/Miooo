@@ -47,7 +47,7 @@ DRILLS.p4bet = {
       if (!midConn) { best = "b"; why = `${highBoard ? `Board alto (${RN(hi + 2)}-high)` : fv.paired ? "Board accoppiato" : "Board basso e poco connesso"}: il range del 4-bettor (AA, KK, QQ, AK) domina quello di chi chiama (QQ-99, AQ, AJ, KQ), che qui ha poche doppie e pochi set. Si punta piccolo con tutto il range: 25% bastano, con SPR ${fmtN(Math.round(spr * 10) / 10)} lo stack entra al turn.`; }
       else if (strong) { best = "b"; why = `Board medio connesso (${RN(vals[0] + 2)}${RN(vals[1] + 2)}${RN(vals[2] + 2)}) che colpisce i JJ-99 e i suited di chi chiama, ma la tua mano (${HKN[cl.k]}) ha il ${pct(eq)}%: punta 25% per valore e protezione, l'all-in arriva al turn.`; }
       else { best = "x"; why = `Board medio connesso (${RN(vals[0] + 2)}${RN(vals[1] + 2)}${RN(vals[2] + 2)}): è quello che colpisce di più chi chiama (set, doppie, progetti). Con ${HKN[cl.k]} e il ${pct(eq)}% fai check: puntare fa foldare le mani peggiori e ti fa check-raisare da quelle migliori.`; }
-      why += " L'all-in al flop con SPR così basso non serve: fa foldare proprio le mani che vuoi far pagare.";
+      why += " L'all-in al flop con SPR così basso non serve: fa foldare proprio le mani da cui vuoi ricevere call.";
     } else {
       const bet = Math.round(S.pot * 0.3 * 10) / 10, need = bet / (S.pot + 2 * bet);
       ctx = `Hai chiamato il 4-bet (${me.pos}). ${me.ip ? `Il ${op.pos} punta ${bb(bet)} (30%).` : `Fai check, il ${op.pos} punta ${bb(bet)} (30%).`}`;

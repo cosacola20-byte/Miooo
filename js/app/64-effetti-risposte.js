@@ -1,6 +1,6 @@
 /* ================= EFFETTI DELLE RISPOSTE: combo a livelli, scintille, riepilogo animato ================= */
 /* opzioni che sono un'azione di poker: la classe act-* le colora con i colori fissi delle azioni (css/13-tavolo.css) */
-const ACT_RE = [["allin", /^(all-?in|shove)/i], ["raise", /^(raise|rilanc|open\b|apri|iso\b|iso raise|[345]-?bet|squeeze|min-?raise|check-?raise)/i], ["fold", /^(fold|folda|foldo)\b/i], ["check", /^check\b/i], ["call", /^(call|paga|pago|limp|complet)/i], ["bet", /^(bet\b|punt|c-?bet|donk|overbet|barrel)/i]];
+const ACT_RE = [["allin", /^(all-?in|shove)/i], ["raise", /^(raise|rilanc|open\b|apri|iso\b|iso raise|[345]-?bet|squeeze|min-?raise|check-?raise)/i], ["fold", /^(fold|folda|foldo)\b/i], ["check", /^check\b/i], ["call", /^(call|paga|pago|fa call|fai call|faccio call|fare call|limp|complet)/i], ["bet", /^(bet\b|punt|c-?bet|donk|overbet|barrel)/i]];
 const actKind = html => { const t = String(html || "").replace(/<[^>]+>/g, "").trim(); for (const [k, re] of ACT_RE) if (re.test(t)) return "act-" + k; return ""; };
 /* quando tutte le opzioni sono azioni, sempre nello stesso ordine: fold, check, call, bet, raise, all-in; a parità d'azione, la size più piccola prima */
 const ACT_ORD = { "act-fold": 0, "act-check": 1, "act-call": 2, "act-bet": 3, "act-raise": 4, "act-allin": 5 };

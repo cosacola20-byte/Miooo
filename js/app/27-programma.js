@@ -1,7 +1,7 @@
 /* ================= PROGRAMMA ================= */
 const SPOTS_REF = null;
 const WEEKS = [
-  { t: "Settimana 1 · Numeri e bersagli", d: "Matematica, combinazioni e la domanda base: chi paga, chi folda?", s: [
+  { t: "Settimana 1 · Numeri e bersagli", d: "Matematica, combinazioni e la domanda base: chi fa call, chi folda?", s: [
     { t: "Le formule che servono", plan: [["preflop", 8, { spots: ["rfi_ep", "rfi_mp", "rfi_co", "rfi_btn", "rfi_sb"] }], ["math", 10], ["combo", 8], ["target", 5]] },
     { t: "Bersaglio e prezzo", plan: [["math", 10], ["target", 5], ["outs", 6]] },
     { t: "Combinazioni e progetti", plan: [["preflop", 8, { spots: ["bb_btn", "bb_sb", "bb_co", "bb_mp", "bb_ep"] }], ["combo", 8], ["outs", 8], ["target", 5]] },

@@ -2,7 +2,7 @@
 const PROFILES = {
   course: { n: "Pool NL (dati di riferimento)", d: "folda quanto misurato nel field REG NL50: più la size è grande, più folda, anche oltre la teoria", fold: (s, sp) => courseFold(s, sp) },
   reg: { n: "Reg teorico (MDF)", d: "difende esattamente la MDF con le sue mani migliori: contro di lui un bluff puro vale zero a qualsiasi size", frac: s => 1 / (1 + s) },
-  station: { n: "Calling station", d: "paga con qualsiasi coppia fino a 3/4 pot; contro size grandi solo con le coppie migliori", station: true },
+  station: { n: "Calling station", d: "fa call con qualsiasi coppia fino a 3/4 pot; contro size grandi solo con le coppie migliori", station: true },
   nit: { n: "Nit", d: "folda troppo, soprattutto contro le size grandi", frac: s => 0.75 / Math.pow(1 + s, 1.35) },
   pool: { n: "Il tuo pool NL25", d: "chiama quanto dicono le tue statistiche di popolazione", frac: s => 1 - poolFold(s) / 100 },
 };
@@ -106,9 +106,9 @@ function whyText(sp, best, evs) {
       const tie = top.bbv > -Math.max(0.6, 0.01 * sp.pot);
       return `Con ${sizeName(top.s)} chiama il ${Math.round(top.call * 100)}% del suo range: il ${Math.round(top.B * 100)}% ti batte e solo il ${Math.round(top.W * 100)}% è peggiore. ` +
         (tie ? `Guadagni con le mani peggiori quanto perdi con quelle migliori: puntare ${sizeName(top.s)} e fare check valgono quasi uguale (${fmt(top.bbv, 1)}bb), quindi vanno bene tutte e due.${sp.stack / sp.pot < 2 ? " Con SPR così basso il check evita anche il check-raise all-in delle sue mani forti." : ""}` :
-          "Le mani migliori pagano più di quelle peggiori: la tua mano vale di più a showdown.");
+          "Le mani migliori fanno call più di quelle peggiori: la tua mano vale di più a showdown.");
     }
-    return "Qualsiasi puntata viene pagata più da mani migliori che da mani peggiori: la tua mano vale di più a showdown.";
+    return "Qualsiasi puntata riceve call più da mani migliori che da mani peggiori: la tua mano vale di più a showdown.";
   }
   const cw = Object.entries(best.catsW).sort((a, b) => b[1] - a[1]).map(([L]) => CATL[L].n.toLowerCase()).slice(0, 2).join(" e ");
   if (sp.eq >= 0.5) return `Con ${sizeName(best.s)} chiama il ${Math.round(best.call * 100)}% del suo range: il ${Math.round(best.W * 100)}% sono mani peggiori della tua (${cw || "mani deboli"}), solo il ${Math.round(best.B * 100)}% ti batte.`;

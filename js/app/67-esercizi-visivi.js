@@ -180,7 +180,7 @@ DRILLS.betsize = {
       after() { document.querySelectorAll(".bs-range, [data-bsd]").forEach(x => { x.disabled = true; }); },
       check(v) {
         const d = Math.abs(v - target), score = d <= 0.25 ? 100 : d <= target * 0.12 ? 50 : 0;
-        const how = pre ? `<p>${p.ip ? "In posizione" : "Fuori posizione"} la 3‑bet è ${mult} volte l'apertura: ${fmtN(p.open)} × ${mult} = <b>${fmtBB(target)}</b>.${p.ip ? "" : " Fuori posizione si rilancia di più perché chi paga giocherà in posizione."}</p>`
+        const how = pre ? `<p>${p.ip ? "In posizione" : "Fuori posizione"} la 3‑bet è ${mult} volte l'apertura: ${fmtN(p.open)} × ${mult} = <b>${fmtBB(target)}</b>.${p.ip ? "" : " Fuori posizione si rilancia di più perché chi fa call giocherà in posizione."}</p>`
           : `<p>${f[2] === "piatto" ? "Una puntata quanto il piatto" : f[2] + " di " + fmtBB(p.pot)} = ${f[2] === "piatto" ? fmtBB(p.pot) : `${fmtN(p.pot)} × ${f[0]} ÷ ${f[1]}`} = <b>${fmtBB(target)}</b>.</p><p class="muted">${{ "1/3": "Un terzo: dividi il piatto per 3.", "1/2": "Metà piatto: dividi per 2.", "2/3": "Due terzi: trova un terzo e raddoppialo.", "3/4": "Tre quarti: metà piatto più la metà della metà.", piatto: "Quanto il piatto: la puntata è uguale al piatto." }[f[2]]}</p>`;
         return { score, correct: null, expl: `${how}${score < 100 ? `<p>Hai puntato ${fmtBB(v)}${score === 50 ? ": ci sei vicino." : "."}</p>` : ""}` };
       },

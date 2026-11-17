@@ -38,8 +38,8 @@ DRILLS.vslimp = {
     /* risposta: [migliore, accettabile] come indici */
     let best, ok = -1, why;
     if (hero === "BB") {
-      if (cat === "value") { best = 1; why = `${h} è abbastanza forte per fare raise: i limper giocano mani deboli e pagano troppo.`; }
-      else if (cat === "wide" && n <= 2) { best = 1; ok = 0; why = `${h} batte buona parte delle mani con cui si limpa: fai raise e fai pagare chi è entrato con carte deboli. Anche il check è accettabile, visto che sei fuori posizione.`; }
+      if (cat === "value") { best = 1; why = `${h} è abbastanza forte per fare raise: i limper giocano mani deboli e fanno call troppo.`; }
+      else if (cat === "wide" && n <= 2) { best = 1; ok = 0; why = `${h} batte buona parte delle mani con cui si limpa: fai raise e prendi valore da chi è entrato con carte deboli. Anche il check è accettabile, visto che sei fuori posizione.`; }
       else { best = 0; why = `${h} non è una mano da gonfiare il piatto fuori posizione: vedi il flop gratis con il check.`; if (cat === "wide") ok = 1; }
     } else if (hero === "SB") {
       const fo = vlOpen("SB", h) ?? 0;
@@ -377,17 +377,17 @@ const LXW = (() => {
       if (oop) P.push("+", ["1bb", "fuori posizione", "neg"]);
       P.push("=", [`${s}bb`, "la tua iso", "res"]);
       const chips = Array.from({ length: s }, (_, i) => `<i style="--d:${(i * 0.06).toFixed(2)}s"></i>`).join("");
-      return UI.eqn(P) + `<div class="lx-iso-chips" aria-hidden="true">${chips}<span>${s}bb</span></div><p>${oop ? "Fuori posizione (dalla SB, o dal BB contro un limper che non è la SB) aggiungi 1bb: parlerai per primo in tutte le street." : "In posizione (CO, BTN) giocherai dopo di lui in tutte le street."} È una base, non un massimo: contro chi paga qualsiasi rilancio puoi salire ancora.</p>`;
+      return UI.eqn(P) + `<div class="lx-iso-chips" aria-hidden="true">${chips}<span>${s}bb</span></div><p>${oop ? "Fuori posizione (dalla SB, o dal BB contro un limper che non è la SB) aggiungi 1bb: parlerai per primo in tutte le street." : "In posizione (CO, BTN) giocherai dopo di lui in tutte le street."} È una base, non un massimo: contro chi fa call a qualsiasi rilancio puoi salire ancora.</p>`;
     },
     // dai un nome all'avversario dai suoi numeri (VPIP e PFR, valori indicativi): profilo, numeri tipici e come giocargli contro
     profKind(v, p) {
       const gap = v - p;
-      if (v >= 35 && p < 15) return ["v", "Fish passivo, calling station", "Entra in tante mani e rilancia di rado: limpa e paga.", "40-60 / sotto 10", "punta per valore spesso, anche con mani medie, e non bluffare. Se rilancia, ha la mano."];
-      if (v >= 35 && p >= 25) return ["y", "Maniac", "Gioca tantissime mani e le rilancia quasi tutte.", "oltre 40 / oltre 30", "paga di più con le mani buone e lascialo puntare: rilanciando fai foldare proprio i suoi bluff."];
+      if (v >= 35 && p < 15) return ["v", "Fish passivo, calling station", "Entra in tante mani e rilancia di rado: limpa e fa call.", "40-60 / sotto 10", "punta per valore spesso, anche con mani medie, e non bluffare. Se rilancia, ha la mano."];
+      if (v >= 35 && p >= 25) return ["y", "Maniac", "Gioca tantissime mani e le rilancia quasi tutte.", "oltre 40 / oltre 30", "fa call di più con le mani buone e lascialo puntare: rilanciando fai foldare proprio i suoi bluff."];
       if (v <= 16) return ["b", "Nit", "Entra di rado, e quando entra ha una mano.", "sotto 15 / poco meno", "rubagli i bui e fai c-bet piccole; rispetta i suoi rilanci e folda le mani medie."];
       if (v <= 32 && gap <= 9) return ["g", "Reg", "Gioca un numero normale di mani e le rilancia quasi tutte.", "20-28 / 16-24", "gioco solido e linee standard: gli exploit sono pochi."];
-      if (v >= 35) return ["y", "Ricreativo largo", "Gioca tante mani: a volte rilancia, a volte paga.", "35-60 / 15-25", "osservalo ancora: allo showdown arriva con mani deboli (paga troppo) o molla spesso (folda troppo)?"];
-      return ["n", "Da osservare", "Numeri nella media, ma paga più di quanto rilancia.", "—", "raccogli altre mani e chiediti sempre: paga troppo o folda troppo?"];
+      if (v >= 35) return ["y", "Ricreativo largo", "Gioca tante mani: a volte rilancia, a volte fa call.", "35-60 / 15-25", "osservalo ancora: allo showdown arriva con mani deboli (fa call troppo) o molla spesso (folda troppo)?"];
+      return ["n", "Da osservare", "Numeri nella media, ma fa call più di quanto rilancia.", "—", "raccogli altre mani e chiediti sempre: fa call troppo o folda troppo?"];
     },
     /* HUD della lezione «Tracker e HUD»: gli stessi tre avversari dopo 25 e dopo 600 mani */
     HUD_P: [["Il vicino", [64, 12, 2], [52, 6, 3], "Pesce palla"], ["Lo sconosciuto", [8, 8, 0], [24, 19, 7], "Polpo mimetico"], ["Il rilanciatore", [40, 32, 14], [43, 31, 12], "Piranha"]],
@@ -708,7 +708,7 @@ const UI = (() => {
         const w = v => (v / mx * 100).toFixed(1) + "%";
         return `<div class="lx-rx-row" style="--c:${col}"><div class="l ${x > y ? "win" : ""}"><b>${x}%</b><i style="--w:${w(x)}"></i></div><span class="n">${n}</span><div class="r ${y > x ? "win" : ""}"><i style="--w:${w(y)}"></i><b>${y}%</b></div></div>`; }).join("");
       return `<div class="lx-rx lx-anim" style="--dur:.9s"><div class="lx-rx-flop"><div class="lx-rx-board">${cards}</div>${o.tex ? `<span class="lx-rx-tex">${o.tex}</span>` : ""}</div>
-        <div class="lx-rx-head"><span class="l"><b>${o.la || "BTN"}</b><small>${o.sa || "ha aperto"}</small></span><span class="r"><b>${o.lb || "BB"}</b><small>${o.sb || "ha pagato"}</small></span></div>
+        <div class="lx-rx-head"><span class="l"><b>${o.la || "BTN"}</b><small>${o.sa || "ha aperto"}</small></span><span class="r"><b>${o.lb || "BB"}</b><small>${o.sb || "ha fatto call"}</small></span></div>
         <div class="lx-rx-rows">${rows}</div>${o.verdict ? `<p class="lx-rx-v">${o.verdict}</p>` : ""}</div>`;
     },
     // le due domande prima di ogni puntata, come schema che compare un passo alla volta quando entra nello schermo: UI.twoq()

@@ -31,7 +31,7 @@ function hHandBuild(p, errMode) {
     title: `${errMode ? "Errore da rifare" : "La tua mano"} · ${["Preflop", "Flop", "Turn", "River"][d.st]}`,
     body: `<p class="ctx">Mano #${esc(h.id)} · ${esc(h.stakes)} · sei <b>${esc(h.pos)}</b>${errMode && d.an && d.an.type ? ` · <span class="pill bad">${esc(HERR[d.an.type] || "errore")}</span>` : ""}</p>` + tableHtml([{ lbl: "Board", cards: d.board }, { hero: 1, lbl: "La tua mano", cards: h.hero }]) +
       `<div class="potviz"><div class="pv k-pot"><span>Piatto</span><b>${bb(d.pot)}</b></div>${d.toCall > 0 ? `<div class="pv bet"><span>Da chiamare</span><b>${bb(d.toCall)}</b></div>` : ""}<div class="pv"><span>Il tuo stack</span><b>${bb(d.stack)}</b></div></div><div class="hh">${hist}</div>` +
-      `<label for="htarget" style="font-weight:600;font-size:14px">Il tuo bersaglio (facoltativo): chi vuoi far chiamare o foldare?</label><input type="text" id="htarget" placeholder="es. voglio che paghino le overpair e i set" style="margin:6px 0 12px">`,
+      `<label for="htarget" style="font-weight:600;font-size:14px">Il tuo bersaglio (facoltativo): chi vuoi far chiamare o foldare?</label><input type="text" id="htarget" placeholder="es. voglio che facciano call le overpair e i set" style="margin:6px 0 12px">`,
     layout: "cols2", opts, timed: false,
     check(v) {
       const tgt = ($("#htarget")?.value || "").trim();
@@ -44,7 +44,7 @@ function hHandBuild(p, errMode) {
       d.an = { v: AV, sc: r.tj.sc, type: r.tj.type || null, loss: Math.round(r.tj.loss * 10) / 10, best: A.best.l, st: d.st, strat: !!A.strat };
       if (errMode && r.uj.sc >= 100) { d.fixed = today(); }
       persistHandsSoon();
-      return { score: r.uj.sc, correct: A.bestK, expl: (tgt ? `<p class="hint">Il tuo bersaglio: <b>${esc(tgt)}</b>. Confrontalo con chi paga e chi folda qui sotto.</p>` : "") + r.html + ai };
+      return { score: r.uj.sc, correct: A.bestK, expl: (tgt ? `<p class="hint">Il tuo bersaglio: <b>${esc(tgt)}</b>. Confrontalo con chi fa call e chi folda qui sotto.</p>` : "") + r.html + ai };
     },
     after() { const b = $("#aiBtn"); if (b) b.onclick = () => analyzeHand(); const sv = $("#svVerdict"); if (sv) svHandVerdict(h, d, sv); const gs = $("#gwOpenSt"); if (gs) gs.onclick = () => { const cfg = svFromHandSt(h, d); if (!cfg) { gs.textContent = "Non riesco a ricostruire lo spot"; return; } const o = cfg.vname ? Object.values(OPPS).find(x => x.name === cfg.vname) : null; if (run) { run = null; } gwOpenHand(cfg, o ? "opp:" + oppSlug(o.name) : null); }; const gp = $("#gwProbSt"); if (gp) gp.onclick = () => { const cfg = svFromHandSt(h, d); if (!cfg) { gp.textContent = "Non riesco a ricostruire lo spot"; return; } const o = cfg.vname ? Object.values(OPPS).find(x => x.name === cfg.vname) : null; if (run) { run = null; } gwHandProblem(cfg, o ? "opp:" + oppSlug(o.name) : null); }; },
   };
@@ -52,7 +52,7 @@ function hHandBuild(p, errMode) {
 let phT = null; function persistHandsSoon() { clearTimeout(phT); phT = setTimeout(persistHands, 1500); }
 DRILLS.hands = {
   name: "Le tue mani", short: "Mani tue", time: 60,
-  desc: "Rivedi le decisioni delle tue mani importate: ricostruisco il range avversario, ti dico chi paga e chi folda a ogni size e dove hai sbagliato bersaglio.",
+  desc: "Rivedi le decisioni delle tue mani importate: ricostruisco il range avversario, ti dico chi fa call e chi folda a ogni size e dove hai sbagliato bersaglio.",
   rule: "Prima di vedere cosa hai fatto, decidi di nuovo e scrivi il bersaglio: chi volevi far chiamare o foldare? Poi confronta con il range ricostruito e con la tua strategia.",
   avail: () => HANDS.hands.some(h => h.dec && h.dec.length),
   sample(ctx) {
@@ -69,7 +69,7 @@ function hErrList(filter) {
 DRILLS.herr = {
   name: "Errori delle tue mani", short: "Errori mani", time: 60,
   desc: "Solo le decisioni che al tavolo hai sbagliato, secondo l'analisi del range. Rifalle finché le giochi giuste.",
-  rule: "Sono spot che al tavolo hai giocato male. Decidi di nuovo pensando al bersaglio: chi paga e chi folda a questa size?",
+  rule: "Sono spot che al tavolo hai giocato male. Decidi di nuovo pensando al bersaglio: chi fa call e chi folda a questa size?",
   avail: () => hErrList().length > 0,
   sample(ctx) {
     ctx.eBag = ctx.eBag || shuffle(hErrList(ctx.opt && ctx.opt.type).map(x => ({ hi: x.hi, di: x.di })));

@@ -18,7 +18,7 @@ const LEVELS = [
       { id: 217, t: "Il bankroll", plan: [["lez", 8, { id: "bankroll" }], ["bbeuro", 6]] },
       { id: 205, t: "Posizione e open", plan: [["lez", 6, { id: "pos" }], ["seat", 4], ["preflop", 12, { spots: ["rfi_ep", "rfi_mp", "rfi_co", "rfi_btn", "rfi_sb"] }]] },
       { id: 206, t: "Vietato limpare", plan: [["lez", 6, { id: "nolimp" }], ["preflop", 8, { spots: ["rfi_ep", "rfi_mp", "rfi_co", "rfi_btn", "rfi_sb"] }]] },
-      { id: 208, t: "Chi paga e chi folda", plan: [["lez", 8, { id: "fish" }], ["target", 6]] },
+      { id: 208, t: "Chi fa call e chi folda", plan: [["lez", 8, { id: "fish" }], ["target", 6]] },
       { id: 207, t: "Contro i limper", plan: [["lez", 8, { id: "limp" }], ["vslimp", 14]] },
       { id: 209, t: "Postflop semplice", plan: [["lez", 8, { id: "post" }], ["betsize", 5], ["vslimp", 6]] },
       { id: 210, t: "Tracker e HUD", plan: [["lez", 8, { id: "tracker" }]] },

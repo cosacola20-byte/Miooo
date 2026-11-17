@@ -39,7 +39,7 @@ function cbdAnswer(k, sz) {
   const big = sz === "l";
   if (k.monster) return ["raise", { call: 50 }, "Mano fortissima (set, doppia, scala, colore): vuole un piatto grande e protezione. È la mano da check-raise."];
   if (k.combo) return ["raise", { call: 60 }, "Progetto colore più progetto di scala aperto: tanta equity, e quando rilanci vinci anche subito se lui folda. È uno dei progetti da check-raise."];
-  if (k.pair === "top") return ["call", { raise: 30 }, "Top pair o overpair: davanti a quasi tutto il range con cui punta, ma non abbastanza forte da rilanciare. Paghi e decidi al turn."];
+  if (k.pair === "top") return ["call", { raise: 30 }, "Top pair o overpair: davanti a quasi tutto il range con cui punta, ma non abbastanza forte da rilanciare. Fai call e decidi al turn."];
   if (k.pair === "mid") return ["call", { fold: big ? 20 : 0 }, `Coppia media: ${big ? "contro il 75% regge ancora il prezzo del 30%" : "contro la size piccola è un call facile"}.`];
   if (k.pair === "weak") {
     if (k.fd || k.oesd) return ["call", { fold: 30 }, "Coppia bassa più un progetto: abbastanza equity anche contro la size grande."];
@@ -77,11 +77,11 @@ DRILLS.cbdef = {
     const tags = [k.monster || k.pair ? k.name : null, k.fd ? "progetto colore" : null, k.oesd ? "progetto di scala aperto" : null, k.gut ? "gutshot" : null, k.over ? "due overcard" : null, k.bdfd && !k.fd ? "backdoor di colore" : null, k.bdsd ? "backdoor di scala" : null].filter(Boolean);
     return {
       title: "BB contro BTN · c-bet " + S.n,
-      body: `<p class="ctx">Il BTN apre a 2,5bb, paghi dal BB. Al flop fai check e il BTN punta <b>${bb(S.b)}</b> in un piatto di <b>5,5bb</b> (${S.n}). Cosa fai?</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px"><span class="pill acc">Piatto 5,5bb</span><span class="pill bad">C-bet ${bb(S.b)} · ${S.n}</span><span class="pill mid">Equity che serve: ${S.eq}%</span></div>` + tableHtml([{ lbl: "Flop", cards: b }, { hero: 1, lbl: "La tua mano", cards: h }]),
+      body: `<p class="ctx">Il BTN apre a 2,5bb, fai call dal BB. Al flop fai check e il BTN punta <b>${bb(S.b)}</b> in un piatto di <b>5,5bb</b> (${S.n}). Cosa fai?</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px"><span class="pill acc">Piatto 5,5bb</span><span class="pill bad">C-bet ${bb(S.b)} · ${S.n}</span><span class="pill mid">Equity che serve: ${S.eq}%</span></div>` + tableHtml([{ lbl: "Flop", cards: b }, { hero: 1, lbl: "La tua mano", cards: h }]),
       layout: "cols3", center: true, opts: ["fold", "call", "raise"].map(v => ({ label: lab[v], v })), timed: false,
       check(v) {
         const sc = v === best ? 100 : (part[v] || 0);
-        return { score: sc, correct: best, expl: `<p><b>${lab[best]}</b>${tags.length ? ` · ${tags.join(", ")}` : ""}.</p><p>${why}</p><p class="muted" style="font-size:13px">Prezzo: ${bb(S.b)} da pagare per vincere 5,5 + ${fmt(S.b, 1)} = ${fmt(5.5 + S.b, 1)}bb, quindi ti serve circa il ${S.eq}% di equity; contro questa size difendi circa il ${S.def}% del range. Strategia semplificata per i micro, non l'equilibrio del solver.</p>` };
+        return { score: sc, correct: best, expl: `<p><b>${lab[best]}</b>${tags.length ? ` · ${tags.join(", ")}` : ""}.</p><p>${why}</p><p class="muted" style="font-size:13px">Prezzo: ${bb(S.b)} da mettere per vincere 5,5 + ${fmt(S.b, 1)} = ${fmt(5.5 + S.b, 1)}bb, quindi ti serve circa il ${S.eq}% di equity; contro questa size difendi circa il ${S.def}% del range. Strategia semplificata per i micro, non l'equilibrio del solver.</p>` };
       },
     };
   },

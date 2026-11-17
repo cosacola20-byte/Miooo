@@ -325,7 +325,7 @@ function oppNote(D, V, S, sc) {
   if (ok("fold_cb_turn", 0.4) && v("fold_cb_turn") < 30) no.push(`barrel bluff al turn (fold vs CB turn ${v("fold_cb_turn")}%${smp("fold_cb_turn")})`);
   if (ok("fold_cb_river", 0.4) && v("fold_cb_river") < 25) no.push(`barrel bluff al river (fold vs CB river ${v("fold_cb_river")}%${smp("fold_cb_river")})`);
   if (ok("fold_rb") && v("fold_rb") > 57) add({ id: "rbluff", prio: 2 * (1 + lvl("fold_rb")) + 2, title: "BLUFF RIVER POLARIZZATO", text: `Fold river bet ${v("fold_rb")}%${smp("fold_rb")}: bluffa il river 60-100% pot con draw mancati e blocker.` }, ["fold_rb"]);
-  if (ok("fold_rb") && v("fold_rb") < 40) add({ id: "rbvalue", prio: 5, title: "PAGA IL RIVER", text: `Fold river bet ${v("fold_rb")}%${smp("fold_rb")}: al river value thin, niente bluff.` }, ["fold_rb"]);
+  if (ok("fold_rb") && v("fold_rb") < 40) add({ id: "rbvalue", prio: 5, title: "FA CALL AL RIVER", text: `Fold river bet ${v("fold_rb")}%${smp("fold_rb")}: al river value thin, niente bluff.` }, ["fold_rb"]);
   if (ok("fold_cb_turn", 0.4) && v("fold_cb_turn") < 35 && ok("fold_rb") && v("fold_rb") > 57) combos.push({ keys: ["fold_cb_turn", "fold_rb"], drop: "rbluff", prio: 12, title: "TURN STICKY, RIVER MOLLA", text: `Fold vs CB turn ${v("fold_cb_turn")}%${smp("fold_cb_turn")} ma fold river bet ${v("fold_rb")}%: al turn solo semi-bluff con draw, bluffa il river quando il draw manca.` });
   if (ok("fold_cr") && v("fold_cr") > 60) add({ id: "crbluff", prio: 5, title: "CHECK-RAISE BLUFF", text: `Fold vs check-raise ${v("fold_cr")}%: check-raise bluff sui suoi cbet con backdoor e blocker.` }, ["fold_cr"]);
   if (v("fold_cr") != null && v("fold_cr") < 30) { no.push(`check-raise bluff (fold vs c/r ${v("fold_cr")}%)`); add({ id: "crvalue", prio: 4, title: "CHECK-RAISE VALUE LARGO", text: `Fold vs check-raise ${v("fold_cr")}%: non molla dopo il c/r, fai c/r per value anche con top pair buona e doppie.` }, ["fold_cr"]); }
@@ -342,7 +342,7 @@ function oppNote(D, V, S, sc) {
   if (cvh && cvh.tot >= 30 && cvh.value > 60 && ok("cb_fold") && v("cb_fold") > 50) combos.push({ prio: 9, title: "CONTRO DI TE CBETTA TROPPO", text: `Cbetta ${cvh.value}% contro di te (${cvh.n}/${cvh.tot}) e molla ai raise (${v("cb_fold")}%): float o raise cbet sui board buoni per te.` });
   if (fish) {
     add({ id: "fishpost", prio: 19, title: "VALUE BET GRANDE", text: `Contro di lui value bet 75% pot o più su flop e turn con top pair debole kicker, seconda coppia top kicker e overpair. Niente bluff senza equity prima del river.` });
-    if (ok("fold_rb") && v("fold_rb") > 55) combos.push({ prio: 10, title: "BLUFF SOLO AL RIVER", text: `Paga flop e turn ma molla il river (fold river bet ${v("fold_rb")}%): bluff polarizzato solo al river.` });
+    if (ok("fold_rb") && v("fold_rb") > 55) combos.push({ prio: 10, title: "BLUFF SOLO AL RIVER", text: `Fa call al flop e turn ma molla il river (fold river bet ${v("fold_rb")}%): bluff polarizzato solo al river.` });
   }
   // pattern check: quando checka
   const cff = cell("cbet", "check_fold", "flop"), crf = cell("aggr", "check_raise", "flop");
@@ -388,7 +388,7 @@ function oppNote(D, V, S, sc) {
   // concetto chiave
   const lead = all[0], sec = all.find(p => p !== lead && !p.combo) || all[1];
   const KC = {
-    station: "Value largo e grande, zero bluff: la sua mano peggiore paga.", resa: "Attaccalo ogni volta che checka: la sua linea di check è quasi sempre resa.", bbbtn: "Rubagli i blind senza pietà dal BTN.", predeb: "Metti pressione preflop: folda troppo alle rilanci.",
+    station: "Value largo e grande, zero bluff: la sua mano peggiore fa call.", resa: "Attaccalo ogni volta che checka: la sua linea di check è quasi sempre resa.", bbbtn: "Rubagli i blind senza pietà dal BTN.", predeb: "Metti pressione preflop: folda troppo alle rilanci.",
     rivbluff: "Non foldare i bluff catcher alle sue river bet.", rivvalue: "Rispetta le sue river bet, folda i marginali.", rbluff: "Il river è la street dove vince il tuo bluff.", sdstrong: "Meno bluff: arriva allo showdown con mani vere.", iso: "Isola e fai value grande: l'EV sta nei piatti che gli fai giocare fuori posizione e dominato.",
     bal: "Gioca standard: il tuo edge viene dagli altri al tavolo.", passive: "Quando si sveglia ha mano: bluff sui suoi check, fold ai suoi bet.", fcbf: "Cbetta tanto con size piccola.", crvalue: "Non bluffare di check-raise, fallo per value largo.",
   };

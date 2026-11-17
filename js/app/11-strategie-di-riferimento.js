@@ -85,7 +85,7 @@ function ruleS3(f) {
   }
   if (f.high === 12) {
     if (b >= 2 || f.straight) return { a: ["r30"], cat: "Q-high broadway o a scala", why: "r30." };
-    if (drawy) return { a: ["r30", "r40", "r50"], cat: "Q-high drawy", why: "r30; contro chi paga troppo le coppie medie e non rilancia giocabile r40 o anche r50 in exploit." };
+    if (drawy) return { a: ["r30", "r40", "r50"], cat: "Q-high drawy", why: "r30; contro chi fa call troppo le coppie medie e non rilancia giocabile r40 o anche r50 in exploit." };
     return { a: ["r40", "r50"], cat: "Q-high secco", why: "r40, giocabile r50 in exploit." };
   }
   if (f.high === 11) {
