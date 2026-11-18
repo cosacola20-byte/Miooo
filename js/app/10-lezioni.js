@@ -885,19 +885,33 @@ ${UI.tab(["Mano", "Nessuna carta vista", "Hai " + UI.c("A♠K♦")], [["QQ", "6"
 ]);
 
 LES("prob", "nl5", "Probabilità delle mani iniziali", `
-<p class="lx-lead"><span class="lx-eye">Probabilità</span>Contate le combinazioni, la probabilità è un passo: <b>combinazioni della mano / 1.326</b>. Impari quanto sono rare le mani forti, perché "1 volta ogni 221" non è un appuntamento e come le tue carte cambiano quelle degli altri.</p>
-<h4>Quanto spesso arrivano</h4>
+<div class="lx-hero"><span class="lx-eye">Probabilità</span><h3>Le mani forti sono rare: per questo non si aspetta solo AA.</h3><p class="lx-lead">Contate le combinazioni, la probabilità è un passo: <b>combinazioni della mano / 1.326</b>. Qui impari quanto spesso arrivano le mani, perché «1 volta ogni 221» non è un appuntamento e come le tue carte cambiano quelle degli altri. Quanto largo giocare dipende da chi hai al tavolo; i numeri di partenza invece sono uguali per tutti.</p></div>
+
+<div class="lx-sec"><b>1</b><h4>Quanto spesso arrivano</h4></div>
 ${UI.tab(["Mano", "Comb.", "1 ogni"], [["AA", "6", "221"], ["AA o KK", "12", "110"], ["Coppia qualsiasi", "78", "17"], ["AK", "16", "83"], ["AKs", "4", "331"], ["QQ+ o AK", "34", "39"], ["Suited qualsiasi", "312", "4"]], { num: [1, 2] })}
-<p class="lx-cap">Comb. = combinazioni su 1.326; "1 ogni" = ogni quante mani arriva in media (1.326 / comb.). AK conta suited e offsuit insieme. Le percentuali sono nel grafico qui sotto.</p>
-${UI.bars([["Mano suited qualsiasi", 23.5], ["Coppia qualsiasi", 5.9], ["QQ+ o AK", 2.6], ["AK", 1.2], ["AA", 0.45]], { unit: "%", max: 25 })}
-<p>Due scorciatoie utili: la coppia arriva 1 volta ogni 17 perché, qualunque sia la prima carta, solo 3 delle 51 rimaste la accoppiano (3 / 51 = 5,9%); il seme si ripete in 12 casi su 51 (23,5%).</p>
-<div class="lx-box calc"><span class="lx-tag">Almeno una volta</span><span class="lx-f">P(almeno una) = 1 − P(mai)</span><p>AA in 221 mani: la probabilità di non vederlo mai è (220/221)<sup>221</sup> = 37%, quindi lo vedi almeno una volta nel 63% dei casi, non nel 100%.</p></div>
-<div class="lx-box trap"><span class="lx-tag">Trappola classica</span><p>Pensare che una mano "debba" arrivare. Dopo 221 mani senza AA, la prossima mano lo porta sempre con 1 probabilità su 221: le carte non hanno memoria.</p></div>
-<h4>Le tue carte cambiano quelle degli altri</h4>
+<p class="lx-cap">Comb. = combinazioni su 1.326; «1 ogni» = ogni quante mani arriva in media (1.326 / comb.). AK conta suited e offsuit insieme.</p>
+${UI.bars([["Mano suited qualsiasi", 23.5], ["Coppia qualsiasi", 5.9], ["QQ+ o AK", 2.6], ["AK", 1.2], ["AA", 0.45, "a"]], { unit: "%", max: 25 })}
+<p>Due scorciatoie da tenere a mente. La coppia arriva 1 volta ogni 17 perché, qualunque sia la prima carta, solo 3 delle 51 rimaste la accoppiano (3 / 51 = 5,9%). Il seme si ripete in 12 casi su 51 (23,5%).</p>
+
+<div class="lx-sec"><b>2</b><h4>«In media» non vuol dire «di sicuro»</h4></div>
+<div class="lx-box calc"><span class="lx-tag">Almeno una volta</span><span class="lx-f">P(almeno una) = 1 − P(mai)</span><p>AA in 221 mani: la probabilità di non vederlo mai è (220/221)<sup>221</sup> = 37%, quindi lo vedi almeno una volta nel 63% dei casi, non nel 100%. Alcuni blocchi da 221 mani ne hanno due, altri nessuno.</p></div>
+<div class="lx-grid"><div class="lx-k b"><small>Ogni mano</small><b>Riparte da zero</b><p>Dopo 500 mani senza AA, la prossima lo porta con la stessa probabilità di sempre: 1 su 221.</p></div><div class="lx-k y"><small>Su tante mani</small><b>La media si vede</b><p>Su 10.000 mani ti aspetti circa 45 volte AA: le oscillazioni restano, ma diventano piccole rispetto al totale.</p></div></div>
+
+<div class="lx-sec"><b>3</b><h4>Le tue carte cambiano quelle degli altri</h4></div>
 <p>Con due carte in mano ne restano 50 e le mani possibili per un avversario diventano 1.225. Se hai AA, KK per un avversario ha ancora 6 combinazioni (1 su 204), mentre AA ne ha una sola (1 su 1.225).</p>
 ${UI.spot({ hero: "Q♠Q♥", pos: "UTG", info: [["Per un avversario", "AA o KK: 12 su 1.225 = 0,98%"], ["5 avversari dietro", "almeno uno con AA o KK: circa 4,9%"], ["Lettura", "con QQ sei dietro raramente: rilancia senza paura"]] })}
-<div class="lx-grid"><div class="lx-k v"><small>Senza blocker</small><b>AA 6, AK 16</b><p>AK pesa quasi tre volte AA.</p></div><div class="lx-k b"><small>Con K♠K♥ in mano</small><b>AA 6, AK 8</b><p>Restano 4 assi × 2 re: AK è il 57% del range "AA o AK".</p></div></div>
-<div class="lx-box gold"><span class="lx-tag">Regola d'oro</span><p><b>Le mani forti sono rare.</b> QQ+ o AK arriva 1 volta ogni 39 mani: chi aspetta solo quelle a 6-max paga circa 25bb di bui ogni 100 mani e ne gioca 2-3. Per questo si apre molto più largo, soprattutto dalle ultime posizioni.</p></div>`, [
+<div class="lx-grid"><div class="lx-k v"><small>Senza blocker</small><b>AA 6, AK 16</b><p>AK pesa quasi tre volte AA.</p></div><div class="lx-k b"><small>Con K♠K♥ in mano</small><b>AA 6, AK 8</b><p>Restano 4 assi × 2 re: AK è il 57% del range «AA o AK».</p></div></div>
+
+<h4>Prova tu: più spesso o più raro di 1 mano su 50?</h4>
+<p>Una mano su 50 sono circa 26-27 combinazioni. Per ogni caso, decidi da che parte sta.</p>
+${UI.pick([["Ricevere una coppia qualsiasi", 0, "78 combinazioni: 1 volta ogni 17."], ["Ricevere AK, suited o offsuit", 1, "16 combinazioni: 1 volta ogni 83."], ["Ricevere due carte dello stesso seme", 0, "312 combinazioni: circa 1 volta ogni 4."], ["Ricevere QQ, KK, AA o AK", 0, "34 combinazioni: 1 volta ogni 39, poco più spesso di 1 su 50."], ["Ricevere AK suited", 1, "4 combinazioni: 1 volta ogni 331."], ["Ricevere due carte dal 10 in su (10, J, Q, K, A)", 0, "Sono 20 carte: 20 × 19 / 2 = 190 combinazioni, circa 1 volta ogni 7."]], { labels: ["Più spesso", "Più raro"], hint: "Tocca una risposta per ogni caso." })}
+${UI.duel(["Chi aspetta QQ+ o AK", [["Mani giocate su 100", "2 o 3", false], ["I bui", "circa 25bb ogni 100 mani, quasi mai recuperati", false], ["Gli avversari", "lo leggono subito: quando entra ha il forte", false]]], ["Chi gioca in base alla posizione", [["Mani giocate su 100", "molte di più, soprattutto da CO, BTN e SB", true], ["I bui", "gli stessi 25bb, recuperati con tanti piatti vinti senza showdown", true], ["Gli avversari", "non sanno mai se ha una mano forte", true]]], "Strategia")}
+<div class="lx-box gold"><span class="lx-tag">Regola d'oro</span><p><b>Le mani forti sono rare.</b> QQ+ o AK arriva 1 volta ogni 39 mani: chi aspetta solo quelle a 6-max mette circa 25bb di bui ogni 100 mani e ne gioca 2-3. Per questo si apre molto più largo, soprattutto dalle ultime posizioni.</p></div>
+<div class="lx-box trap"><span class="lx-tag">Trappola classica</span><p>Pensare che una mano «debba» arrivare. Dopo 221 mani senza AA, la prossima mano lo porta sempre con 1 probabilità su 221: le carte non hanno memoria.</p></div>
+<h4>Le tre regole delle probabilità preflop</h4>
+<ol class="lx-steps"><li><b>Conta le combinazioni</b>Coppia 6, suited 4, offsuit 12: la probabilità è combinazioni diviso 1.326.</li><li><b>Le carte non hanno memoria</b>Ogni mano ha le stesse probabilità, qualunque cosa sia uscita prima.</li><li><b>Guarda le tue carte prima di contare le sue</b>Ogni carta che hai toglie combinazioni all'avversario.</li></ol>
+<div class="lx-end"><p>In sintesi</p><b>Le mani forti arrivano <em>di rado</em>, e le tue carte cambiano il conto di quelle degli altri.</b><p>Prossima lezione: «Il range».</p></div>
+`, [
   { q: "Ogni quante mani, in media, ricevi una coppia qualsiasi?", o: ["Circa 1 ogni 17: 3 carte su 51 la accoppiano", "Circa 1 ogni 13: ci sono 13 coppie diverse", "Circa 1 ogni 6: ogni coppia ha 6 combinazioni", "Circa 1 ogni 221: come una coppia specifica"], e: "Le coppie sono 13 × 6 = 78 combinazioni su 1.326: 5,9%, cioè 1 volta ogni 17. Scorciatoia: qualunque sia la prima carta, solo 3 delle 51 rimaste la accoppiano. 1 ogni 221 vale per una coppia specifica come AA." },
   { q: "Ogni quante mani, in media, ricevi AK (suited o offsuit)?", o: ["Circa 1 ogni 83: 16 combinazioni su 1.326", "Circa 1 ogni 331: 4 combinazioni su 1.326", "Circa 1 ogni 110: 12 combinazioni su 1.326", "Circa 1 ogni 169: una mano diversa su 169"], e: "AK ha 16 combinazioni: 1.326 / 16 = 83. 331 conta solo AK suited, 110 solo AK offsuit; 169 tratta tutte le mani come se avessero lo stesso numero di combinazioni, ma una coppia ne ha 6 e AK 16." },
   { q: "Hai giocato 221 mani senza mai ricevere AA. Qual è la probabilità di riceverlo nella prossima mano?", o: ["1 su 221, come in ogni altra mano", "Circa 63%: è la probabilità entro 221 mani", "Circa 1 su 110: la media va recuperata", "Più bassa: sei in un periodo negativo"], e: "Ogni mano è indipendente dalle precedenti: la probabilità resta 6 / 1.326 = 1 su 221. Il 63% è la probabilità di vedere AA almeno una volta in un blocco di 221 mani, non nella prossima. Né la media da recuperare né i periodi negativi cambiano il mazzo." },
@@ -912,22 +926,50 @@ ${UI.spot({ hero: "Q♠Q♥", pos: "UTG", info: [["Per un avversario", "AA o KK:
 ]);
 
 LES("allin", "nl5", "L'equity: gli scontri preflop", `
-<p class="lx-lead"><span class="lx-eye">Equity</span>L'<b>equity</b> dice quanto spesso una mano batte un'altra mano, o un intero range, se si girano tutte le carte fino al river. Impari a leggerla negli scontri preflop che si ripetono di continuo e a calcolarla contro un range.</p>
-<h4>Cos'è l'equity</h4>
+<div class="lx-hero"><span class="lx-eye">Equity</span><h3>L'equity dice quanto spesso vinci se si girano tutte le carte.</h3><p class="lx-lead">L'<b>equity</b> è la tua parte del piatto contro un'altra mano, o contro un intero range, se si arriva al river senza altre puntate. Impari a leggerla negli scontri preflop che si ripetono di continuo, a calcolarla contro un range e a capire perché, quando la mano continua dopo il flop, non la porti a casa tutta.</p></div>
+
+<div class="lx-sec"><b>1</b><h4>Cos'è l'equity</h4></div>
 <div class="lx-box calc"><span class="lx-tag">Definizione</span><span class="lx-f">equity = % di vittorie + % di pareggi ÷ 2</span><p>Immagina di girare le carte fino al river moltissime volte. Quando le due mani pareggiano il piatto si divide, quindi un pareggio vale mezza vittoria. Su 100 volte vinci 60, perdi 36 e pareggi 4: equity = 60 + 4 ÷ 2 = <b>62%</b>.</p></div>
 ${UI.eqn([["71,7%", "AK vince", "pos"], "+", ["4,6% ÷ 2", "pareggi a metà", ""], "=", ["74%", "equity di AKo contro AQo", "res"]])}
-<h4>Gli scontri tipici</h4>
+
+<div class="lx-sec"><b>2</b><h4>Gli scontri tipici</h4></div>
 ${UI.tab(["Scontro", "Equity"], [["99-AKo<br><small style=\"font-weight:400\">coppia contro due alte</small>", "56%"], ["88-77<br><small style=\"font-weight:400\">coppia contro coppia bassa</small>", "81%"], ["AKo-AQo<br><small style=\"font-weight:400\">dominata</small>", "74%"], ["KK-ATo<br><small style=\"font-weight:400\">coppia contro una alta</small>", "71%"], ["AKo-98o<br><small style=\"font-weight:400\">due alte contro due basse</small>", "64%"], ["JTs-22<br><small style=\"font-weight:400\">suited contro coppia bassa</small>", "54%"]], { num: [1] })}
 <p class="lx-cap">Equity della prima mano, calcolata su tutti i board possibili. Un <b>coinflip</b> è uno scontro vicino al 50/50, come 99 contro AK.</p>
 <div class="lx-grid"><div class="lx-k g"><small>Coinflip</small><b>circa 50/50</b><p>Coppia contro due carte più alte, suited connector contro coppia bassa.</p></div><div class="lx-k y"><small>Favorito</small><b>circa 70/30</b><p>Coppia contro una sola carta più alta; due alte contro due basse fanno 64/36.</p></div><div class="lx-k r"><small>Dominata</small><b>circa 25/75</b><p>Stessa carta alta, kicker peggiore: AQ contro AK, A5 contro AK.</p></div></div>
-${UI.bars([["7♠6♠", 23], ["K♠K♣", 18.7], ["K♠Q♠", 17.7], ["A♠K♠", 12.1], ["A♣6♦", 6.1]], { unit: "%", max: 30 })}
+${UI.bars([["7♠6♠", 23], ["K♠K♣", 18.7], ["K♠Q♠", 17.7], ["A♠K♠", 12.1], ["A♣6♦", 6.1, "c"]], { unit: "%", max: 30 })}
 <p class="lx-cap">Equity contro A♥A♦. Le suited connector vanno meno peggio di KK perché fanno scale e colori; gli assi deboli sono quasi morti.</p>
-<h4>Contro un range</h4>
+
+<div class="lx-sec"><b>3</b><h4>L'equity cambia a ogni carta</h4></div>
+<p>Preflop AK contro 99 ha il 44%. Guarda cosa succede alla stessa mano carta dopo carta.</p>
+${UI.hand({ cycle: 20, hero: { pos: "BTN", cards: "A♠K♦" }, deal: 1, hcards: 2,
+  ev: [[0.3, "SB", "post", "", "0,5"], [0.6, "BB", "post", "", "1"], [2.4, "UTG", "fold", "Fold"], [2.9, "HJ", "fold", "Fold"], [3.4, "CO", "fold", "Fold"], [4.1, "BTN", "raise", "Raise 2,5bb", "2,5"], [4.9, "SB", "fold", "Fold"], [5.7, "BB", "allin", "All-in 100bb", "100"], [6.9, "BTN", "call", "Call", "100"]],
+  reveal: [[7.8, "BB", "9♣9♥"]],
+  board: [[9.2, "K♥7♦2♣"], [12, "5♠"], [14.8, "9♦"]],
+  pot: [[0.6, "1,5bb"], [4.1, "4bb"], [5.7, "103bb"], [6.9, "200,5bb"]],
+  end: { t: 16.2, testo: "Vince il <em>BB</em> con il set al river" },
+  log: [[0.3, "Bui: lo SB mette 0,5bb, il BB 1bb"], [2, "Hero ha A♠ K♦ al BTN"], [4.1, "Hero apre a 2,5bb"], [5.7, "Il BB va all-in per 100bb e Hero fa call"], [7.8, "Il BB mostra 9♣ 9♥: preflop Hero ha il 44%"], [9.2, "Flop K♥ 7♦ 2♣: Hero fa coppia di re e sale al 91%"], [12, "Turn 5♠: al BB restano solo i due 9. Hero ha il 95,5%"], [14.8, "River 9♦: il BB fa set"], [16.2, "Una mano persa con il 95,5% non è un errore: è la parte di 4,5% che a volte succede"]] })}
+<p>Quello che decidi preflop vale per tutte le volte che lo spot si ripete. Una mano persa da favorito non cambia l'equity che avevi quando hai messo i soldi.</p>
+
+<div class="lx-sec"><b>4</b><h4>Contro un range</h4></div>
 <p>L'avversario non ha una mano sola ma un range di combinazioni. L'equity contro un range è la media delle equity contro ogni mano, pesata per il numero di combinazioni.</p>
 ${UI.spot({ hero: "J♣J♦", pos: "UTG", info: [["Avversario", "un nit va all-in solo con QQ+ e AK"], ["Contro QQ, KK, AA", "18 combinazioni: JJ vince circa il 18%"], ["Contro AK", "16 combinazioni: JJ vince circa il 56%"], ["Contro il range", "(18 × 18% + 16 × 56%) ÷ 34 = circa 36%"]] })}
-${UI.bars([["JJ contro AK", 56], ["JJ contro QQ+ e AK", 36], ["JJ contro QQ+", 18]], { unit: "%", max: 100 })}
+${UI.bars([["JJ contro AK", 56], ["JJ contro QQ+ e AK", 36, "a"], ["JJ contro QQ+", 18, "c"]], { unit: "%", max: 100 })}
+
+<div class="lx-sec"><b>5</b><h4>Equity e realizzazione</h4></div>
+<p>Le equity di questa lezione valgono tutte solo quando i soldi sono all-in preflop. Se la mano continua dopo il flop, non porti a casa tutta l'equity che hai sulla carta: una parte la perdi foldando prima del river. Quanta ne <b>realizzi</b> dipende da come si gioca il resto della mano.</p>
+<div class="lx-grid"><div class="lx-k v"><small>Realizzi di più</small><b>In posizione, mani giocabili</b><p>Parli per ultimo, vedi cosa fa l'altro, e con mani suited e collegate hai tanti modi di continuare.</p></div><div class="lx-k r"><small>Realizzi di meno</small><b>Fuori posizione, mani scollegate</b><p>Parli per primo, subisci le puntate e con le offsuit scollegate lasci spesso la mano prima del river.</p></div></div>
+<p>Più gli stack sono profondi, più la posizione pesa. Per questo la stessa mano, con la stessa equity, può essere un call in posizione e un fold fuori posizione.</p>
+
+<h4>Prova tu: chi è favorito?</h4>
+<p>All-in preflop. Indica quale delle due mani ha più equity.</p>
+${UI.pick([[UI.c("A♠K♠") + " contro " + UI.c("Q♥Q♦"), 1, "QQ ha circa il 54%: la coppia è già fatta, AK suited ha il 46%."], [UI.c("A♥2♥") + " contro " + UI.c("K♣Q♦"), 0, "A2 suited ha circa il 60%: l'asso è la carta più alta e il seme aggiunge colori."], [UI.c("6♠5♠") + " contro " + UI.c("A♣K♦"), 1, "AK ha circa il 58%: 65 suited fa tante scale e colori, ma resta sotto con il 42%."], [UI.c("K♥Q♥") + " contro " + UI.c("A♦J♣"), 1, "AJ ha circa il 56%: ha la carta più alta. KQ suited si ferma al 44%."], [UI.c("2♣2♦") + " contro " + UI.c("A♠K♥"), 0, "La coppia bassa ha circa il 53%: è un coinflip, di poco a favore della coppia."], [UI.c("A♣5♦") + " contro " + UI.c("K♥Q♦"), 0, "A5 ha circa il 58%: l'asso conta più di due carte alte senza asso."]], { labels: ["Prima mano", "Seconda mano"], hint: "Tocca una risposta per ogni scontro." })}
+${UI.duel(["All-in preflop", [["Equity", "vale tutta: si arriva al river senza altre decisioni", true], ["Posizione", "non conta più", true], ["Cosa ti serve sapere", "l'equity contro il suo range e il prezzo", true]]], ["La mano continua dopo il flop", [["Equity", "ne realizzi solo una parte", false], ["Posizione", "pesa tanto: in posizione realizzi di più", false], ["Cosa ti serve sapere", "anche quanto è giocabile la tua mano e chi parla per primo", false]]], "Situazione")}
+<div class="lx-box gold"><span class="lx-tag">Regola d'oro</span><p><b>L'equity si misura contro il range, non contro una mano sola.</b> JJ contro AK è avanti 56 a 44, ma contro QQ+ e AK ha solo il 36%. Se fare call convenga lo decide il prezzo: lo vedrai con le pot odds.</p></div>
 <div class="lx-box trap"><span class="lx-tag">Trappola classica</span><p>Credere che un asso debole sia una mano da all-in. Contro QQ+ e AK, ${UI.c("A♣5♦")} ha il 26%: contro AK è dominato (27%), contro AA quasi morto (8%). ${UI.c("2♣2♦")} contro lo stesso range ha il 34%.</p></div>
-<div class="lx-box gold"><span class="lx-tag">Regola d'oro</span><p><b>L'equity si misura contro il range, non contro una mano sola.</b> JJ contro AK è avanti 56 a 44, ma contro QQ+ e AK ha solo il 36%. Se fare call convenga lo decide il prezzo: lo vedrai con le pot odds.</p></div>`, [
+<h4>Le tre regole dell'equity</h4>
+<ol class="lx-steps"><li><b>Un pareggio vale mezza vittoria</b>Equity = vittorie più metà dei pareggi.</li><li><b>Conta contro il range</b>Media delle equity contro ogni mano, pesata per combinazioni.</li><li><b>Tutta tua solo all-in</b>Se la mano continua, posizione e giocabilità decidono quanta equity realizzi.</li></ol>
+<div class="lx-end"><p>In sintesi</p><b>L'equity è la tua parte del piatto <em>contro il suo range</em>, e dopo il flop ne realizzi solo una parte.</b><p>Prossima lezione: «Migliorare al flop».</p></div>
+`, [
   { q: "All-in preflop: 9♠9♥ contro A♣K♦. Chi è favorito e di quanto?", o: ["Il 99, di poco: circa 56 contro 44", "AK, circa 55 contro 45: ha due carte vive", "Alla pari: è il classico coinflip 50/50", "Il 99, circa 70 contro 30: è già fatto"], e: "99 contro AKo ha il 55,7% di equity. AK ha due carte vive, cioè 6 outs per fare coppia, ma la coppia è già fatta: per questo è un coinflip leggermente sbilanciato verso il 99, non un 70/30." },
   { q: "All-in preflop: 8♠8♥ contro 7♣7♦. Quanto vince circa la coppia più alta?", o: ["Circa 81%", "Circa 70%", "Circa 56%", "Circa 91%"], e: "88 contro 77: 81%. La coppia più bassa vince soprattutto con il set, che arriva circa 1 volta su 5 entro il river, più qualche scala. 56% è la coppia contro due carte più alte; 70% la coppia contro una sola carta più alta." },
   { q: "Un simulatore gira A♠K♥ contro A♣Q♦ fino al river: AK vince il 71,7%, pareggia il 4,6% e perde il 23,7%. Qual è l'equity di AK?", o: ["Circa 74%: 71,7 più metà di 4,6", "Circa 71,7%: i pareggi non vincono il piatto", "Circa 76,3%: un pareggio vale una vittoria", "Circa 48%: 71,7 meno 23,7"], e: "Nel pareggio il piatto si divide: AK riprende metà, quindi ogni pareggio vale mezza vittoria. 71,7 + 4,6 ÷ 2 = 74%. Ignorare i pareggi sottostima l'equity, contarli interi la sovrastima; 71,7 − 23,7 è la differenza tra vittorie e sconfitte, non l'equity." },
@@ -943,19 +985,39 @@ ${UI.bars([["JJ contro AK", 56], ["JJ contro QQ+ e AK", 36], ["JJ contro QQ+", 1
 ]);
 
 LES("flop", "nl5", "Migliorare al flop", `
-<p class="lx-lead"><span class="lx-eye">Il flop</span>Il flop non aiuta quasi mai nessuno. Sapere quanto spesso si migliora evita di sopravvalutare le mani speculative, di fare call troppo "per vedere cosa esce" e ti dice perché chi punta per primo vince tanti piatti.</p>
-<h4>Quanto spesso colpisci</h4>
+<div class="lx-hero"><span class="lx-eye">Il flop</span><h3>Il flop non aiuta quasi mai nessuno: due carte diverse lo mancano circa 2 volte su 3.</h3><p class="lx-lead">Sapere quanto spesso si migliora evita di sopravvalutare le mani speculative e di fare call troppo «per vedere cosa esce». E ti spiega perché chi punta per primo vince tanti piatti senza avere niente: anche l'avversario, quasi sempre, il flop lo manca.</p></div>
+
+<div class="lx-sec"><b>1</b><h4>Quanto spesso colpisci</h4></div>
 ${UI.stats([["32%", "almeno una coppia al flop con due carte diverse"], ["11,8%", "set o meglio con una coppia in mano (1 su 8,5)"], ["10,9%", "progetto colore con due carte suited"], ["0,8%", "colore già fatto al flop"]])}
 ${UI.tab(["Cerchi", "Flop", "River"], [["Coppia o meglio", "32%", "49%"], ["Set (con coppia)", "11,8%", "19,2%"], ["Colore (suited)", "0,8%", "6,4%"], ["Progetto colore", "10,9%", "-"], ["Overcard su 77", "92%", "-"]], { num: [1, 2] })}
-<p class="lx-cap">"Coppia o meglio" parte da due carte diverse; "progetto colore" da due carte suited. "River" = entro il river, vedendo tutte e cinque le carte. Overcard: carta più alta della tua coppia.</p>
-<p>Due carte diverse mancano il flop circa 2 volte su 3, e vale anche per l'avversario. Per questo una c-bet piccola dopo aver aperto vince spesso subito.</p>
+<p class="lx-cap">«Coppia o meglio» parte da due carte diverse; «progetto colore» da due carte suited. «River» = entro il river, vedendo tutte e cinque le carte. Overcard: carta più alta della tua coppia.</p>
+
+<div class="lx-sec"><b>2</b><h4>Perché chi punta per primo vince tanti piatti</h4></div>
+<p>Due carte diverse mancano il flop circa 2 volte su 3, e vale anche per l'avversario. Quando lui fa check e tu hai aperto preflop, una puntata piccola vince spesso subito, anche se non hai niente.</p>
+${UI.hand({ cycle: 16, hero: { pos: "BTN", cards: "A♣5♣" }, deal: 1, hcards: 2,
+  ev: [[0.3, "SB", "post", "", "0,5"], [0.6, "BB", "post", "", "1"], [2.4, "UTG", "fold", "Fold"], [2.9, "HJ", "fold", "Fold"], [3.4, "CO", "fold", "Fold"], [4.1, "BTN", "raise", "Raise 2,5bb", "2,5"], [4.9, "SB", "fold", "Fold"], [5.6, "BB", "call", "Call", "2,5"], [8, "BB", "check", "Check"], [8.9, "BTN", "bet", "Bet 1,8bb", "1,8"], [10.2, "BB", "fold", "Fold"]],
+  board: [[7.2, "Q♦8♠3♥"]],
+  pot: [[0.6, "1,5bb"], [4.1, "4bb"], [5.6, "5,5bb"], [8.9, "7,3bb"]],
+  end: { t: 11, testo: "Vince <em>Hero</em> senza showdown" },
+  log: [[0.3, "Bui: lo SB mette 0,5bb, il BB 1bb"], [2, "Hero ha A♣ 5♣ al BTN"], [4.1, "Hero apre a 2,5bb, il BB fa call: piatto 5,5bb"], [7.2, "Flop Q♦ 8♠ 3♥: Hero non ha niente, ma quasi sempre nemmeno il BB"], [8.9, "Il BB checka, Hero punta 1,8bb, un terzo del piatto"], [10.2, "Il BB folda: la puntata rischiava 1,8bb per vincerne 5,5"]] })}
+<p>Puntare un terzo del piatto va in pari se l'avversario folda una volta su quattro. Contro chi difende tutto fino al river la stessa puntata rende meno: lo vedrai con le c-bet al NL10.</p>
 <div class="lx-grid"><div class="lx-k v"><small>Suited</small><b>circa +4 punti</b><p>K4s contro K4o: circa +4 punti di equity contro un range di 3-bet. Un vantaggio, non un motivo per giocare.</p></div><div class="lx-k n"><small>Offsuit</small><b>la base</b><p>Una mano debole resta debole anche suited: il colore arriva il 6,4% delle volte.</p></div></div>
-<h4>Le coppie basse e il set</h4>
-<div class="lx-box calc"><span class="lx-tag">Il set in pratica</span><span class="lx-f">1 flop su 8,5 fai set, gli altri 7,5 lo manchi</span><p>Con una coppia bassa fai call quasi sempre per niente: 7,5 flop su 8,5 non migliori e lasci la mano. Il set ha senso solo se, quando arriva, vinci molto di più di quanto hai fatto call per vederlo. Quanto di più lo calcolerai con l'EV (lezione 5.8) e con le implied odds al NL10.</p></div>
+
+<div class="lx-sec"><b>3</b><h4>Le coppie basse e il set</h4></div>
+<div class="lx-box calc"><span class="lx-tag">Il set in pratica</span><span class="lx-f">1 flop su 8,5 fai set, gli altri 7,5 lo manchi</span><p>Con una coppia bassa fai call quasi sempre per niente: 7,5 flop su 8,5 non migliori e lasci la mano. Il set ha senso solo se, quando arriva, vinci molto di più di quanto hai messo per vederlo. Quanto di più lo calcolerai con l'EV (lezione 5.8) e con le implied odds al NL10.</p></div>
 ${UI.spot({ hero: "4♣4♦", pos: "BTN", board: "J♠7♥4♠", info: [["Azione", "un nit UTG apre, tu fai call, lui rilancia forte al flop"], ["Set più alti", "JJ 3 combinazioni, 77 3: 6 in tutto"], ["Progetti", "molte picche: il tuo set è forte ma non invincibile"]] })}
-<div class="lx-box trap"><span class="lx-tag">Trappola classica</span><p>Pensare che il set sia sempre la mano migliore. Contro un avversario che apre tutte le coppie, su un board con carte medie un set più alto (overset) è raro ma possibile: conta le sue combinazioni prima di mettere 100bb.</p></div>
 <div class="lx-sem"><div><i class="go">FAI CALL</i>per il set se gli stack sono profondi e l'avversario fa call quando colpisci.</div><div><i class="mid">VALUTA</i>se dietro possono rilanciare o l'avversario è un nit che folda tutto.</div><div><i class="st">FOLD</i>se gli stack effettivi sono corti: quando fai set non vinci abbastanza.</div></div>
-<div class="lx-box gold"><span class="lx-tag">Regola d'oro</span><p><b>Le mani speculative vivono di odds implicite.</b> Coppie basse e suited connector colpiscono di rado: hanno valore solo se, quando colpiscono, vinci molto più di quanto hai fatto call.</p></div>`, [
+
+<h4>Prova tu: quanto spesso succede?</h4>
+<p>Metti ogni caso nella fascia giusta.</p>
+${UI.pick([["Con " + UI.c("5♣5♦") + ", set o meglio al flop", 0, "11,8%: circa 1 volta su 8,5."], ["Con " + UI.c("A♣J♦") + ", almeno una coppia al flop", 1, "32%: circa 1 volta su 3."], ["Con " + UI.c("7♣7♦") + ", almeno una carta più alta del 7 sul flop", 2, "92%: con una coppia media il flop è quasi sempre scomodo."], ["Con " + UI.c("8♥7♥") + ", progetto colore al flop", 0, "10,9%: circa 1 volta su 9."], ["Con " + UI.c("A♠K♦") + " all-in preflop, almeno una coppia entro il river", 2, "48,7%: quasi metà delle volte."], ["Con " + UI.c("4♣4♦") + ", set entro il river", 1, "19,2%: circa 1 volta su 5, ma solo se vedi tutte le carte."]], { labels: ["Meno del 15%", "Dal 15 al 40%", "Più del 40%"], hint: "Tocca una risposta per ogni caso." })}
+${UI.duel(["Coppia bassa, stack profondi", [["Quando fai set", "puoi vincere molto: anche tutto lo stack", true], ["Il call preflop", "costa poco rispetto a quello che vinci", true], ["Decisione", "call per il set contro chi ti dà azione", true]]], ["Coppia bassa, stack corti", [["Quando fai set", "vinci al massimo quello che resta, poche decine di bb", false], ["Il call preflop", "pesa troppo: 7,5 volte su 8,5 lo butti", false], ["Decisione", "il call per il set non rende", false]]], "Stack")}
+<div class="lx-box gold"><span class="lx-tag">Regola d'oro</span><p><b>Le mani speculative vivono di odds implicite.</b> Coppie basse e suited connector colpiscono di rado: hanno valore solo se, quando colpiscono, vinci molto più di quanto hai messo per vedere il flop.</p></div>
+<div class="lx-box trap"><span class="lx-tag">Trappola classica</span><p>Pensare che il set sia sempre la mano migliore. Contro un avversario che apre tutte le coppie, su un board con carte medie un set più alto (overset) è raro ma possibile: conta le sue combinazioni prima di mettere 100bb.</p></div>
+<h4>Le tre regole del flop</h4>
+<ol class="lx-steps"><li><b>Due volte su tre nessuno ha niente</b>Due carte diverse mancano il flop circa 2 volte su 3: vale anche per l'avversario.</li><li><b>Il set è raro</b>1 volta su 8,5: le coppie basse si giocano solo se quando colpisci vinci molto.</li><li><b>Suited aiuta poco</b>Circa 4 punti di equity: non trasforma una mano debole in una da giocare.</li></ol>
+<div class="lx-end"><p>In sintesi</p><b>Il flop si manca <em>quasi sempre</em>: punta quando lui l'ha mancato, gioca le mani speculative solo se colpire rende molto.</b><p>Prossima lezione: «Outs, regola del 4 e del 2».</p></div>
+`, [
   { q: "Hai 5♣5♦. Quanto spesso fai set o meglio al flop?", o: ["Circa 1 volta su 8,5 (11,8%)", "Circa 1 volta su 12,5 (8%)", "Circa 1 volta su 5,2 (19,2%)", "Circa 1 volta su 25 (4%)"], e: "Non fare set vuol dire che le tre carte del flop non sono nessuno dei 2 cinque rimasti: 48/50 × 47/49 × 46/48 = 88,2%. Quindi set o meglio 11,8%. L'8% e il 4% sottostimano: il flop porta tre carte, e ognuna può essere uno dei due cinque; il 19% è la probabilità di fare set entro il river, vedendo tutte e cinque le carte." },
   { q: "Hai A♣J♦. Quanto spesso fai almeno una coppia al flop (con una delle tue carte, o meglio)?", o: ["Circa 1 volta su 3 (32%)", "Circa 1 volta su 2 (49%)", "Circa 2 volte su 3 (67,6%)", "Circa 1 volta su 5 (20%)"], e: "Le carte che non ti accoppiano sono 44 su 50: il flop le evita tutte nel 67,6% dei casi, quindi colpisci il 32,4%. Il 49% è la probabilità entro il river; il 68% è quante volte manchi." },
   { q: "Parti con due carte dello stesso seme e vedi tutte e cinque le carte. Quanto spesso chiudi il colore?", o: ["Circa 6%", "Circa 11%", "Circa 20%", "Circa 35%"], e: "6,4%: 0,8% già al flop, più i progetti che chiudono al turn o al river, più qualche colore runner-runner. L'11% è la frequenza del progetto colore al flop; il 35% è la probabilità di chiudere quando il progetto ce l'hai già." },
@@ -1084,20 +1146,38 @@ ${UI.plan()}
 /* ---------------- NL5: lezioni nuove (range, EV, difesa del BB, 3-bet) ---------------- */
 
 LES("n5range", "nl5", "Il range", `
-<p class="lx-lead"><span class="lx-eye">Range</span>Non sai mai le carte dell'avversario, ma sai quali <b>può</b> avere dopo le sue azioni. Quell'insieme di combinazioni è il suo <b>range</b>: da qui in avanti ogni conto si fa contro un range, non contro una mano sola.</p>
-<h4>Dalle mani al range</h4>
-<div class="lx-box tip"><span class="lx-tag">Cos'è il range</span><p>Le tue note, le statistiche e l'azione stessa ti dicono come gioca un avversario. L'insieme di tutte le combinazioni che può avere in quel momento si chiama <b>range</b>. Ogni azione toglie mani: chi apre ha un range, chi poi fa call a un all-in ne tiene solo una parte, quella forte.</p></div>
+<div class="lx-hero"><span class="lx-eye">Range</span><h3>Non devi indovinare la sua mano: devi sapere quali mani può avere.</h3><p class="lx-lead">Non vedi mai le carte dell'avversario, ma dopo le sue azioni sai quali <b>può</b> avere. Quell'insieme di combinazioni è il suo <b>range</b>: da qui in avanti ogni conto si fa contro un range, non contro una mano sola. E lo stesso spot, giocato da un nit o da un fish, ha range diversi: dipende da chi hai al tavolo.</p></div>
+
+<div class="lx-sec"><b>1</b><h4>Dalle mani al range</h4></div>
+<div class="lx-box tip"><span class="lx-tag">Cos'è il range</span><p>Le tue note, le statistiche e l'azione stessa ti dicono come gioca un avversario. L'insieme di tutte le combinazioni che può avere in quel momento si chiama <b>range</b>.</p></div>
 <div class="lx-grid"><div class="lx-k b"><small>Range stretto</small><b>QQ+, AK</b><p>Un nit che va all-in: poche mani, quasi tutte fortissime. 34 combinazioni, il 2,6% delle mani.</p></div><div class="lx-k v"><small>Range largo</small><b>22+, A9s+, ATo+...</b><p>Un giocatore aggressivo: tante mani, anche medie. Nella griglia qui sotto sono 198 combinazioni, il 14,9%.</p></div></div>
-<h4>La griglia 13x13</h4>
+
+<div class="lx-sec"><b>2</b><h4>La griglia 13x13</h4></div>
 <p>Le 169 mani si disegnano in una griglia: sulla diagonale le coppie (6 combinazioni ciascuna), sopra la diagonale le suited (4), sotto le offsuit (12). Le caselle accese sono il range; sotto la griglia leggi le combinazioni e la percentuale sulle 1.326 mani.</p>
 ${UI.grid("22+,A9s+,KJs+,QJs,JTs,ATo+,KJo+,QJo", "Range largo: 22+, A9s+, KJs+, QJs, JTs, ATo+, KJo+, QJo")}
 <p class="lx-cap">Range illustrativo, scelto per fare i conti: non è una tabella da copiare. I range veri cambiano con la posizione, l'avversario e l'azione.</p>
-<h4>Contare le combinazioni di un range</h4>
+
+<div class="lx-sec"><b>3</b><h4>Contare le combinazioni di un range</h4></div>
 <div class="lx-box calc"><span class="lx-tag">Il conto</span><span class="lx-f">range = somma delle combinazioni di ogni mano</span><p>Coppie 6, suited 4, offsuit 12; poi togli le carte che vedi, come nella lezione sulle combinazioni. QQ+ e AK: 6 + 6 + 6 + 16 = 34. Diviso 1.326 fa il 2,6% delle mani.</p></div>
 ${UI.spot({ hero: "A♠K♦", pos: "BTN", info: [["Avversario", "un nit va all-in solo con QQ+ e AK"], ["Le tue carte tolgono", "AA da 6 a 3, KK da 6 a 3, AK da 16 a 9"], ["Range che resta", "QQ 6 + KK 3 + AA 3 + AK 9 = 21 combinazioni"], ["AK nel range", "9 su 21: circa 43%"]] })}
-${UI.bars([["QQ", 6], ["KK", 3], ["AA", 3], ["AK", 9]], { unit: " comb." })}
+${UI.bars([["QQ", 6], ["KK", 3], ["AA", 3], ["AK", 9, "a"]], { unit: " comb." })}
+
+<div class="lx-sec"><b>4</b><h4>Ogni azione restringe il range</h4></div>
+<p>Il range non è fisso: ogni scelta dell'avversario toglie qualche mano. Chi apre ha un range largo; chi poi fa call a un all-in tiene solo la parte più forte. Nell'esempio un giocatore apre da UTG con 77+, AJ+ e KQ, e contro un all-in fa call solo con QQ+ e AK.</p>
+${UI.bars([["Apre da UTG: 77+, AJ+, KQ", 112, "c"], ["Fa call all'all-in: QQ+, AK", 34, "a"]], { unit: " comb.", max: 120 })}
+<p class="lx-cap">Range illustrativi. Delle 112 combinazioni con cui apre, al call ne arrivano 34: il 30%, quasi tutte mani che ti battono o che sono un coinflip.</p>
+<p>Anche le azioni passive dicono qualcosa. Più avanti vedrai che dopo certi check o certi call le mani più forti mancano quasi sempre: lì il range è <b>cappato</b>, e la puntata giusta cambia.</p>
+
+<h4>Prova tu: quante combinazioni?</h4>
+<p>Conta le combinazioni di ogni mano, togliendo le carte che vedi.</p>
+${UI.pick([["AK suited", 1, "Una per seme: 4."], ["Una coppia, per esempio TT", 2, "4 × 3 / 2 = 6."], ["AJ offsuit", 3, "16 AJ in tutto, meno le 4 suited: 12."], ["KQ, suited e offsuit insieme", 4, "4 re × 4 donne = 16."], ["QQ quando una Q ce l'hai tu", 0, "Restano 3 donne: 3 × 2 / 2 = 3."], ["AK quando sul board c'è un asso", 3, "Restano 3 assi: 3 × 4 = 12."]], { labels: ["3", "4", "6", "12", "16"], hint: "Tocca una risposta per ogni mano." })}
+${UI.duel(["Pensare a una mano", [["La domanda", "«avrà AK?»", false], ["Il risultato", "fold per paura di KK, o call perché «ha AK»", false], ["Contro giocatori diversi", "la mano immaginata è sempre la stessa", false]]], ["Pensare al range", [["La domanda", "«con quali combinazioni gioca così, e quante sono?»", true], ["Il risultato", "conti quante volte sei avanti e quante dietro", true], ["Contro giocatori diversi", "aggiorni il range con le note: un nit e un fish non hanno le stesse mani", true]]], "Metodo")}
+<div class="lx-box gold"><span class="lx-tag">Regola d'oro</span><p><b>Conta le combinazioni, non le caselle.</b> Una casella offsuit pesa il doppio di una coppia e il triplo di una suited: AK da solo (16) vale quasi quanto QQ, KK e AA insieme (18).</p></div>
 <div class="lx-box trap"><span class="lx-tag">Trappola classica</span><p>«Gli metto AK». Pensare a una sola mano porta a foldare troppo («e se ha KK?») o a fare call troppo. La domanda giusta è: con quali combinazioni gioca così, e quante sono di ogni tipo?</p></div>
-<div class="lx-box gold"><span class="lx-tag">Regola d'oro</span><p><b>Conta le combinazioni, non le caselle.</b> Una casella offsuit pesa il doppio di una coppia e il triplo di una suited: AK da solo (16) vale quasi quanto QQ, KK e AA insieme (18).</p></div>`, [
+<h4>Le tre regole del range</h4>
+<ol class="lx-steps"><li><b>Il range è un insieme di combinazioni</b>Non una mano sola: tutte quelle compatibili con come gioca e con quello che ha fatto.</li><li><b>Conta le combinazioni, non le caselle</b>Coppia 6, suited 4, offsuit 12, poi togli le carte che vedi.</li><li><b>Ogni azione toglie mani</b>Aggiorna il range a ogni giro, e secondo chi hai davanti.</li></ol>
+<div class="lx-end"><p>In sintesi</p><b>Gioca contro <em>tutte</em> le mani che può avere, pesate per combinazioni.</b><p>Prossima lezione: «L'equity: gli scontri preflop».</p></div>
+`, [
   { q: "Un reg che conosci da migliaia di mani apre dal CO. Quale frase descrive meglio il suo range in questo momento?", o: ["Tutte le combinazioni con cui apre dal CO, ognuna con il suo peso", "La mano che ha più probabilmente, per esempio AK o una coppia alta", "Le mani che ha mostrato allo showdown nelle ultime sessioni", "Le mani che apriresti tu dal CO, perché lo spot è lo stesso"], e: "Il range è l'insieme di tutte le combinazioni compatibili con quello che ha fatto e con come gioca. Non è una mano sola, non sono solo le poche mani viste allo showdown (una parte piccola e casuale) e non è il tuo range: due giocatori nello stesso posto aprono mani diverse." },
   { q: "Un nit va all-in preflop solo con TT+ e AK, e tu non hai nessuna di queste carte. Quante combinazioni ha il suo range?", o: ["46: 30 di coppie e 16 di AK", "34: 18 di coppie e 16 di AK", "42: 30 di coppie e solo 12 di AK", "36: 30 di coppie e 6 di AK"], e: "TT, JJ, QQ, KK e AA sono 5 coppie da 6 combinazioni: 30. AK ne ha 16 (4 suited e 12 offsuit). Totale 46, cioè 46 / 1.326 = 3,5% delle mani. 34 è il range QQ+ e AK; 12 conta solo AK offsuit; 6 tratta AK come se fosse una coppia." },
   { q: "Un giocatore va all-in con tutte le coppie, da 22 ad AA, e nient'altro. Quanto è largo il suo range, in percentuale delle mani?", o: ["Circa 5,9%: 78 combinazioni su 1.326", "Circa 7,7%: 13 mani su 169", "Circa 1%: 13 combinazioni su 1.326", "Circa 11,8%: 156 combinazioni su 1.326"], e: "13 coppie × 6 combinazioni = 78; 78 / 1.326 = 5,9%. Contare 13 su 169 dà a ogni casella lo stesso peso, ma una coppia vale 6 combinazioni e una offsuit 12; 13 combinazioni dimentica che ogni coppia ne ha 6; 156 usa 12 per coppia, il peso di una offsuit." },
